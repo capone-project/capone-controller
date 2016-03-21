@@ -4,10 +4,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.6'
     }
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
 
 repositories {
     mavenCentral()
@@ -33,9 +35,16 @@ android {
     }
 }
 
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.0.0-beta-2'
+    }
+}
+
 dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
     compile 'org.abstractj.kalium:kalium:0.4.0'
 }
