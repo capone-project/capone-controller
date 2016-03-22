@@ -34,6 +34,7 @@ import java.util.List;
 
 public class DiscoveryListActivity extends ListActivity {
 
+    private SigningKey key = new SigningKey();
     private List<Server> servers;
     private DiscoveryTask serviceLoader;
     private ArrayAdapter<Server> adapter;
@@ -42,8 +43,6 @@ public class DiscoveryListActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discovery_list);
-
-        SigningKey key = new SigningKey();
 
         servers = new ArrayList<>();
 
@@ -73,6 +72,12 @@ public class DiscoveryListActivity extends ListActivity {
         };
         setListAdapter(adapter);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         serviceLoader = new DiscoveryTask(key.getVerifyKey()) {
             @Override
             public void onProgressUpdate(Server... server) {
@@ -83,8 +88,8 @@ public class DiscoveryListActivity extends ListActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         serviceLoader.cancel(true);
     }
 
