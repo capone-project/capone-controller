@@ -10,4 +10,5 @@
     <string name="service_port">Port</string>
     <string name="server_key">Server Key</string>
     <string name="server_address">Server Address</string>
+    <string name="server">Server</string>
 </resources>

@@ -11,6 +11,13 @@
         android:orientation="vertical"
         tools:context="im.pks.sd.controller.discovery.ServerDetailActivity">
 
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:text="@string/server"/>
+
     <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
