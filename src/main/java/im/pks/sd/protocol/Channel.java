@@ -18,10 +18,12 @@
 package im.pks.sd.protocol;
 
 import com.google.protobuf.nano.MessageNano;
-import org.abstractj.kalium.NaCl;
+import nano.Encryption;
+import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.keys.KeyPair;
-import org.abstractj.kalium.keys.PublicKey;
+import org.abstractj.kalium.keys.SigningKey;
+import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -29,27 +31,47 @@ import java.nio.ByteOrder;
 
 public abstract class Channel {
 
-    private KeyPair localKeys;
-    private PublicKey remoteKey;
     private byte[] localNonce;
     private byte[] remoteNonce;
+    private byte[] key;
 
-    public Channel() {
-        this.localKeys = null;
-        this.localNonce = null;
-        this.remoteKey = null;
-        this.remoteNonce = null;
-    }
+    public void enableEncryption(SigningKey localKeys, VerifyKey remoteKey) throws IOException, VerifyKey.SignatureException {
+        final KeyPair keys = new KeyPair();
 
-    public void setEncrypted(KeyPair localKeys, PublicKey remoteKey) {
-        this.localKeys = localKeys;
-        this.localNonce = new byte[SodiumConstants.NONCE_BYTES];
-        this.remoteKey = remoteKey;
-        this.remoteNonce = new byte[SodiumConstants.NONCE_BYTES];
+        Encryption.SessionKeyMessage sessionKey = new Encryption.SessionKeyMessage();
+        sessionKey.signPk = localKeys.getVerifyKey().toBytes();
+        sessionKey.encryptPk = keys.getPublicKey().toBytes();
+        sessionKey.signature = localKeys.sign(sessionKey.encryptPk);
+        writeProtobuf(sessionKey);
+
+        Encryption.SessionKeyMessage remoteSessionKey = new Encryption.SessionKeyMessage();
+        readProtobuf(remoteSessionKey);
+
+        remoteKey.verify(remoteSessionKey.encryptPk, remoteSessionKey.signature);
+
+        byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
+        Sodium.crypto_scalarmult_curve25519(scalarmult, keys.getPrivateKey().toBytes(),
+                remoteSessionKey.encryptPk);
+
+        int bufferLength = scalarmult.length + keys.getPublicKey().toBytes().length +
+                remoteSessionKey.encryptPk.length;
+        ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
+        buffer.put(scalarmult);
+        buffer.put(keys.getPublicKey().toBytes());
+        buffer.put(remoteSessionKey.encryptPk);
+
+        byte[] symmetricKey = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_KEYBYTES];
+        Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
+                buffer.array().length, new byte[0], 0);
+
+        this.key = symmetricKey;
+        this.localNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
+        this.remoteNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
+        incrementNonce(this.remoteNonce);
     }
 
     public boolean isEncrypted() {
-        return this.localKeys != null && this.remoteKey != null;
+        return this.key != null;
     }
 
     public void write(byte[] msg) throws IOException {
@@ -57,12 +79,13 @@ public abstract class Channel {
         ByteBuffer len = ByteBuffer.allocate(4);
 
         if (isEncrypted()) {
-            data = new byte[msg.length + SodiumConstants.ZERO_BYTES];
-            if (NaCl.sodium().crypto_secretbox_xsalsa20poly1305(data, msg, msg.length, localNonce, localKeys.getPrivateKey().toBytes()) < 0) {
+            data = new byte[msg.length + (SodiumConstants.ZERO_BYTES - SodiumConstants.BOXZERO_BYTES)];
+            if (Sodium.crypto_secretbox_xsalsa20poly1305(data, msg, msg.length, localNonce, key) < 0) {
                 throw new RuntimeException();
             }
 
-            incrementByteBuffer(localNonce);
+            incrementNonce(localNonce);
+            incrementNonce(localNonce);
         } else {
             data = msg;
         }
@@ -76,25 +99,26 @@ public abstract class Channel {
         ByteBuffer lenBuf = ByteBuffer.allocate(4);
         read(lenBuf.array(), lenBuf.array().length);
 
-        long len = lenBuf.order(ByteOrder.BIG_ENDIAN).getInt();
-        if (len > Integer.MAX_VALUE || len < 0) {
+        int len = lenBuf.order(ByteOrder.BIG_ENDIAN).getInt();
+        if (len < 0) {
             return null;
         }
 
-        byte[] buf = new byte[(int) len];
-        read(buf, (int) len);
+        byte[] buf = new byte[len];
+        read(buf, len);
 
         if (isEncrypted()) {
-            if (len - SodiumConstants.ZERO_BYTES < 0) {
+            if (len - (SodiumConstants.ZERO_BYTES - SodiumConstants.BOXZERO_BYTES) < 0) {
                 throw new RuntimeException();
             }
 
-            byte[] msg = new byte[(int) (len - SodiumConstants.ZERO_BYTES)];
-            if (NaCl.sodium().crypto_secretbox_xsalsa20poly1305_open(msg, buf, (int) len, remoteNonce, remoteKey.toBytes()) < 0) {
+            byte[] msg = new byte[len - (SodiumConstants.ZERO_BYTES - SodiumConstants.BOXZERO_BYTES)];
+            if (Sodium.crypto_secretbox_xsalsa20poly1305_open(msg, buf, len, remoteNonce, key) < 0) {
                 throw new RuntimeException();
             }
 
-            incrementByteBuffer(remoteNonce);
+            incrementNonce(remoteNonce);
+            incrementNonce(remoteNonce);
         }
 
         return buf;
@@ -110,17 +134,20 @@ public abstract class Channel {
         return Message.mergeFrom(msg, bytes);
     }
 
-    private void incrementByteBuffer(byte[] buf) {
-        for (int i = buf.length - 1; i >= 0; i--) {
-            buf[i] = (byte) (buf[i] + 1);
-            /* check for overflow */
-            if (buf[i] != 0) {
-                break;
-            }
+    private void incrementNonce(byte[] buf) {
+        byte c = 1;
+
+        for (int i = 0; i < buf.length; i++) {
+            c += buf[i];
+            buf[i] = c;
+            c >>= 8;
         }
     }
 
     protected abstract void write(byte[] msg, int len) throws IOException;
+
     protected abstract void read(byte[] msg, int len) throws IOException;
-    public abstract void close();
+
+    public abstract void close() throws IOException;
+
 }

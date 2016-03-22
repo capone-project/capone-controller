@@ -70,6 +70,10 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
                 broadcastChannel.writeProtobuf(discoverMessage);
 
                 while (true) {
+                    if (this.isCancelled()) {
+                        return null;
+                    }
+
                     try {
                         ByteBuffer lenBuf = ByteBuffer.allocate(4);
                         DatagramPacket lenPacket = new DatagramPacket(lenBuf.array(), lenBuf.array().length);
@@ -122,7 +126,7 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
             Service service = new Service();
             service.name = announcedService.name;
             service.type = announcedService.type;
-            service.port = announcedService.port;
+            service.port = Integer.valueOf(announcedService.port);
             server.services.add(service);
         }
         return server;

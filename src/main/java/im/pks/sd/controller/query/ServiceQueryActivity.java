@@ -25,6 +25,7 @@ import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
+import org.abstractj.kalium.keys.SigningKey;
 
 public class ServiceQueryActivity extends Activity {
 
@@ -52,9 +53,25 @@ public class ServiceQueryActivity extends Activity {
         TextView serviceName = (TextView) findViewById(R.id.service_name);
         serviceName.setText(service.name);
         TextView servicePort = (TextView) findViewById(R.id.service_port);
-        servicePort.setText(service.port);
+        servicePort.setText(String.valueOf(service.port));
         TextView serviceType = (TextView) findViewById(R.id.service_type);
         serviceType.setText(service.type);
+
+        QueryTask queryTask = new QueryTask() {
+            @Override
+            public void onProgressUpdate(ServiceDetails... details) {
+                setServiceDetails(details[0]);
+            }
+        };
+
+        // TODO: use peristent key pair
+        SigningKey key = new SigningKey();
+        QueryTask.QueryParameters parameters = new QueryTask.QueryParameters(key, server, service);
+        queryTask.execute(parameters);
+    }
+
+    private void setServiceDetails(ServiceDetails details) {
+
     }
 
 }

@@ -26,7 +26,7 @@ import java.io.Serializable;
 public class Service implements Serializable {
     public String name;
     public String type;
-    public String port;
+    public int port;
 
     @Override
     public boolean equals(Object other) {

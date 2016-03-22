@@ -62,7 +62,7 @@ public class ServerDetailActivity extends Activity {
                 TextView serviceType = (TextView) view.findViewById(R.id.service_type);
                 serviceType.setText(service.type);
                 TextView servicePort = (TextView) view.findViewById(R.id.service_port);
-                servicePort.setText(service.port);
+                servicePort.setText(String.valueOf(service.port));
 
                 return view;
             }
