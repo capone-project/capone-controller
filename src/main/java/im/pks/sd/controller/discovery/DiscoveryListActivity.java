@@ -66,6 +66,8 @@ public class DiscoveryListActivity extends ListActivity {
 
                 TextView serverKey = (TextView) view.findViewById(R.id.server_key);
                 serverKey.setText(server.publicKey);
+                TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
+                serverAddress.setText(server.address);
 
                 return view;
             }

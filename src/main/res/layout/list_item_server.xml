@@ -4,8 +4,47 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView android:id="@+id/server_key"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"/>
+    <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TableRow>
+
+            <TextView
+                    android:text="@string/server_key"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            <Space
+                    android:layout_width="5dp"
+                    android:layout_height="wrap_content"/>
+
+            <TextView
+                    android:id="@+id/server_key"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                    android:text="@string/server_address"
+                    android:textStyle="bold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            <Space
+                    android:layout_width="5dp"
+                    android:layout_height="wrap_content"/>
+
+            <TextView
+                    android:id="@+id/server_address"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </TableRow>
+    </TableLayout>
 
 </LinearLayout>
