@@ -18,15 +18,20 @@
 package im.pks.sd.controller.discovery;
 
 import android.os.AsyncTask;
+import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.protocol.UdpChannel;
 import nano.Discovery;
 import org.abstractj.kalium.keys.PublicKey;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -60,18 +65,32 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
 
             announceSocket = new DatagramSocket(LOCAL_DISCOVERY_PORT);
             announceSocket.setSoTimeout(10000);
-            UdpChannel announceChannel = UdpChannel.createFromSocket(announceSocket, null, 0);
 
             while (true) {
                 broadcastChannel.writeProtobuf(discoverMessage);
 
                 while (true) {
                     try {
+                        ByteBuffer lenBuf = ByteBuffer.allocate(4);
+                        DatagramPacket lenPacket = new DatagramPacket(lenBuf.array(), lenBuf.array().length);
+                        announceSocket.receive(lenPacket);
+                        int len = lenBuf.order(ByteOrder.BIG_ENDIAN).getInt();
+                        if (len < 0) {
+                            throw new InvalidParameterException();
+                        }
+
+                        DatagramPacket announcePacket = new DatagramPacket(new byte[len], len);
+                        announceSocket.receive(announcePacket);
+
+                        if (!lenPacket.getAddress().equals(announcePacket.getAddress())) {
+                            continue;
+                        }
+
                         Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
-                        announceChannel.readProtobuf(announceMessage);
+                        MessageNano.mergeFrom(announceMessage, announcePacket.getData());
 
                         /* TODO: announce to activities */
-                        Server server = convertAnnouncement(null, announceMessage);
+                        Server server = convertAnnouncement(announcePacket.getAddress(), announceMessage);
 
                         if (!servers.contains(server)) {
                             servers.add(server);
@@ -96,7 +115,7 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
     private Server convertAnnouncement(InetAddress address, Discovery.AnnounceMessage announceMessage) {
         Server server = new Server();
         server.publicKey = new PublicKey(announceMessage.signKey).toString();
-        server.address = null; //address.getCanonicalHostName();
+        server.address = address.getCanonicalHostName();
         server.services = new ArrayList<>();
 
         for (Discovery.AnnounceMessage.Service announcedService : announceMessage.services) {

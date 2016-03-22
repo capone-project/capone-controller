@@ -27,6 +27,8 @@ public class ServerDetailActivity extends Activity {
 
         TextView keyView = (TextView) findViewById(R.id.server_key);
         keyView.setText(server.publicKey);
+        TextView addressView = (TextView) findViewById(R.id.server_address);
+        addressView.setText(server.address);
 
         ListView serviceList = (ListView) findViewById(R.id.service_list);
         serviceList.setAdapter(new ArrayAdapter<Service>(this, R.layout.list_item_server, server.services) {
