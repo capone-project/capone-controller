@@ -21,6 +21,7 @@ import com.google.protobuf.nano.MessageNano;
 import nano.Encryption;
 import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
+import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.keys.KeyPair;
 import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
@@ -33,7 +34,7 @@ public abstract class Channel {
 
     private byte[] localNonce;
     private byte[] remoteNonce;
-    private byte[] key;
+    private SecretBox key;
 
     public void enableEncryption(SigningKey localKeys, VerifyKey remoteKey) throws IOException, VerifyKey.SignatureException {
         final KeyPair keys = new KeyPair();
@@ -64,7 +65,7 @@ public abstract class Channel {
         Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
                 buffer.array().length, new byte[0], 0);
 
-        this.key = symmetricKey;
+        this.key = new SecretBox(symmetricKey);
         this.localNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
         this.remoteNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
         incrementNonce(this.remoteNonce);
@@ -75,24 +76,17 @@ public abstract class Channel {
     }
 
     public void write(byte[] msg) throws IOException {
-        byte[] data;
         ByteBuffer len = ByteBuffer.allocate(4);
 
         if (isEncrypted()) {
-            data = new byte[msg.length + (SodiumConstants.ZERO_BYTES - SodiumConstants.BOXZERO_BYTES)];
-            if (Sodium.crypto_secretbox_xsalsa20poly1305(data, msg, msg.length, localNonce, key) < 0) {
-                throw new RuntimeException();
-            }
-
+            msg = key.encrypt(localNonce, msg);
             incrementNonce(localNonce);
             incrementNonce(localNonce);
-        } else {
-            data = msg;
         }
 
-        len.order(ByteOrder.BIG_ENDIAN).putInt(data.length);
+        len.order(ByteOrder.BIG_ENDIAN).putInt(msg.length);
         write(len.array(), len.array().length);
-        write(data, data.length);
+        write(msg, msg.length);
     }
 
     public byte[] read() throws IOException {
@@ -108,15 +102,7 @@ public abstract class Channel {
         read(buf, len);
 
         if (isEncrypted()) {
-            if (len - (SodiumConstants.ZERO_BYTES - SodiumConstants.BOXZERO_BYTES) < 0) {
-                throw new RuntimeException();
-            }
-
-            byte[] msg = new byte[len - (SodiumConstants.ZERO_BYTES - SodiumConstants.BOXZERO_BYTES)];
-            if (Sodium.crypto_secretbox_xsalsa20poly1305_open(msg, buf, len, remoteNonce, key) < 0) {
-                throw new RuntimeException();
-            }
-
+            buf = key.decrypt(remoteNonce, buf);
             incrementNonce(remoteNonce);
             incrementNonce(remoteNonce);
         }
