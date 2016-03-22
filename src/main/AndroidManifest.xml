@@ -23,6 +23,8 @@
         </activity>
         <activity android:name=".discovery.ServerDetailActivity">
         </activity>
+        <activity android:name=".query.ServiceQueryActivity">
+        </activity>
     </application>
 
 </manifest>

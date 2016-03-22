@@ -2,6 +2,7 @@ package im.pks.sd.controller.discovery;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
+import im.pks.sd.controller.query.ServiceQueryActivity;
 
 public class ServerDetailActivity extends Activity {
 
@@ -30,7 +32,7 @@ public class ServerDetailActivity extends Activity {
         TextView addressView = (TextView) findViewById(R.id.server_address);
         addressView.setText(server.address);
 
-        ListView serviceList = (ListView) findViewById(R.id.service_list);
+        final ListView serviceList = (ListView) findViewById(R.id.service_list);
         serviceList.setAdapter(new ArrayAdapter<Service>(this, R.layout.list_item_server, server.services) {
             @Override
             public View getView(final int position, View view, ViewGroup group) {
@@ -39,10 +41,21 @@ public class ServerDetailActivity extends Activity {
                     view = inflater.inflate(R.layout.list_item_service, null);
                 }
 
-                Service service = server.services.get(position);
+                final Service service = server.services.get(position);
+
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ServerDetailActivity.this,
+                                ServiceQueryActivity.class);
+                        intent.putExtra(ServiceQueryActivity.EXTRA_SERVICE, service);
+                        intent.putExtra(ServiceQueryActivity.EXTRA_SERVER, server);
+                        startActivity(intent);
+                    }
+                });
 
                 ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
-                serviceImage.setImageResource(getResourceId(service.type));
+                serviceImage.setImageResource(service.getResourceId());
 
                 TextView serviceName = (TextView) view.findViewById(R.id.service_name);
                 serviceName.setText(service.name);
@@ -56,18 +69,4 @@ public class ServerDetailActivity extends Activity {
         });
     }
 
-    private int getResourceId(String type) {
-        switch (type) {
-            case "Display":
-                return R.drawable.service_display;
-            case "Input":
-                return R.drawable.service_input;
-            case "Shell":
-                return R.drawable.service_shell;
-            case "Capabilities":
-                return R.drawable.service_capabilities;
-            default:
-                return R.drawable.service_unknown;
-        }
-    }
 }

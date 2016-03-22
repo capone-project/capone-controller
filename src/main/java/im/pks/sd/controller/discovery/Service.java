@@ -17,6 +17,7 @@
 
 package im.pks.sd.controller.discovery;
 
+import im.pks.sd.controller.R;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -35,6 +36,21 @@ public class Service implements Serializable {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    public int getResourceId() {
+        switch (type) {
+            case "Display":
+                return R.drawable.service_display;
+            case "Input":
+                return R.drawable.service_input;
+            case "Shell":
+                return R.drawable.service_shell;
+            case "Capabilities":
+                return R.drawable.service_capabilities;
+            default:
+                return R.drawable.service_unknown;
+        }
     }
 
 }

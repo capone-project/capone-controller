@@ -5,10 +5,11 @@
     <string name="identity">Identity</string>
     <string name="services">Services</string>
     <string name="service_image">Service Image</string>
-    <string name="service_name">Name</string>
-    <string name="service_type">Type</string>
-    <string name="service_port">Port</string>
+    <string name="service_name">Service Name</string>
+    <string name="service_type">Service Type</string>
+    <string name="service_port">Service Port</string>
     <string name="server_key">Server Key</string>
     <string name="server_address">Server Address</string>
     <string name="server">Server</string>
+    <string name="service">Service</string>
 </resources>
