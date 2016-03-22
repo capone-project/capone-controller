@@ -15,29 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.controller;
+package im.pks.sd.controller.discovery;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import im.pks.sd.controller.discovery.DiscoveryListActivity;
-import im.pks.sd.controller.identity.IdentityActivity;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.Serializable;
+import java.util.List;
+
+public class Server implements Serializable {
+    public String publicKey;
+    public String address;
+    public List<Service> services;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public String toString() {
+        return publicKey;
     }
 
-    public void onDiscoveryClicked(View view) {
-        startActivity(new Intent(this, DiscoveryListActivity.class));
+    @Override
+    public boolean equals(Object other) {
+        return EqualsBuilder.reflectionEquals(this, other);
     }
 
-    public void onIdentityClicked(View view) {
-        startActivity(new Intent(this, IdentityActivity.class));
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
 }

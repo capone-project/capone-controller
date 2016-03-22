@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SD Controller</string>
+    <string name="discovery">Discovery</string>
+    <string name="identity">Identity</string>
+    <string name="services">Services</string>
 </resources>
