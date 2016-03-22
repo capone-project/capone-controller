@@ -4,4 +4,8 @@
     <string name="discovery">Discovery</string>
     <string name="identity">Identity</string>
     <string name="services">Services</string>
+    <string name="service_image">Service Image</string>
+    <string name="service_name">Name</string>
+    <string name="service_type">Type</string>
+    <string name="service_port">Port</string>
 </resources>
