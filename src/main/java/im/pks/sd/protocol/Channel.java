@@ -19,6 +19,7 @@ package im.pks.sd.protocol;
 
 import com.google.protobuf.nano.MessageNano;
 import org.abstractj.kalium.NaCl;
+import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.keys.KeyPair;
 import org.abstractj.kalium.keys.PublicKey;
 
@@ -35,12 +36,16 @@ public abstract class Channel {
 
     public Channel() {
         this.localKeys = null;
+        this.localNonce = null;
         this.remoteKey = null;
+        this.remoteNonce = null;
     }
 
     public void setEncrypted(KeyPair localKeys, PublicKey remoteKey) {
         this.localKeys = localKeys;
+        this.localNonce = new byte[SodiumConstants.NONCE_BYTES];
         this.remoteKey = remoteKey;
+        this.remoteNonce = new byte[SodiumConstants.NONCE_BYTES];
     }
 
     public boolean isEncrypted() {
@@ -49,27 +54,29 @@ public abstract class Channel {
 
     public void write(byte[] msg) throws IOException {
         byte[] data;
-        ByteBuffer len = ByteBuffer.wrap(new byte[4]);
+        ByteBuffer len = ByteBuffer.allocate(4);
 
         if (isEncrypted()) {
-            data = new byte[msg.length + NaCl.Sodium.HMACSHA512256_BYTES];
+            data = new byte[msg.length + SodiumConstants.ZERO_BYTES];
             if (NaCl.sodium().crypto_secretbox_xsalsa20poly1305(data, msg, msg.length, localNonce, localKeys.getPrivateKey().toBytes()) < 0) {
                 throw new RuntimeException();
             }
+
+            incrementByteBuffer(localNonce);
         } else {
             data = msg;
         }
 
-        len.order(ByteOrder.BIG_ENDIAN).putLong(data.length);
+        len.order(ByteOrder.BIG_ENDIAN).putInt(data.length);
         write(len.array(), len.array().length);
         write(data, data.length);
     }
 
     public byte[] read() throws IOException {
-        ByteBuffer lenBuf = ByteBuffer.wrap(new byte[4]);
+        ByteBuffer lenBuf = ByteBuffer.allocate(4);
         read(lenBuf.array(), lenBuf.array().length);
 
-        long len = lenBuf.order(ByteOrder.nativeOrder()).getLong();
+        long len = lenBuf.order(ByteOrder.BIG_ENDIAN).getInt();
         if (len > Integer.MAX_VALUE || len < 0) {
             return null;
         }
@@ -78,14 +85,16 @@ public abstract class Channel {
         read(buf, (int) len);
 
         if (isEncrypted()) {
-            if (len - NaCl.Sodium.HMACSHA512256_BYTES < 0) {
+            if (len - SodiumConstants.ZERO_BYTES < 0) {
                 throw new RuntimeException();
             }
 
-            byte[] msg = new byte[(int) (len - NaCl.Sodium.HMACSHA512256_BYTES)];
-            if (NaCl.sodium().crypto_secretbox_xsalsa20poly1305_open(msg, buf, len, remoteNonce, remoteKey.toBytes()) < 0) {
+            byte[] msg = new byte[(int) (len - SodiumConstants.ZERO_BYTES)];
+            if (NaCl.sodium().crypto_secretbox_xsalsa20poly1305_open(msg, buf, (int) len, remoteNonce, remoteKey.toBytes()) < 0) {
                 throw new RuntimeException();
             }
+
+            incrementByteBuffer(remoteNonce);
         }
 
         return buf;
@@ -97,9 +106,21 @@ public abstract class Channel {
 
     public <Message extends MessageNano> Message readProtobuf(Message msg)
             throws IOException {
-        return Message.mergeFrom(msg, read());
+        byte[] bytes = read();
+        return Message.mergeFrom(msg, bytes);
+    }
+
+    private void incrementByteBuffer(byte[] buf) {
+        for (int i = buf.length - 1; i >= 0; i--) {
+            buf[i] = (byte) (buf[i] + 1);
+            /* check for overflow */
+            if (buf[i] != 0) {
+                break;
+            }
+        }
     }
 
     protected abstract void write(byte[] msg, int len) throws IOException;
     protected abstract void read(byte[] msg, int len) throws IOException;
+    public abstract void close();
 }

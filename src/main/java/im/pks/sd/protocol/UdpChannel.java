@@ -18,26 +18,38 @@
 package im.pks.sd.protocol;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 public class UdpChannel extends Channel {
 
     private DatagramSocket socket;
+    private InetAddress address;
+    private int port;
 
-    private UdpChannel(DatagramSocket socket) {
+    private UdpChannel(DatagramSocket socket, InetAddress remoteAddress, int remotePort) {
         super();
         this.socket = socket;
+        this.address = remoteAddress;
+        this.port = remotePort;
     }
 
     public static UdpChannel createFromHost(String host, int port) throws UnknownHostException, SocketException {
         InetAddress address = InetAddress.getByName(host);
         DatagramSocket socket = new DatagramSocket(port, address);
-        return new UdpChannel(socket);
+        return createFromSocket(socket, address, port);
+    }
+
+    public static UdpChannel createFromSocket(DatagramSocket socket, InetAddress remoteAddress, int remotePort) {
+        return new UdpChannel(socket, remoteAddress, remotePort);
     }
 
     @Override
     protected void write(byte[] msg, int len) throws IOException {
-        DatagramPacket packet = new DatagramPacket(msg, len);
+        DatagramPacket packet = new DatagramPacket(msg, len, address, port);
         socket.send(packet);
     }
 
@@ -46,4 +58,9 @@ public class UdpChannel extends Channel {
         DatagramPacket packet = new DatagramPacket(msg, len);
         socket.receive(packet);
     }
+
+    public void close() {
+        socket.close();
+    }
+
 }
