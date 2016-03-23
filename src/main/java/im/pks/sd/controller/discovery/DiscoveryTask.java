@@ -34,6 +34,7 @@ import java.nio.ByteOrder;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
@@ -45,7 +46,13 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
     private Set<Server> servers = new HashSet<>();
     private VerifyKey key;
 
-    public DiscoveryTask(VerifyKey key) {
+    private DatagramSocket broadcastSocket;
+    private DatagramSocket announceSocket;
+
+    public DiscoveryTask(List<Server> servers, VerifyKey key) {
+        if (servers != null) {
+            this.servers.addAll(servers);
+        }
         this.key = key;
     }
 
@@ -56,7 +63,6 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
         discoverMessage.port = LOCAL_DISCOVERY_PORT;
         discoverMessage.signKey = key.toBytes();
 
-        DatagramSocket broadcastSocket = null, announceSocket = null;
         try {
             InetAddress broadcastAddress = InetAddress.getByName(BROADCAST_ADDRESS);
             broadcastSocket = new DatagramSocket();
@@ -130,6 +136,14 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
             server.services.add(service);
         }
         return server;
+    }
+
+    public void cancel() {
+        if (broadcastSocket != null)
+            broadcastSocket.close();
+        if (announceSocket != null)
+            announceSocket.close();
+        super.cancel(true);
     }
 
     public abstract void onProgressUpdate(Server... server);

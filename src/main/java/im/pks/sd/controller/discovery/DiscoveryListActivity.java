@@ -80,7 +80,7 @@ public class DiscoveryListActivity extends ListActivity {
     protected void onResume() {
         super.onResume();
 
-        serviceLoader = new DiscoveryTask(key.getVerifyKey()) {
+        serviceLoader = new DiscoveryTask(servers, key.getVerifyKey()) {
             @Override
             public void onProgressUpdate(Server... server) {
                 adapter.add(server[0]);
@@ -92,7 +92,7 @@ public class DiscoveryListActivity extends ListActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        serviceLoader.cancel(true);
+        serviceLoader.cancel();
     }
 
 }
