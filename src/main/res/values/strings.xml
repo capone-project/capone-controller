@@ -22,4 +22,7 @@
     <string name="import_key">Import Key</string>
     <string name="public_key">Public Key</string>
     <string name="key_seed">Key Seed</string>
+    <string name="paste_your_key_seed">Please paste in your key seed</string>
+    <string name="invalid_seed">Invalid Seed</string>
+    <string name="cancel">Cancel</string>
 </resources>
