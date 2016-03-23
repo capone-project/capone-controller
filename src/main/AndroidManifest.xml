@@ -5,9 +5,11 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+            android:name="com.orm.SugarApp"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
+
         <activity
                 android:name=".MainActivity"
                 android:label="@string/app_name">
@@ -25,6 +27,19 @@
         </activity>
         <activity android:name=".query.ServiceDetailActivity">
         </activity>
+
+        <meta-data
+                android:name="DATABASE"
+                android:value="sd-controller.db"/>
+        <meta-data
+                android:name="VERSION"
+                android:value="1"/>
+        <meta-data
+                android:name="QUERY_LOG"
+                android:value="false"/>
+        <meta-data
+                android:name="DOMAIN_PACKAGE_NAME"
+                android:value="im.pks.sd.persistence"/>
     </application>
 
 </manifest>

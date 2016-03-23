@@ -47,4 +47,5 @@ dependencies {
     compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
     compile 'com.github.gerardsoleca:robosodium:1.0.0'
     compile 'commons-lang:commons-lang:2.6'
+    compile 'com.github.satyan:sugar:1.5'
 }
