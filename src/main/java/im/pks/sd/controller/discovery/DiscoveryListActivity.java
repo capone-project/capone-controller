@@ -18,10 +18,8 @@
 package im.pks.sd.controller.discovery;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -52,8 +50,7 @@ public class DiscoveryListActivity extends ListActivity {
                 final Server server = servers.get(position);
 
                 if (view == null) {
-                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    view = inflater.inflate(R.layout.list_item_server, null);
+                    view = View.inflate(DiscoveryListActivity.this, R.layout.list_item_server, null);
                     view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

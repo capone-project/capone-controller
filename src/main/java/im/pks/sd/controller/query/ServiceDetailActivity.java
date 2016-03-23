@@ -19,12 +19,10 @@ package im.pks.sd.controller.query;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -73,8 +71,7 @@ public class ServiceDetailActivity extends Activity {
             @Override
             public View getView(final int position, View view, ViewGroup group) {
                 if (view == null) {
-                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    view = inflater.inflate(R.layout.list_item_parameter, null);
+                    view = View.inflate(ServiceDetailActivity.this, R.layout.list_item_parameter, null);
                 }
 
                 ServiceDetails.Parameter parameter = getItem(position);
