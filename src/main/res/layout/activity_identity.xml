@@ -44,6 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <Button
+                style="?android:attr/buttonBarButtonStyle"
                 android:onClick="onImportClicked"
                 android:text="@string/import_key"
                 android:layout_weight="0.5"
@@ -51,6 +52,7 @@
                 android:layout_height="wrap_content"/>
 
         <Button
+                style="?android:attr/buttonBarButtonStyle"
                 android:onClick="onGenerateClicked"
                 android:text="@string/generate_key"
                 android:layout_weight="0.5"
