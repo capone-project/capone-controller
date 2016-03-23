@@ -32,6 +32,7 @@ import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
+import im.pks.sd.persistence.Identity;
 import org.abstractj.kalium.keys.SigningKey;
 import org.apache.commons.lang.StringUtils;
 
@@ -94,8 +95,7 @@ public class ServiceDetailActivity extends Activity {
             }
         };
 
-        // TODO: use peristent key pair
-        SigningKey key = new SigningKey();
+        SigningKey key = Identity.getSigningKey();
         QueryTask.QueryParameters parameters = new QueryTask.QueryParameters(key, server, service);
         queryTask.execute(parameters);
 

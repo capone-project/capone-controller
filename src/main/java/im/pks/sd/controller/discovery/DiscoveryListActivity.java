@@ -25,14 +25,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
-import org.abstractj.kalium.keys.SigningKey;
+import im.pks.sd.persistence.Identity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DiscoveryListActivity extends ListActivity {
 
-    private SigningKey key = new SigningKey();
     private List<Server> servers;
     private DiscoveryTask serviceLoader;
     private ArrayAdapter<Server> adapter;
@@ -77,7 +76,7 @@ public class DiscoveryListActivity extends ListActivity {
     protected void onResume() {
         super.onResume();
 
-        serviceLoader = new DiscoveryTask(servers, key.getVerifyKey()) {
+        serviceLoader = new DiscoveryTask(servers, Identity.getSigningKey().getVerifyKey()) {
             @Override
             public void onProgressUpdate(Server... server) {
                 adapter.add(server[0]);

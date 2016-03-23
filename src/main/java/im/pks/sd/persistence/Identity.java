@@ -21,6 +21,8 @@ import com.orm.SugarRecord;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
 
+import java.util.List;
+
 public class Identity extends SugarRecord {
 
     private String keySeed;
@@ -38,6 +40,19 @@ public class Identity extends SugarRecord {
 
     public void setKey(SigningKey key) {
         this.keySeed = key.toString();
+    }
+
+    public static SigningKey getSigningKey() {
+        List<Identity> identities = Identity.listAll(Identity.class);
+        if (identities.size() == 1) {
+            return identities.get(0).getKey();
+        } else if (identities.size() == 0) {
+            Identity identity = new Identity(new SigningKey());
+            identity.save();
+            return identity.getKey();
+        } else {
+            throw new RuntimeException();
+        }
     }
 
 }

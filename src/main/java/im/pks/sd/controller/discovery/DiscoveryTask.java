@@ -44,8 +44,8 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
     public static final String BROADCAST_ADDRESS = "224.0.0.1";
 
     private Set<Server> servers = new HashSet<>();
-    private VerifyKey key;
 
+    private VerifyKey key;
     private DatagramSocket broadcastSocket;
     private DatagramSocket announceSocket;
 
