@@ -25,4 +25,6 @@
     <string name="paste_your_key_seed">Please paste in your key seed</string>
     <string name="invalid_seed">Invalid Seed</string>
     <string name="cancel">Cancel</string>
+    <string name="about">About</string>
+    <string name="software_notices">Software notices</string>
 </resources>

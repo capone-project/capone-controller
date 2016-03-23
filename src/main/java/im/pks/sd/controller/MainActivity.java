@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import im.pks.sd.controller.about.AboutActivity;
 import im.pks.sd.controller.discovery.DiscoveryListActivity;
 import im.pks.sd.controller.identity.IdentityActivity;
 
@@ -38,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void onIdentityClicked(View view) {
         startActivity(new Intent(this, IdentityActivity.class));
+    }
+
+    public void onAboutClicked(View view) {
+        startActivity(new Intent(this, AboutActivity.class));
     }
 
 }
