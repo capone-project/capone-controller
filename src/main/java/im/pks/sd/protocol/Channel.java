@@ -134,6 +134,8 @@ public abstract class Channel {
 
     protected abstract void read(byte[] msg, int len) throws IOException;
 
+    public abstract void connect() throws IOException;
+
     public abstract void close() throws IOException;
 
 }

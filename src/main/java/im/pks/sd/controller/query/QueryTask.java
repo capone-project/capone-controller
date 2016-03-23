@@ -46,13 +46,17 @@ public abstract class QueryTask extends AsyncTask<QueryTask.QueryParameters, Ser
         }
     }
 
+    private Channel channel = null;
+
     @Override
     protected Void doInBackground(QueryParameters... params) {
         for (QueryParameters param : params) {
-            Channel channel = null;
-
             try {
-                channel = TcpChannel.createFromHost(param.server.address, param.service.port);
+                if (isCancelled())
+                    return null;
+
+                channel = new TcpChannel(param.server.address, param.service.port);
+                channel.connect();
 
                 Connect.ConnectionInitiationMessage initiation = new Connect
                         .ConnectionInitiationMessage();
@@ -92,6 +96,15 @@ public abstract class QueryTask extends AsyncTask<QueryTask.QueryParameters, Ser
 
         return new ServiceDetails(params.server, params.service, queryResults.subtype,
                 queryResults.location, queryResults.version, parameters);
+    }
+
+    public void cancel() {
+        if (channel != null) {
+            try {
+                channel.close();
+            } catch (IOException e) {
+            }
+        }
     }
 
     @Override

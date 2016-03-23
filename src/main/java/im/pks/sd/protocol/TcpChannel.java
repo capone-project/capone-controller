@@ -18,18 +18,19 @@
 package im.pks.sd.protocol;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 public class TcpChannel extends Channel {
     private Socket socket;
+    private String host;
+    int port;
 
-    public static TcpChannel createFromHost(String host, int port) throws IOException {
-        Socket socket = new Socket(host, port);
-        return new TcpChannel(socket);
-    }
-
-    private TcpChannel(Socket socket) {
-        this.socket = socket;
+    public TcpChannel(String host, int port) {
+        this.host = host;
+        this.port = port;
+        this.socket = new Socket();
     }
 
     @Override
@@ -40,6 +41,12 @@ public class TcpChannel extends Channel {
     @Override
     protected void read(byte[] msg, int len) throws IOException {
         socket.getInputStream().read(msg, 0, len);
+    }
+
+    @Override
+    public void connect() throws IOException {
+        SocketAddress address = new InetSocketAddress(host, port);
+        socket.connect(address);
     }
 
     @Override

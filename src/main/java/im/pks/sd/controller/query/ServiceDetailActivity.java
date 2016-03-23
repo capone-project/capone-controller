@@ -108,7 +108,7 @@ public class ServiceDetailActivity extends Activity {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
                 if (queryTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
-                    queryTask.cancel(true);
+                    queryTask.cancel();
                     finish();
                 }
             }

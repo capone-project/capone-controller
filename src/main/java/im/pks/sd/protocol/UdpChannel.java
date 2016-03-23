@@ -55,6 +55,10 @@ public class UdpChannel extends Channel {
         socket.receive(packet);
     }
 
+    @Override
+    public void connect() throws IOException {
+    }
+
     public void close() {
         socket.close();
     }
