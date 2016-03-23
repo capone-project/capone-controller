@@ -1,50 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:orientation="vertical"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
 
-    <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <TableRow>
 
-        <TableRow>
+        <TextView
+                android:text="@string/server_key"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <TextView
-                    android:text="@string/server_key"
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+        <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"/>
 
-            <Space
-                    android:layout_width="5dp"
-                    android:layout_height="wrap_content"/>
+        <TextView
+                android:id="@+id/server_key"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </TableRow>
 
-            <TextView
-                    android:id="@+id/server_key"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
+    <TableRow>
 
-        <TableRow>
+        <TextView
+                android:text="@string/server_address"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <TextView
-                    android:text="@string/server_address"
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+        <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"/>
 
-            <Space
-                    android:layout_width="5dp"
-                    android:layout_height="wrap_content"/>
+        <TextView
+                android:id="@+id/server_address"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </TableRow>
 
-            <TextView
-                    android:id="@+id/server_address"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
-    </TableLayout>
-
-</LinearLayout>
+</TableLayout>
