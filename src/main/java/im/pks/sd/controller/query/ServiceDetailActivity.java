@@ -18,27 +18,39 @@
 package im.pks.sd.controller.query;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
 import org.abstractj.kalium.keys.SigningKey;
+import org.apache.commons.lang.StringUtils;
 
-public class ServiceQueryActivity extends Activity {
+public class ServiceDetailActivity extends Activity {
 
     public static final String EXTRA_SERVER = "server";
     public static final String EXTRA_SERVICE = "service";
 
+    private ProgressDialog progressDialog;
+    private ArrayAdapter<ServiceDetails.Parameter> parameterAdapter;
     private Server server;
     private Service service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_service_query);
+        setContentView(R.layout.activity_service_detail);
 
         Intent intent = getIntent();
         server = (Server) intent.getSerializableExtra(EXTRA_SERVER);
@@ -57,7 +69,28 @@ public class ServiceQueryActivity extends Activity {
         TextView serviceType = (TextView) findViewById(R.id.service_type);
         serviceType.setText(service.type);
 
-        QueryTask queryTask = new QueryTask() {
+        parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(this, R.layout.list_item_parameter) {
+            @Override
+            public View getView(final int position, View view, ViewGroup group) {
+                if (view == null) {
+                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    view = inflater.inflate(R.layout.list_item_parameter, null);
+                }
+
+                ServiceDetails.Parameter parameter = getItem(position);
+
+                TextView serverKey = (TextView) view.findViewById(R.id.parameter_name);
+                serverKey.setText(parameter.name);
+                TextView serverAddress = (TextView) view.findViewById(R.id.parameter_values);
+                serverAddress.setText(StringUtils.join(parameter.values, '\n'));
+
+                return view;
+            }
+        };
+        ListView parameterList = (ListView) findViewById(R.id.service_parameter_list);
+        parameterList.setAdapter(parameterAdapter);
+
+        final QueryTask queryTask = new QueryTask() {
             @Override
             public void onProgressUpdate(ServiceDetails... details) {
                 setServiceDetails(details[0]);
@@ -68,10 +101,29 @@ public class ServiceQueryActivity extends Activity {
         SigningKey key = new SigningKey();
         QueryTask.QueryParameters parameters = new QueryTask.QueryParameters(key, server, service);
         queryTask.execute(parameters);
+
+        progressDialog = ProgressDialog.show(this, getString(R.string.loading), getString(R.string.query_loading),
+                true, true);
+        progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                if (queryTask.getStatus().equals(AsyncTask.Status.RUNNING)) {
+                    queryTask.cancel(true);
+                    finish();
+                }
+            }
+        });
     }
 
     private void setServiceDetails(ServiceDetails details) {
+        parameterAdapter.addAll(details.parameters);
 
+        TextView subtype = (TextView) findViewById(R.id.service_subtype);
+        subtype.setText(details.subtype);
+        TextView location = (TextView) findViewById(R.id.service_location);
+        location.setText(details.location);
+
+        progressDialog.dismiss();
     }
 
 }

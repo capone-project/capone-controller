@@ -23,7 +23,7 @@
         </activity>
         <activity android:name=".discovery.ServerDetailActivity">
         </activity>
-        <activity android:name=".query.ServiceQueryActivity">
+        <activity android:name=".query.ServiceDetailActivity">
         </activity>
     </application>
 

@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.query.ServiceQueryActivity;
+import im.pks.sd.controller.query.ServiceDetailActivity;
 
 public class ServerDetailActivity extends Activity {
 
@@ -47,9 +47,9 @@ public class ServerDetailActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(ServerDetailActivity.this,
-                                ServiceQueryActivity.class);
-                        intent.putExtra(ServiceQueryActivity.EXTRA_SERVICE, service);
-                        intent.putExtra(ServiceQueryActivity.EXTRA_SERVER, server);
+                                ServiceDetailActivity.class);
+                        intent.putExtra(ServiceDetailActivity.EXTRA_SERVICE, service);
+                        intent.putExtra(ServiceDetailActivity.EXTRA_SERVER, server);
                         startActivity(intent);
                     }
                 });

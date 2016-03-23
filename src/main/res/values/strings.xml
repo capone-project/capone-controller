@@ -12,4 +12,10 @@
     <string name="server_address">Server Address</string>
     <string name="server">Server</string>
     <string name="service">Service</string>
+    <string name="query_loading">The service is being queried.</string>
+    <string name="loading">Loading…</string>
+    <string name="parameters">Parameters</string>
+    <string name="service_subtype">Service Subtype</string>
+    <string name="service_location">Service Location</string>
+    <string name="not_available">N/A</string>
 </resources>
