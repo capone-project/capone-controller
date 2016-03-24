@@ -40,14 +40,16 @@ public class Service implements Serializable {
 
     public int getResourceId() {
         switch (type) {
+            case "Capabilities":
+                return R.drawable.service_capabilities;
             case "Display":
                 return R.drawable.service_display;
             case "Input":
                 return R.drawable.service_input;
+            case "Invoke":
+                return R.drawable.service_invoke;
             case "Shell":
                 return R.drawable.service_shell;
-            case "Capabilities":
-                return R.drawable.service_capabilities;
             default:
                 return R.drawable.service_unknown;
         }
