@@ -22,23 +22,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
+import im.pks.sd.controller.query.ServiceDetailActivity;
 import im.pks.sd.controller.query.ServiceDetails;
 
 public class InvokeActivity extends FragmentActivity {
 
-    public static final String EXTRA_SERVICE = "service";
     private static final int SERVICE_SELECTION_REQUEST_CODE = 1;
-
-    private ListView parameterList;
-    private ArrayAdapter<ServiceDetails.Parameter> parameterAdapter;
 
     private ServiceDetails service;
     private Server invocationServer;
@@ -47,27 +41,9 @@ public class InvokeActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_invoke);
+        setContentView(R.layout.activity_plugin_invoke);
 
-        service = (ServiceDetails) getIntent().getSerializableExtra(EXTRA_SERVICE);
-
-        parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(this, R.layout.list_item_editable_parameter) {
-            @Override
-            public View getView(final int position, View view, ViewGroup group) {
-                if (view == null) {
-                    view = View.inflate(InvokeActivity.this, R.layout.list_item_editable_parameter, null);
-                }
-
-                TextView parameterName = (TextView) view.findViewById(R.id.parameter_name);
-                parameterName.setText(getItem(position).name);
-
-                return view;
-            }
-        };
-        parameterAdapter.addAll(service.parameters);
-
-        parameterList = (ListView) findViewById(R.id.service_parameter_list);
-        parameterList.setAdapter(parameterAdapter);
+        service = (ServiceDetails) getIntent().getSerializableExtra(ServiceDetailActivity.EXTRA_SERVICE_DETAILS);
     }
 
     public void onInvocationServerSelectionClicked(View view) {

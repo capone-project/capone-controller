@@ -30,6 +30,14 @@
                 android:name=".invoke.ServiceChooserActivity"
                 android:theme="@android:style/Theme.Dialog">
         </activity>
+        <activity android:name=".about.AboutActivity">
+        </activity>
+
+        <!-- Plugin activities -->
+        <activity android:name=".invoke.InvokeActivity">
+        </activity>
+        <activity android:name=".invoke.GenericActivity">
+        </activity>
 
         <meta-data
                 android:name="DATABASE"
@@ -43,11 +51,6 @@
         <meta-data
                 android:name="DOMAIN_PACKAGE_NAME"
                 android:value="im.pks.sd.persistence"/>
-
-        <activity android:name=".about.AboutActivity">
-        </activity>
-        <activity android:name=".invoke.InvokeActivity">
-        </activity>
     </application>
 
 </manifest>
