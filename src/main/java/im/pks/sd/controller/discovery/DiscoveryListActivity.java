@@ -20,10 +20,6 @@ package im.pks.sd.controller.discovery;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.persistence.Identity;
 
@@ -34,7 +30,7 @@ public class DiscoveryListActivity extends ListActivity {
 
     private List<Server> servers;
     private DiscoveryTask serviceLoader;
-    private ArrayAdapter<Server> adapter;
+    private ServerListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,34 +38,15 @@ public class DiscoveryListActivity extends ListActivity {
         setContentView(R.layout.activity_discovery_list);
 
         servers = new ArrayList<>();
-
-        adapter = new ArrayAdapter<Server>(this, R.layout.list_item_server, servers) {
+        adapter = new ServerListAdapter(this) {
             @Override
-            public View getView(final int position, View view, ViewGroup group) {
-                final Server server = servers.get(position);
-
-                if (view == null) {
-                    view = View.inflate(DiscoveryListActivity.this, R.layout.list_item_server, null);
-                    view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(DiscoveryListActivity.this, ServerDetailActivity.class);
-                            intent.putExtra(ServerDetailActivity.EXTRA_SERVER, server);
-                            startActivity(intent);
-                        }
-                    });
-                }
-
-                TextView serverKey = (TextView) view.findViewById(R.id.server_key);
-                serverKey.setText(server.publicKey);
-                TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
-                serverAddress.setText(server.address);
-
-                return view;
+            public void onServerClicked(Server server) {
+                Intent intent = new Intent(DiscoveryListActivity.this, ServerDetailActivity.class);
+                intent.putExtra(ServerDetailActivity.EXTRA_SERVER, server);
+                startActivity(intent);
             }
         };
         setListAdapter(adapter);
-
     }
 
     @Override
