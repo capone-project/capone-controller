@@ -18,15 +18,31 @@
 package im.pks.sd.controller.invoke;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import im.pks.sd.controller.R;
+import im.pks.sd.controller.discovery.Server;
+import im.pks.sd.controller.discovery.Service;
 import im.pks.sd.controller.query.ServiceDetails;
 
-public class InvokeActivity extends Activity {
+public class InvokeActivity extends FragmentActivity {
 
     public static final String EXTRA_SERVICE = "service";
+    private static final int SERVICE_SELECTION_REQUEST_CODE = 1;
+
+    private ListView parameterList;
+    private ArrayAdapter<ServiceDetails.Parameter> parameterAdapter;
 
     private ServiceDetails service;
+    private Server invocationServer;
+    private Service invocationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +50,56 @@ public class InvokeActivity extends Activity {
         setContentView(R.layout.activity_invoke);
 
         service = (ServiceDetails) getIntent().getSerializableExtra(EXTRA_SERVICE);
+
+        parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(this, R.layout.list_item_editable_parameter) {
+            @Override
+            public View getView(final int position, View view, ViewGroup group) {
+                if (view == null) {
+                    view = View.inflate(InvokeActivity.this, R.layout.list_item_editable_parameter, null);
+                }
+
+                TextView parameterName = (TextView) view.findViewById(R.id.parameter_name);
+                parameterName.setText(getItem(position).name);
+
+                return view;
+            }
+        };
+        parameterAdapter.addAll(service.parameters);
+
+        parameterList = (ListView) findViewById(R.id.service_parameter_list);
+        parameterList.setAdapter(parameterAdapter);
+    }
+
+    public void onInvocationServerSelectionClicked(View view) {
+        Intent intent = new Intent(this, ServiceChooserActivity.class);
+        startActivityForResult(intent, SERVICE_SELECTION_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != SERVICE_SELECTION_REQUEST_CODE || resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        invocationServer = (Server) data.getSerializableExtra(ServiceChooserActivity.EXTRA_SELECTED_SERVER);
+        TextView serverKey = (TextView) findViewById(R.id.server_key);
+        serverKey.setText(invocationServer.publicKey);
+        TextView serverAddress = (TextView) findViewById(R.id.server_address);
+        serverAddress.setText(invocationServer.address);
+
+        invocationService = (Service) data.getSerializableExtra(ServiceChooserActivity.EXTRA_SELECTED_SERVICE);
+        ImageView serviceImage = (ImageView) findViewById(R.id.service_image);
+        serviceImage.setImageResource(invocationService.getResourceId());
+        TextView serviceName = (TextView) findViewById(R.id.service_name);
+        serviceName.setText(invocationService.name);
+        TextView serviceType = (TextView) findViewById(R.id.service_type);
+        serviceType.setText(invocationService.type);
+        TextView servicePort = (TextView) findViewById(R.id.service_port);
+        servicePort.setText(String.valueOf(invocationService.port));
+    }
+
+    public void onConnectClicked(View view) {
+
     }
 
 }

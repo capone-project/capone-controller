@@ -26,6 +26,10 @@
         </activity>
         <activity android:name=".query.ServiceDetailActivity">
         </activity>
+        <activity
+                android:name=".invoke.ServiceChooserActivity"
+                android:theme="@android:style/Theme.Dialog">
+        </activity>
 
         <meta-data
                 android:name="DATABASE"

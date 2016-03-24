@@ -28,4 +28,8 @@
     <string name="about">About</string>
     <string name="software_notices">Software notices</string>
     <string name="invoke">Invoke</string>
+    <string name="invocation_server">Invocation server</string>
+    <string name="select">Select</string>
+    <string name="connect">Connect</string>
+    <string name="choose_invoke_service">Choose invoke service</string>
 </resources>
