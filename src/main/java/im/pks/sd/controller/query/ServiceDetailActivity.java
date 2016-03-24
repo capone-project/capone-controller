@@ -32,6 +32,7 @@ import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
+import im.pks.sd.controller.invoke.InvokeActivity;
 import im.pks.sd.persistence.Identity;
 import org.abstractj.kalium.keys.SigningKey;
 import org.apache.commons.lang.StringUtils;
@@ -43,8 +44,7 @@ public class ServiceDetailActivity extends Activity {
 
     private ProgressDialog progressDialog;
     private ArrayAdapter<ServiceDetails.Parameter> parameterAdapter;
-    private Server server;
-    private Service service;
+    private ServiceDetails serviceDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +52,8 @@ public class ServiceDetailActivity extends Activity {
         setContentView(R.layout.activity_service_detail);
 
         Intent intent = getIntent();
-        server = (Server) intent.getSerializableExtra(EXTRA_SERVER);
-        service = (Service) intent.getSerializableExtra(EXTRA_SERVICE);
+        Server server = (Server) intent.getSerializableExtra(EXTRA_SERVER);
+        Service service = (Service) intent.getSerializableExtra(EXTRA_SERVICE);
 
         ImageView serviceImage = (ImageView) findViewById(R.id.service_image);
         serviceImage.setImageResource(service.getResourceId());
@@ -113,6 +113,7 @@ public class ServiceDetailActivity extends Activity {
     }
 
     private void setServiceDetails(ServiceDetails details) {
+        serviceDetails = details;
         parameterAdapter.addAll(details.parameters);
 
         TextView subtype = (TextView) findViewById(R.id.service_subtype);
@@ -121,6 +122,12 @@ public class ServiceDetailActivity extends Activity {
         location.setText(details.location);
 
         progressDialog.dismiss();
+    }
+
+    public void onInvokeClicked(View view) {
+        Intent intent = new Intent(this, InvokeActivity.class);
+        intent.putExtra(InvokeActivity.EXTRA_SERVICE, serviceDetails);
+        startActivity(intent);
     }
 
 }

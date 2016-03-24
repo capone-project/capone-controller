@@ -27,4 +27,5 @@
     <string name="cancel">Cancel</string>
     <string name="about">About</string>
     <string name="software_notices">Software notices</string>
+    <string name="invoke">Invoke</string>
 </resources>

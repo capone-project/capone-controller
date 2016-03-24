@@ -1,4 +1,11 @@
 /*
+2 hours ago
+submitgit commented on pull request git/git#219
+@submitgit
+
+    @pranitbauva1997 sent this commit (7e4ba36...a2fa85d) as a patch to the mailing list with submitGit - here on Gmane, MARC
+
+2 hours ago
  * Copyright (C) 2016 Patrick Steinhardt
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,11 +27,12 @@ package im.pks.sd.controller.query;
 import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ServiceDetails {
+public class ServiceDetails implements Serializable {
 
-    public static class Parameter {
+    public static class Parameter implements Serializable {
         public String name;
         public List<String> values;
 

@@ -42,6 +42,8 @@
 
         <activity android:name=".about.AboutActivity">
         </activity>
+        <activity android:name=".invoke.InvokeActivity">
+        </activity>
     </application>
 
 </manifest>
