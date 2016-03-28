@@ -28,12 +28,10 @@
         </activity>
         <activity android:name=".about.AboutActivity">
         </activity>
+        <activity android:name=".invoke.InvokeActivity">
+        </activity>
 
         <!-- Plugin activities -->
-        <activity android:name="im.pks.sd.services.InvokeActivity">
-        </activity>
-        <activity android:name="im.pks.sd.services.GenericActivity">
-        </activity>
 
         <meta-data
                 android:name="DATABASE"

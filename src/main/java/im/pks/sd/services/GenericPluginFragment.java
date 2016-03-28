@@ -18,7 +18,7 @@
 package im.pks.sd.services;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -26,27 +26,29 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.query.ServiceDetailActivity;
 import im.pks.sd.controller.query.ServiceDetails;
 
-public class GenericActivity extends FragmentActivity {
+import static android.view.View.inflate;
 
-    private ArrayAdapter<ServiceDetails.Parameter> parameterAdapter;
+public class GenericPluginFragment extends PluginFragment {
 
     private ServiceDetails service;
 
+    public static GenericPluginFragment createFragment(ServiceDetails service) {
+        GenericPluginFragment fragment = new GenericPluginFragment();
+        fragment.service = service;
+        return fragment;
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plugin_genric);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_plugin_generic, container, false);
 
-        service = (ServiceDetails) getIntent().getSerializableExtra(ServiceDetailActivity.EXTRA_SERVICE_DETAILS);
-
-        parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(this, R.layout.list_item_editable_parameter) {
+        ArrayAdapter<ServiceDetails.Parameter> parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(container.getContext(), R.layout.list_item_editable_parameter) {
             @Override
             public View getView(final int position, View view, ViewGroup group) {
                 if (view == null) {
-                    view = View.inflate(GenericActivity.this, R.layout.list_item_editable_parameter, null);
+                    view = inflate(GenericPluginFragment.this.getActivity(), R.layout.list_item_editable_parameter, null);
                 }
 
                 TextView parameterName = (TextView) view.findViewById(R.id.parameter_name);
@@ -57,12 +59,15 @@ public class GenericActivity extends FragmentActivity {
         };
         parameterAdapter.addAll(service.parameters);
 
-        ListView parameterList = (ListView) findViewById(R.id.service_parameter_list);
+        ListView parameterList = (ListView) view.findViewById(R.id.service_parameter_list);
         parameterList.setAdapter(parameterAdapter);
+
+        return view;
     }
 
-    public void onConnectClicked(View view) {
-        Toast.makeText(this, R.string.service_handler_not_implemented, Toast.LENGTH_SHORT).show();
+    @Override
+    public void onConnectClicked() {
+        Toast.makeText(getActivity(), R.string.service_handler_not_implemented, Toast.LENGTH_SHORT).show();
     }
 
 }

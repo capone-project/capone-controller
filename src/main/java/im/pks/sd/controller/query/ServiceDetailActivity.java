@@ -30,11 +30,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
+import im.pks.sd.controller.invoke.InvokeActivity;
+import im.pks.sd.entities.Identity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
-import im.pks.sd.services.GenericActivity;
-import im.pks.sd.services.InvokeActivity;
-import im.pks.sd.entities.Identity;
 import im.pks.sd.protocol.QueryTask;
 import im.pks.sd.services.Services;
 import org.abstractj.kalium.keys.SigningKey;
@@ -44,7 +43,6 @@ public class ServiceDetailActivity extends Activity {
 
     public static final String EXTRA_SERVER = "server";
     public static final String EXTRA_SERVICE = "service";
-    public static final String EXTRA_SERVICE_DETAILS = "service_details";
 
     private ProgressDialog progressDialog;
     private ArrayAdapter<ServiceDetails.Parameter> parameterAdapter;
@@ -129,18 +127,9 @@ public class ServiceDetailActivity extends Activity {
     }
 
     public void onInvokeClicked(View view) {
-        Intent intent = getServiceIntent(serviceDetails.subtype);
-        intent.putExtra(EXTRA_SERVICE_DETAILS, serviceDetails);
+        Intent intent = new Intent(this, InvokeActivity.class);
+        intent.putExtra(InvokeActivity.EXTRA_SERVICE, serviceDetails);
         startActivity(intent);
-    }
-
-    public Intent getServiceIntent(String type) {
-        switch (type) {
-            case "invoke":
-                return new Intent(this, InvokeActivity.class);
-            default:
-                return new Intent(this, GenericActivity.class);
-        }
     }
 
 }

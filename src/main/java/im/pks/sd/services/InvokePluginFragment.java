@@ -18,13 +18,14 @@
 package im.pks.sd.services;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
-import im.pks.sd.controller.query.ServiceDetailActivity;
 import im.pks.sd.controller.query.ServiceDetails;
 import im.pks.sd.entities.Identity;
 import im.pks.sd.protocol.Channel;
@@ -37,61 +38,56 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvokeActivity extends FragmentActivity {
+public class InvokePluginFragment extends PluginFragment {
 
+    private View view;
     private ServiceDetails service;
     private ServiceDetails invocationService;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plugin_invoke);
-
-        service = (ServiceDetails) getIntent().getSerializableExtra(ServiceDetailActivity.EXTRA_SERVICE_DETAILS);
+    public static InvokePluginFragment createFragment(ServiceDetails service) {
+        InvokePluginFragment fragment = new InvokePluginFragment();
+        fragment.service = service;
+        return fragment;
     }
 
-    public void onInvocationServerSelectionClicked(View view) {
-        ServiceChooserDialog dialog = new ServiceChooserDialog() {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_plugin_invoke, container, false);
+
+        Button button = (Button) view.findViewById(R.id.button_select_server);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onServiceChosen(ServiceDetails details) {
-                setServiceDetails(details);
+            public void onClick(View v) {
+
+                ServiceChooserDialog dialog = new ServiceChooserDialog() {
+                    @Override
+                    public void onServiceChosen(ServiceDetails details) {
+                        setServiceDetails(details);
+                    }
+                };
+                dialog.show(getFragmentManager(), "ServiceChooserDialog");
             }
-        };
-        dialog.show(getFragmentManager(), "ServiceChooserDialog");
+        });
+
+
+        return view;
     }
 
     private void setServiceDetails(ServiceDetails details) {
         invocationService = details;
 
-        TextView serverKey = (TextView) findViewById(R.id.server_key);
+        TextView serverKey = (TextView) view.findViewById(R.id.server_key);
         serverKey.setText(invocationService.server.publicKey);
-        TextView serverAddress = (TextView) findViewById(R.id.server_address);
+        TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
         serverAddress.setText(invocationService.server.address);
 
-        ImageView serviceImage = (ImageView) findViewById(R.id.service_image);
+        ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
         serviceImage.setImageResource(Services.getImageId(invocationService.service.type));
-        TextView serviceName = (TextView) findViewById(R.id.service_name);
+        TextView serviceName = (TextView) view.findViewById(R.id.service_name);
         serviceName.setText(invocationService.service.name);
-        TextView serviceType = (TextView) findViewById(R.id.service_type);
+        TextView serviceType = (TextView) view.findViewById(R.id.service_type);
         serviceType.setText(invocationService.service.type);
-        TextView servicePort = (TextView) findViewById(R.id.service_port);
+        TextView servicePort = (TextView) view.findViewById(R.id.service_port);
         servicePort.setText(String.valueOf(invocationService.service.port));
-    }
-
-    public void onConnectClicked(View view) {
-        RequestTask invocationServiceRequest = new RequestTask() {
-            @Override
-            public void onPostExecute(Session session) {
-                onSessionInitiated(session);
-            }
-        };
-
-        List<ServiceDetails.Parameter> parameters = new ArrayList<>();
-        /* TODO: fill parameters */
-
-        RequestTask.RequestParameters request = new RequestTask.RequestParameters(
-                Identity.getSigningKey(), invocationService, parameters);
-        invocationServiceRequest.execute(request);
     }
 
     private void onSessionInitiated(RequestTask.Session session) {
@@ -137,6 +133,23 @@ public class InvokeActivity extends FragmentActivity {
                 service.server,
                 service.service);
         connectTask.execute(connectParameter);
+    }
+
+    @Override
+    public void onConnectClicked() {
+        RequestTask invocationServiceRequest = new RequestTask() {
+            @Override
+            public void onPostExecute(Session session) {
+                onSessionInitiated(session);
+            }
+        };
+
+        List<ServiceDetails.Parameter> parameters = new ArrayList<>();
+        /* TODO: fill parameters */
+
+        RequestTask.RequestParameters request = new RequestTask.RequestParameters(
+                Identity.getSigningKey(), invocationService, parameters);
+        invocationServiceRequest.execute(request);
     }
 
 }

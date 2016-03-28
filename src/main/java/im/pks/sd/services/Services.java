@@ -17,7 +17,9 @@
 
 package im.pks.sd.services;
 
+import android.app.Fragment;
 import im.pks.sd.controller.R;
+import im.pks.sd.controller.query.ServiceDetails;
 
 public class Services {
 
@@ -35,6 +37,16 @@ public class Services {
                 return R.drawable.service_shell;
             default:
                 return R.drawable.service_unknown;
+        }
+    }
+
+    public static PluginFragment getFragment(ServiceDetails service) {
+        switch (service.subtype) {
+            case "invoke":
+                return InvokePluginFragment.createFragment(service);
+            default: {
+                return GenericPluginFragment.createFragment(service);
+            }
         }
     }
 
