@@ -17,15 +17,13 @@
 
 package im.pks.sd.services;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.invoke.ServiceChooserActivity;
+import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.query.ServiceDetailActivity;
 import im.pks.sd.controller.query.ServiceDetails;
 import im.pks.sd.entities.Identity;
@@ -41,8 +39,6 @@ import java.util.List;
 
 public class InvokeActivity extends FragmentActivity {
 
-    private static final int SERVICE_SELECTION_REQUEST_CODE = 1;
-
     private ServiceDetails service;
     private ServiceDetails invocationService;
 
@@ -55,17 +51,17 @@ public class InvokeActivity extends FragmentActivity {
     }
 
     public void onInvocationServerSelectionClicked(View view) {
-        Intent intent = new Intent(this, ServiceChooserActivity.class);
-        startActivityForResult(intent, SERVICE_SELECTION_REQUEST_CODE);
+        ServiceChooserDialog dialog = new ServiceChooserDialog() {
+            @Override
+            public void onServiceChosen(ServiceDetails details) {
+                setServiceDetails(details);
+            }
+        };
+        dialog.show(getFragmentManager(), "ServiceChooserDialog");
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != SERVICE_SELECTION_REQUEST_CODE || resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
-        invocationService = (ServiceDetails) data.getSerializableExtra(ServiceChooserActivity.EXTRA_SELECTED_SERVICE);
+    private void setServiceDetails(ServiceDetails details) {
+        invocationService = details;
 
         TextView serverKey = (TextView) findViewById(R.id.server_key);
         serverKey.setText(invocationService.server.publicKey);
