@@ -27,7 +27,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import im.pks.sd.controller.R;
-import im.pks.sd.persistence.Identity;
+import im.pks.sd.entities.Identity;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
 

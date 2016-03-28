@@ -8,7 +8,9 @@ import android.widget.ListView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.*;
 import im.pks.sd.controller.query.ServiceDetails;
-import im.pks.sd.persistence.Identity;
+import im.pks.sd.entities.Identity;
+import im.pks.sd.entities.ServerTo;
+import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.protocol.QueryTask;
 
 public class ServiceChooserActivity extends Activity {
@@ -39,7 +41,7 @@ public class ServiceChooserActivity extends Activity {
 
         discoveryTask = new DiscoveryTask(null, Identity.getSigningKey().getVerifyKey()) {
             @Override
-            public void onProgressUpdate(Server... server) {
+            public void onProgressUpdate(ServerTo... server) {
                 serverAdapter.add(server[0]);
             }
         };
@@ -50,7 +52,7 @@ public class ServiceChooserActivity extends Activity {
         if (serverAdapter == null) {
             serverAdapter = new ServerListAdapter(this) {
                 @Override
-                public void onServerClicked(final Server server) {
+                public void onServerClicked(final ServerTo server) {
                     setServiceAdapter(view, server);
                 }
             };
@@ -59,12 +61,12 @@ public class ServiceChooserActivity extends Activity {
         view.setAdapter(serverAdapter);
     }
 
-    private void setServiceAdapter(final ListView view, final Server server) {
+    private void setServiceAdapter(final ListView view, final ServerTo server) {
         discoveryTask.cancel();
 
         ServiceListAdapter adapter = new ServiceListAdapter(this) {
             @Override
-            public void onServiceClicked(Service service) {
+            public void onServiceClicked(ServiceTo service) {
                 QueryTask.QueryParameters parameters = new QueryTask.QueryParameters(Identity.getSigningKey(), server, service);
 
                 QueryTask queryTask = new QueryTask() {

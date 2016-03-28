@@ -24,19 +24,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.query.ServiceDetailActivity;
+import im.pks.sd.entities.ServerTo;
+import im.pks.sd.entities.ServiceTo;
 
 public class ServerDetailActivity extends Activity {
 
     public static final String EXTRA_SERVER = "server";
 
-    private Server server;
+    private ServerTo server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_detail);
 
-        server = (Server) getIntent().getSerializableExtra(EXTRA_SERVER);
+        server = (ServerTo) getIntent().getSerializableExtra(EXTRA_SERVER);
 
         TextView keyView = (TextView) findViewById(R.id.server_key);
         keyView.setText(server.publicKey);
@@ -46,7 +48,7 @@ public class ServerDetailActivity extends Activity {
         ListView serviceList = (ListView) findViewById(R.id.service_list);
         ServiceListAdapter adapter = new ServiceListAdapter(this) {
             @Override
-            public void onServiceClicked(Service service) {
+            public void onServiceClicked(ServiceTo service) {
                 Intent intent = new Intent(ServerDetailActivity.this,
                                                   ServiceDetailActivity.class);
                 intent.putExtra(ServiceDetailActivity.EXTRA_SERVICE, service);

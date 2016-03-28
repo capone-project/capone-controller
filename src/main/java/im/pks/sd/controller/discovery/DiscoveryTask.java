@@ -19,6 +19,8 @@ package im.pks.sd.controller.discovery;
 
 import android.os.AsyncTask;
 import com.google.protobuf.nano.MessageNano;
+import im.pks.sd.entities.ServerTo;
+import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.protocol.UdpChannel;
 import nano.Discovery;
 import org.abstractj.kalium.keys.PublicKey;
@@ -37,19 +39,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
+public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
 
     public static final int LOCAL_DISCOVERY_PORT = 6668;
     public static final int REMOTE_DISCOVERY_PORT = 6667;
     public static final String BROADCAST_ADDRESS = "224.0.0.1";
 
-    private Set<Server> servers = new HashSet<>();
+    private Set<ServerTo> servers = new HashSet<>();
 
     private VerifyKey key;
     private DatagramSocket broadcastSocket;
     private DatagramSocket announceSocket;
 
-    public DiscoveryTask(List<Server> servers, VerifyKey key) {
+    public DiscoveryTask(List<ServerTo> servers, VerifyKey key) {
         if (servers != null) {
             this.servers.addAll(servers);
         }
@@ -100,7 +102,7 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
                         MessageNano.mergeFrom(announceMessage, announcePacket.getData());
 
                         /* TODO: announce to activities */
-                        Server server = convertAnnouncement(announcePacket.getAddress(), announceMessage);
+                        ServerTo server = convertAnnouncement(announcePacket.getAddress(), announceMessage);
 
                         if (!servers.contains(server)) {
                             servers.add(server);
@@ -122,14 +124,14 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
         return null;
     }
 
-    private Server convertAnnouncement(InetAddress address, Discovery.AnnounceMessage announceMessage) {
-        Server server = new Server();
+    private ServerTo convertAnnouncement(InetAddress address, Discovery.AnnounceMessage announceMessage) {
+        ServerTo server = new ServerTo();
         server.publicKey = new PublicKey(announceMessage.signKey).toString();
         server.address = address.getCanonicalHostName();
         server.services = new ArrayList<>();
 
         for (Discovery.AnnounceMessage.Service announcedService : announceMessage.services) {
-            Service service = new Service();
+            ServiceTo service = new ServiceTo();
             service.name = announcedService.name;
             service.type = announcedService.type;
             service.port = Integer.valueOf(announcedService.port);
@@ -146,6 +148,6 @@ public abstract class DiscoveryTask extends AsyncTask<Void, Server, Void> {
         super.cancel(true);
     }
 
-    public abstract void onProgressUpdate(Server... server);
+    public abstract void onProgressUpdate(ServerTo... server);
 
 }

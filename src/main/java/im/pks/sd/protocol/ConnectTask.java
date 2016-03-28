@@ -18,8 +18,8 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.controller.discovery.Server;
-import im.pks.sd.controller.discovery.Service;
+import im.pks.sd.entities.ServerTo;
+import im.pks.sd.entities.ServiceTo;
 import nano.Connect;
 import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.keys.VerifyKey;
@@ -31,10 +31,10 @@ public abstract class ConnectTask extends AsyncTask<ConnectTask.Parameters, Void
     public static class Parameters {
         public final SecretBox key;
         public final int sessionId;
-        public final Server server;
-        public final Service service;
+        public final ServerTo server;
+        public final ServiceTo service;
 
-        public Parameters(int sessionId, SecretBox key, Server server, Service service) {
+        public Parameters(int sessionId, SecretBox key, ServerTo server, ServiceTo service) {
             this.sessionId = sessionId;
             this.key = key;
             this.server = server;

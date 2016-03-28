@@ -24,9 +24,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
+import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.services.Services;
 
-public abstract class ServiceListAdapter extends ArrayAdapter<Service> {
+public abstract class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
 
     public ServiceListAdapter(Context context) {
         super(context, R.layout.list_item_service);
@@ -34,7 +35,7 @@ public abstract class ServiceListAdapter extends ArrayAdapter<Service> {
 
     @Override
     public View getView(final int position, View view, ViewGroup group) {
-        final Service service = getItem(position);
+        final ServiceTo service = getItem(position);
 
         if (view == null) {
             view = View.inflate(getContext(), R.layout.list_item_service, null);
@@ -60,6 +61,6 @@ public abstract class ServiceListAdapter extends ArrayAdapter<Service> {
         return view;
     }
 
-    public abstract void onServiceClicked(Service service);
+    public abstract void onServiceClicked(ServiceTo service);
 
 }

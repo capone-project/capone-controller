@@ -21,14 +21,15 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import im.pks.sd.controller.R;
-import im.pks.sd.persistence.Identity;
+import im.pks.sd.entities.Identity;
+import im.pks.sd.entities.ServerTo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DiscoveryListActivity extends ListActivity {
 
-    private List<Server> servers;
+    private List<ServerTo> servers;
     private DiscoveryTask serviceLoader;
     private ServerListAdapter adapter;
 
@@ -40,7 +41,7 @@ public class DiscoveryListActivity extends ListActivity {
         servers = new ArrayList<>();
         adapter = new ServerListAdapter(this) {
             @Override
-            public void onServerClicked(Server server) {
+            public void onServerClicked(ServerTo server) {
                 Intent intent = new Intent(DiscoveryListActivity.this, ServerDetailActivity.class);
                 intent.putExtra(ServerDetailActivity.EXTRA_SERVER, server);
                 startActivity(intent);
@@ -55,7 +56,7 @@ public class DiscoveryListActivity extends ListActivity {
 
         serviceLoader = new DiscoveryTask(servers, Identity.getSigningKey().getVerifyKey()) {
             @Override
-            public void onProgressUpdate(Server... server) {
+            public void onProgressUpdate(ServerTo... server) {
                 adapter.add(server[0]);
             }
         };

@@ -24,8 +24,8 @@ submitgit commented on pull request git/git#219
 
 package im.pks.sd.controller.query;
 
-import im.pks.sd.controller.discovery.Server;
-import im.pks.sd.controller.discovery.Service;
+import im.pks.sd.entities.ServerTo;
+import im.pks.sd.entities.ServiceTo;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -48,14 +48,14 @@ public class ServiceDetails implements Serializable {
         }
     }
 
-    public final Server server;
-    public final Service service;
+    public final ServerTo server;
+    public final ServiceTo service;
     public final String subtype;
     public final String location;
     public final String version;
     public final List<Parameter> parameters;
 
-    public ServiceDetails(Server server, Service service, String subtype, String location,
+    public ServiceDetails(ServerTo server, ServiceTo service, String subtype, String location,
                           String version, List<Parameter> parameters) {
         this.server = server;
         this.service = service;

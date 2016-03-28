@@ -18,8 +18,8 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.controller.discovery.Server;
-import im.pks.sd.controller.discovery.Service;
+import im.pks.sd.entities.ServerTo;
+import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.controller.query.ServiceDetails;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
@@ -35,10 +35,10 @@ public abstract class QueryTask extends AsyncTask<QueryTask.QueryParameters, Ser
 
     public static class QueryParameters {
         public final SigningKey localKey;
-        public final Server server;
-        public final Service service;
+        public final ServerTo server;
+        public final ServiceTo service;
 
-        public QueryParameters(SigningKey localKey, Server server, Service service) {
+        public QueryParameters(SigningKey localKey, ServerTo server, ServiceTo service) {
             this.localKey = localKey;
             this.server = server;
             this.service = service;

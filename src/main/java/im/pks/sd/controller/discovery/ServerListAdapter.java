@@ -23,13 +23,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
+import im.pks.sd.entities.ServerTo;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class ServerListAdapter extends ArrayAdapter<Server> {
+public abstract class ServerListAdapter extends ArrayAdapter<ServerTo> {
 
-    private Set<Server> servers = new HashSet<>();
+    private Set<ServerTo> servers = new HashSet<>();
 
     public ServerListAdapter(Context context) {
         super(context, R.layout.list_item_server);
@@ -41,7 +42,7 @@ public abstract class ServerListAdapter extends ArrayAdapter<Server> {
     }
 
     private View getServerView(int position, View view) {
-        final Server server = getItem(position);
+        final ServerTo server = getItem(position);
 
         if (view == null) {
             view = View.inflate(getContext(), R.layout.list_item_server, null);
@@ -62,7 +63,7 @@ public abstract class ServerListAdapter extends ArrayAdapter<Server> {
     }
 
     @Override
-    public void add(Server server) {
+    public void add(ServerTo server) {
         if (servers.contains(server)) {
             return;
         }
@@ -71,6 +72,6 @@ public abstract class ServerListAdapter extends ArrayAdapter<Server> {
         super.add(server);
     }
 
-    public abstract void onServerClicked(Server server);
+    public abstract void onServerClicked(ServerTo server);
 
 }

@@ -15,23 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.controller.discovery;
+package im.pks.sd.entities;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class Server implements Serializable {
-    public String publicKey;
-    public String address;
-    public List<Service> services;
-
-    @Override
-    public String toString() {
-        return publicKey;
-    }
+public class ServiceTo implements Serializable {
+    public String name;
+    public String type;
+    public int port;
 
     @Override
     public boolean equals(Object other) {
