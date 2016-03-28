@@ -35,6 +35,7 @@ import im.pks.sd.controller.discovery.Service;
 import im.pks.sd.controller.invoke.GenericActivity;
 import im.pks.sd.controller.invoke.InvokeActivity;
 import im.pks.sd.persistence.Identity;
+import im.pks.sd.protocol.QueryTask;
 import org.abstractj.kalium.keys.SigningKey;
 import org.apache.commons.lang.StringUtils;
 
