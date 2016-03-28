@@ -19,8 +19,8 @@ package im.pks.sd.controller.invoke;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -30,9 +30,9 @@ import im.pks.sd.controller.discovery.DiscoveryTask;
 import im.pks.sd.controller.discovery.ServerListAdapter;
 import im.pks.sd.controller.discovery.ServiceListAdapter;
 import im.pks.sd.controller.query.ServiceDetails;
-import im.pks.sd.persistence.Identity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
+import im.pks.sd.persistence.Identity;
 import im.pks.sd.protocol.QueryTask;
 
 public abstract class ServiceChooserDialog extends DialogFragment {

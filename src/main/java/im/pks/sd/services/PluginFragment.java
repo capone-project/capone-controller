@@ -17,7 +17,7 @@
 
 package im.pks.sd.services;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 public abstract class PluginFragment extends Fragment {
 

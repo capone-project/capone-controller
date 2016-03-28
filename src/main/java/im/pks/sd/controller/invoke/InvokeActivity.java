@@ -1,9 +1,9 @@
 package im.pks.sd.controller.invoke;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 import im.pks.sd.controller.R;
@@ -13,7 +13,7 @@ import im.pks.sd.services.PluginFragment;
 import im.pks.sd.services.PluginTask;
 import im.pks.sd.services.Plugins;
 
-public class InvokeActivity extends Activity {
+public class InvokeActivity extends AppCompatActivity {
 
     public static final String EXTRA_SERVICE = "service";
 
@@ -30,7 +30,7 @@ public class InvokeActivity extends Activity {
 
         setContentView(R.layout.activity_invoke);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         fragment = plugin.getFragment(service);
         transaction.add(R.id.plugin_view, fragment);

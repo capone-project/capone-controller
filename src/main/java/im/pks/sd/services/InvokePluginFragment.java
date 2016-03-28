@@ -18,6 +18,8 @@
 package im.pks.sd.services;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,8 @@ import java.util.List;
 public class InvokePluginFragment extends PluginFragment {
 
     private View view;
+    private PluginFragment pluginFragment;
+
     private ServiceDetails invoker;
     private ServiceDetails service;
 
@@ -79,6 +83,13 @@ public class InvokePluginFragment extends PluginFragment {
         serviceType.setText(service.service.type);
         TextView servicePort = (TextView) view.findViewById(R.id.service_port);
         servicePort.setText(String.valueOf(service.service.port));
+
+        Plugin plugin = Plugins.getPlugin(details);
+        FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        pluginFragment = plugin.getFragment(service);
+        transaction.add(R.id.plugin_view, pluginFragment);
+        transaction.commit();
     }
 
     public PluginTask createTask() {
@@ -99,6 +110,5 @@ public class InvokePluginFragment extends PluginFragment {
 
         return new InvokePluginTask(invoker, service, parameters);
     }
-
 
 }
