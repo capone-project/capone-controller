@@ -92,7 +92,8 @@ public class InvokePluginFragment extends PluginFragment {
         transaction.commit();
     }
 
-    public PluginTask createTask() {
+    @Override
+    public List<ServiceDetails.Parameter> getParameters() {
         List<ServiceDetails.Parameter> parameters = new ArrayList<>();
         parameters.add(new ServiceDetails.Parameter("service-identity",
                                                     service.server.publicKey));
@@ -104,11 +105,16 @@ public class InvokePluginFragment extends PluginFragment {
         parameters.add(new ServiceDetails.Parameter("service-type",
                                                     service.subtype));
 
-        /* TODO: correctly fill client- and server-side arguments */
-        parameters.add(new ServiceDetails.Parameter("service-args", "--port"));
-        parameters.add(new ServiceDetails.Parameter("service-args", "9999"));
+        for (ServiceDetails.Parameter parameter : pluginFragment.getParameters()) {
+            parameters.add(new ServiceDetails.Parameter("service-args", parameter.name));
+            parameters.add(new ServiceDetails.Parameter("service-args", parameter.values));
+        }
 
-        return new InvokePluginTask(invoker, service, parameters);
+        return parameters;
+    }
+
+    public PluginTask createTask() {
+        return new InvokePluginTask(invoker, service, getParameters());
     }
 
 }

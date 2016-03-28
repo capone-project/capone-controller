@@ -22,16 +22,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.query.ServiceDetails;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static android.view.View.inflate;
 
 public class GenericPluginFragment extends PluginFragment {
 
     private ServiceDetails service;
+    private Map<String, EditText> parameterEdits;
 
     public static GenericPluginFragment createFragment(ServiceDetails service) {
         GenericPluginFragment fragment = new GenericPluginFragment();
@@ -43,15 +50,21 @@ public class GenericPluginFragment extends PluginFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_plugin_generic, container, false);
 
-        ArrayAdapter<ServiceDetails.Parameter> parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(container.getContext(), R.layout.list_item_editable_parameter) {
+        parameterEdits = new HashMap<>();
+
+        ArrayAdapter<ServiceDetails.Parameter> parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(container.getContext(),
+                                                                                                             R.layout.list_item_editable_parameter) {
             @Override
             public View getView(final int position, View view, ViewGroup group) {
                 if (view == null) {
-                    view = inflate(GenericPluginFragment.this.getActivity(), R.layout.list_item_editable_parameter, null);
+                    view = inflate(GenericPluginFragment.this.getActivity(),
+                                   R.layout.list_item_editable_parameter, null);
                 }
 
                 TextView parameterName = (TextView) view.findViewById(R.id.parameter_name);
                 parameterName.setText(getItem(position).name);
+                EditText parameterValue = (EditText) view.findViewById(R.id.parameter_values);
+                parameterEdits.put(getItem(position).name, parameterValue);
 
                 return view;
             }
@@ -64,4 +77,17 @@ public class GenericPluginFragment extends PluginFragment {
         return view;
     }
 
+    @Override
+    public List<ServiceDetails.Parameter> getParameters() {
+        List<ServiceDetails.Parameter> parameters = new ArrayList<>();
+
+        for (Map.Entry<String, EditText> edit : parameterEdits.entrySet()) {
+            ServiceDetails.Parameter parameter
+                    = new ServiceDetails.Parameter(edit.getKey(),
+                                                   edit.getValue().getText().toString());
+            parameters.add(parameter);
+        }
+
+        return parameters;
+    }
 }

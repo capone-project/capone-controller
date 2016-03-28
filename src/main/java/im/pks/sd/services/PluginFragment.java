@@ -18,7 +18,12 @@
 package im.pks.sd.services;
 
 import android.support.v4.app.Fragment;
+import im.pks.sd.controller.query.ServiceDetails;
+
+import java.util.List;
 
 public abstract class PluginFragment extends Fragment {
+
+    public abstract List<ServiceDetails.Parameter> getParameters();
 
 }
