@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.entities;
+package im.pks.sd.persistence;
 
 import com.orm.SugarRecord;
 import org.abstractj.kalium.encoders.Encoder;

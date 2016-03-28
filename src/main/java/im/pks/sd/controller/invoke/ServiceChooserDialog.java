@@ -30,7 +30,7 @@ import im.pks.sd.controller.discovery.DiscoveryTask;
 import im.pks.sd.controller.discovery.ServerListAdapter;
 import im.pks.sd.controller.discovery.ServiceListAdapter;
 import im.pks.sd.controller.query.ServiceDetails;
-import im.pks.sd.entities.Identity;
+import im.pks.sd.persistence.Identity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.protocol.QueryTask;

@@ -31,7 +31,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.InvokeActivity;
-import im.pks.sd.entities.Identity;
+import im.pks.sd.persistence.Identity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.protocol.QueryTask;

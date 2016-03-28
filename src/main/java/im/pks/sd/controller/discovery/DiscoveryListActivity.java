@@ -21,7 +21,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import im.pks.sd.controller.R;
-import im.pks.sd.entities.Identity;
+import im.pks.sd.persistence.Identity;
 import im.pks.sd.entities.ServerTo;
 
 import java.util.ArrayList;

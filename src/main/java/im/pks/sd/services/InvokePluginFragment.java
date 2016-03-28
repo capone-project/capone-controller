@@ -27,7 +27,7 @@ import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.query.ServiceDetails;
-import im.pks.sd.entities.Identity;
+import im.pks.sd.persistence.Identity;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.RequestTask;
