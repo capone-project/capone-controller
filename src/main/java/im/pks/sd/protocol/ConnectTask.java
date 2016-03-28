@@ -21,21 +21,22 @@ import android.os.AsyncTask;
 import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
 import nano.Connect;
-import org.abstractj.kalium.encoders.Encoder;
-import org.abstractj.kalium.keys.SigningKey;
+import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
-public abstract class ConnectTask extends AsyncTask<ConnectTask.ConnectParameters, Void, Void> {
+public abstract class ConnectTask extends AsyncTask<ConnectTask.Parameters, Void, Void> {
 
-    public static class ConnectParameters {
-        public final SigningKey localKey;
+    public static class Parameters {
+        public final SecretBox key;
+        public final int sessionId;
         public final Server server;
         public final Service service;
 
-        public ConnectParameters(SigningKey localKey, Server server, Service service) {
-            this.localKey = localKey;
+        public Parameters(int sessionId, SecretBox key, Server server, Service service) {
+            this.sessionId = sessionId;
+            this.key = key;
             this.server = server;
             this.service = service;
         }
@@ -44,18 +45,20 @@ public abstract class ConnectTask extends AsyncTask<ConnectTask.ConnectParameter
     private Channel channel = null;
 
     @Override
-    protected Void doInBackground(ConnectParameters... params) {
-        ConnectParameters param = params[0];
-        VerifyKey remoteKey = new VerifyKey(param.server.publicKey, Encoder.HEX);
+    protected Void doInBackground(Parameters... params) {
+        Parameters param = params[0];
 
-        Connect.ConnectionInitiationMessage initiation = new Connect.ConnectionInitiationMessage();
-        initiation.type = Connect.ConnectionInitiationMessage.CONNECT;
+        Connect.ConnectionInitiationMessage connectionInitiation = new Connect.ConnectionInitiationMessage();
+        connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
+        Connect.SessionInitiationMessage sessionInitiation = new Connect.SessionInitiationMessage();
+        sessionInitiation.sessionid = param.sessionId;
 
         try {
             channel = new TcpChannel(param.server.address, param.service.port);
             channel.connect();
-            channel.writeProtobuf(initiation);
-            channel.enableEncryption(param.localKey, remoteKey);
+            channel.writeProtobuf(connectionInitiation);
+            channel.writeProtobuf(sessionInitiation);
+            channel.enableEncryption(param.key);
 
             handleConnection(channel);
         } catch (VerifyKey.SignatureException | IOException e) {
@@ -80,9 +83,6 @@ public abstract class ConnectTask extends AsyncTask<ConnectTask.ConnectParameter
             }
         }
     }
-
-    @Override
-    public abstract void onPostExecute(Void result);
 
     public abstract void handleConnection(Channel channel);
 

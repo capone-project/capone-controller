@@ -20,7 +20,6 @@ package im.pks.sd.protocol;
 import android.os.AsyncTask;
 import im.pks.sd.controller.query.ServiceDetails;
 import nano.Connect;
-import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
@@ -45,9 +44,9 @@ public abstract class RequestTask extends AsyncTask<RequestTask.RequestParameter
 
     public static class Session {
         public final int sessionId;
-        public final SecretBox key;
+        public final byte[] key;
 
-        public Session(int sessionId, SecretBox key) {
+        public Session(int sessionId, byte[] key) {
             this.sessionId = sessionId;
             this.key = key;
         }
@@ -87,7 +86,7 @@ public abstract class RequestTask extends AsyncTask<RequestTask.RequestParameter
             Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
             channel.readProtobuf(sessionMessage);
 
-            return new Session(sessionMessage.sessionid, new SecretBox(sessionMessage.sessionkey));
+            return new Session(sessionMessage.sessionid, sessionMessage.sessionkey);
         } catch (IOException | VerifyKey.SignatureException e) {
             e.printStackTrace();
             return null;

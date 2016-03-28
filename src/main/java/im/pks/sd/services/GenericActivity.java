@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.controller.invoke;
+package im.pks.sd.services;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -24,13 +24,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.query.ServiceDetailActivity;
 import im.pks.sd.controller.query.ServiceDetails;
 
 public class GenericActivity extends FragmentActivity {
 
-    private ListView parameterList;
     private ArrayAdapter<ServiceDetails.Parameter> parameterAdapter;
 
     private ServiceDetails service;
@@ -57,12 +57,12 @@ public class GenericActivity extends FragmentActivity {
         };
         parameterAdapter.addAll(service.parameters);
 
-        parameterList = (ListView) findViewById(R.id.service_parameter_list);
+        ListView parameterList = (ListView) findViewById(R.id.service_parameter_list);
         parameterList.setAdapter(parameterAdapter);
     }
 
     public void onConnectClicked(View view) {
-
+        Toast.makeText(this, R.string.service_handler_not_implemented, Toast.LENGTH_SHORT).show();
     }
 
 }

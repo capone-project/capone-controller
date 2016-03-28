@@ -32,10 +32,11 @@ import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
-import im.pks.sd.controller.invoke.GenericActivity;
-import im.pks.sd.controller.invoke.InvokeActivity;
+import im.pks.sd.services.GenericActivity;
+import im.pks.sd.services.InvokeActivity;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.protocol.QueryTask;
+import im.pks.sd.services.Services;
 import org.abstractj.kalium.keys.SigningKey;
 import org.apache.commons.lang.StringUtils;
 
@@ -59,7 +60,7 @@ public class ServiceDetailActivity extends Activity {
         Service service = (Service) intent.getSerializableExtra(EXTRA_SERVICE);
 
         ImageView serviceImage = (ImageView) findViewById(R.id.service_image);
-        serviceImage.setImageResource(service.getResourceId());
+        serviceImage.setImageResource(Services.getImageId(service.type));
         TextView serverKey = (TextView) findViewById(R.id.server_key);
         serverKey.setText(server.publicKey);
         TextView serverAddress = (TextView) findViewById(R.id.server_address);

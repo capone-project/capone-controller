@@ -15,26 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.controller.discovery;
+package im.pks.sd.services;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import im.pks.sd.controller.R;
 
-import java.io.Serializable;
+public class Services {
 
-public class Service implements Serializable {
-    public String name;
-    public String type;
-    public int port;
-
-    @Override
-    public boolean equals(Object other) {
-        return EqualsBuilder.reflectionEquals(this, other);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+    public static int getImageId(String type) {
+        switch (type) {
+            case "Capabilities":
+                return R.drawable.service_capabilities;
+            case "Display":
+                return R.drawable.service_display;
+            case "Input":
+                return R.drawable.service_input;
+            case "Invoke":
+                return R.drawable.service_invoke;
+            case "Shell":
+                return R.drawable.service_shell;
+            default:
+                return R.drawable.service_unknown;
+        }
     }
 
 }

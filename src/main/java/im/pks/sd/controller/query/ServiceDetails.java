@@ -28,6 +28,7 @@ import im.pks.sd.controller.discovery.Server;
 import im.pks.sd.controller.discovery.Service;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 public class ServiceDetails implements Serializable {
@@ -39,6 +40,11 @@ public class ServiceDetails implements Serializable {
         public Parameter(String name, List<String> values) {
             this.name = name;
             this.values = values;
+        }
+
+        public Parameter(String name, String value) {
+            this.name = name;
+            this.values = Collections.singletonList(value);
         }
     }
 

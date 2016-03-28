@@ -34,9 +34,9 @@
         </activity>
 
         <!-- Plugin activities -->
-        <activity android:name=".invoke.InvokeActivity">
+        <activity android:name="im.pks.sd.services.InvokeActivity">
         </activity>
-        <activity android:name=".invoke.GenericActivity">
+        <activity android:name="im.pks.sd.services.GenericActivity">
         </activity>
 
         <meta-data

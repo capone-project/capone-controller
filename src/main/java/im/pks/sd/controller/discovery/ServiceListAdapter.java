@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
+import im.pks.sd.services.Services;
 
 public abstract class ServiceListAdapter extends ArrayAdapter<Service> {
 
@@ -47,7 +48,7 @@ public abstract class ServiceListAdapter extends ArrayAdapter<Service> {
         });
 
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
-        serviceImage.setImageResource(service.getResourceId());
+        serviceImage.setImageResource(Services.getImageId(service.type));
 
         TextView serviceName = (TextView) view.findViewById(R.id.service_name);
         serviceName.setText(service.name);

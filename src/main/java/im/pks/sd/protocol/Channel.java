@@ -65,7 +65,11 @@ public abstract class Channel {
         Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
                 buffer.array().length, new byte[0], 0);
 
-        this.key = new SecretBox(symmetricKey);
+        enableEncryption(new SecretBox(symmetricKey));
+    }
+
+    public void enableEncryption(SecretBox key) throws IOException, VerifyKey.SignatureException {
+        this.key = key;
         this.localNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
         this.remoteNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
         incrementNonce(this.remoteNonce);
