@@ -31,14 +31,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class QueryTask extends AsyncTask<QueryTask.QueryParameters, ServiceDetails, Void> {
+public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceDetails, Void> {
 
-    public static class QueryParameters {
+    public static class Parameters {
         public final SigningKey localKey;
         public final ServerTo server;
         public final ServiceTo service;
 
-        public QueryParameters(SigningKey localKey, ServerTo server, ServiceTo service) {
+        public Parameters(SigningKey localKey, ServerTo server, ServiceTo service) {
             this.localKey = localKey;
             this.server = server;
             this.service = service;
@@ -48,8 +48,8 @@ public abstract class QueryTask extends AsyncTask<QueryTask.QueryParameters, Ser
     private Channel channel = null;
 
     @Override
-    protected Void doInBackground(QueryParameters... params) {
-        for (QueryParameters param : params) {
+    protected Void doInBackground(Parameters... params) {
+        for (Parameters param : params) {
             try {
                 if (isCancelled())
                     return null;
@@ -86,7 +86,7 @@ public abstract class QueryTask extends AsyncTask<QueryTask.QueryParameters, Ser
         return null;
     }
 
-    private ServiceDetails convertQuery(QueryParameters params, Connect.QueryResults queryResults) {
+    private ServiceDetails convertQuery(Parameters params, Connect.QueryResults queryResults) {
         List<ServiceDetails.Parameter> parameters = new ArrayList<>();
         for (Connect.Parameter parameter : queryResults.parameters) {
             parameters.add(new ServiceDetails.Parameter(parameter.key,

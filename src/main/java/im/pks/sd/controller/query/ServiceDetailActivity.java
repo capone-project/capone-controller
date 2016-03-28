@@ -98,7 +98,7 @@ public class ServiceDetailActivity extends Activity {
         };
 
         SigningKey key = Identity.getSigningKey();
-        QueryTask.QueryParameters parameters = new QueryTask.QueryParameters(key, server, service);
+        QueryTask.Parameters parameters = new QueryTask.Parameters(key, server, service);
         queryTask.execute(parameters);
 
         progressDialog = ProgressDialog.show(this, getString(R.string.loading), getString(R.string.query_loading),

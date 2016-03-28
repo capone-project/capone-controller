@@ -100,7 +100,7 @@ public abstract class ServiceChooserDialog extends DialogFragment {
                 onServiceChosen(details[0]);
             }
         };
-        task.execute(new QueryTask.QueryParameters(Identity.getSigningKey(), server, service));
+        task.execute(new QueryTask.Parameters(Identity.getSigningKey(), server, service));
     }
 
     public abstract void onServiceChosen(ServiceDetails details);
