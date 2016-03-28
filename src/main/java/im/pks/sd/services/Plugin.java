@@ -17,8 +17,16 @@
 
 package im.pks.sd.services;
 
-import android.app.Fragment;
+import im.pks.sd.controller.query.ServiceDetails;
 
-public abstract class PluginFragment extends Fragment {
+public interface Plugin {
+
+    String getType();
+
+    int getImageId();
+
+    PluginFragment getFragment(ServiceDetails service);
+
+    PluginTask getTask(PluginFragment fragment);
 
 }

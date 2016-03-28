@@ -27,26 +27,19 @@ import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.query.ServiceDetails;
-import im.pks.sd.persistence.Identity;
-import im.pks.sd.protocol.Channel;
-import im.pks.sd.protocol.ConnectTask;
-import im.pks.sd.protocol.RequestTask;
-import org.abstractj.kalium.crypto.SecretBox;
-import org.abstractj.kalium.encoders.Encoder;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InvokePluginFragment extends PluginFragment {
 
     private View view;
+    private ServiceDetails invoker;
     private ServiceDetails service;
-    private ServiceDetails invocationService;
 
-    public static InvokePluginFragment createFragment(ServiceDetails service) {
+    public static InvokePluginFragment createFragment(ServiceDetails invoker) {
         InvokePluginFragment fragment = new InvokePluginFragment();
-        fragment.service = service;
+        fragment.invoker = invoker;
         return fragment;
     }
 
@@ -57,7 +50,6 @@ public class InvokePluginFragment extends PluginFragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 ServiceChooserDialog dialog = new ServiceChooserDialog() {
                     @Override
                     public void onServiceChosen(ServiceDetails details) {
@@ -68,88 +60,45 @@ public class InvokePluginFragment extends PluginFragment {
             }
         });
 
-
         return view;
     }
 
     private void setServiceDetails(ServiceDetails details) {
-        invocationService = details;
+        service = details;
 
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
-        serverKey.setText(invocationService.server.publicKey);
+        serverKey.setText(service.server.publicKey);
         TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
-        serverAddress.setText(invocationService.server.address);
+        serverAddress.setText(service.server.address);
 
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
-        serviceImage.setImageResource(Services.getImageId(invocationService.service.type));
+        serviceImage.setImageResource(Plugins.getCategoryImageId(service.service.type));
         TextView serviceName = (TextView) view.findViewById(R.id.service_name);
-        serviceName.setText(invocationService.service.name);
+        serviceName.setText(service.service.name);
         TextView serviceType = (TextView) view.findViewById(R.id.service_type);
-        serviceType.setText(invocationService.service.type);
+        serviceType.setText(service.service.type);
         TextView servicePort = (TextView) view.findViewById(R.id.service_port);
-        servicePort.setText(String.valueOf(invocationService.service.port));
+        servicePort.setText(String.valueOf(service.service.port));
     }
 
-    private void onSessionInitiated(RequestTask.Session session) {
+    public PluginTask createTask() {
         List<ServiceDetails.Parameter> parameters = new ArrayList<>();
-        parameters.add(new ServiceDetails.Parameter("service-identity", invocationService.server.publicKey));
-        parameters.add(new ServiceDetails.Parameter("service-address", invocationService.server.address));
-        parameters.add(new ServiceDetails.Parameter("service-port", String.valueOf(invocationService.service.port)));
-        parameters.add(new ServiceDetails.Parameter("service-type", invocationService.subtype));
-        parameters.add(new ServiceDetails.Parameter("sessionid", Integer.toString(session.sessionId)));
-        parameters.add(new ServiceDetails.Parameter("sessionkey", Encoder.HEX.encode(session.key)));
+        parameters.add(new ServiceDetails.Parameter("service-identity",
+                                                    service.server.publicKey));
+        parameters.add(new ServiceDetails.Parameter("service-address",
+                                                    service.server.address));
+        parameters.add(new ServiceDetails.Parameter("service-port",
+                                                    String.valueOf(
+                                                            service.service.port)));
+        parameters.add(new ServiceDetails.Parameter("service-type",
+                                                    service.subtype));
 
-        /* TODO: fill parameters */
+        /* TODO: correctly fill client- and server-side arguments */
         parameters.add(new ServiceDetails.Parameter("service-args", "--port"));
         parameters.add(new ServiceDetails.Parameter("service-args", "9999"));
 
-        RequestTask invocationServiceRequest = new RequestTask() {
-            @Override
-            public void onPostExecute(Session session) {
-                onInvocationSessionInitiated(session);
-            }
-        };
-
-        RequestTask.RequestParameters request = new RequestTask.RequestParameters(
-                Identity.getSigningKey(), service, parameters);
-        invocationServiceRequest.execute(request);
+        return new InvokePluginTask(invoker, service, parameters);
     }
 
-    private void onInvocationSessionInitiated(RequestTask.Session session) {
-        ConnectTask connectTask = new ConnectTask() {
-            @Override
-            public void handleConnection(Channel channel) {
-                try {
-                    channel.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        };
-
-        ConnectTask.Parameters connectParameter = new ConnectTask.Parameters(
-                session.sessionId,
-                new SecretBox(session.key),
-                service.server,
-                service.service);
-        connectTask.execute(connectParameter);
-    }
-
-    @Override
-    public void onConnectClicked() {
-        RequestTask invocationServiceRequest = new RequestTask() {
-            @Override
-            public void onPostExecute(Session session) {
-                onSessionInitiated(session);
-            }
-        };
-
-        List<ServiceDetails.Parameter> parameters = new ArrayList<>();
-        /* TODO: fill parameters */
-
-        RequestTask.RequestParameters request = new RequestTask.RequestParameters(
-                Identity.getSigningKey(), invocationService, parameters);
-        invocationServiceRequest.execute(request);
-    }
 
 }

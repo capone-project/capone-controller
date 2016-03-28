@@ -11,8 +11,8 @@
     <string name="server_key">Server Key</string>
     <string name="server_address">Server Address</string>
     <string name="server">Server</string>
-    <string name="service">Service</string>
-    <string name="query_loading">The service is being queried.</string>
+    <string name="invoker">Service</string>
+    <string name="query_loading">The invoker is being queried.</string>
     <string name="loading">Loading…</string>
     <string name="parameters">Parameters</string>
     <string name="service_subtype">Service Subtype</string>
@@ -31,6 +31,6 @@
     <string name="invocation_server">Invocation server</string>
     <string name="select">Select</string>
     <string name="connect">Connect</string>
-    <string name="choose_invoke_service">Choose invoke service</string>
+    <string name="choose_invoke_service">Choose invoke invoker</string>
     <string name="service_handler_not_implemented">Service type not implemented</string>
 </resources>

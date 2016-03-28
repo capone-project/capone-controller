@@ -17,8 +17,30 @@
 
 package im.pks.sd.services;
 
-import android.app.Fragment;
+import im.pks.sd.controller.R;
+import im.pks.sd.controller.query.ServiceDetails;
 
-public abstract class PluginFragment extends Fragment {
+public class InvokePlugin implements Plugin {
+
+    @Override
+    public String getType() {
+        return "invoke";
+    }
+
+    @Override
+    public int getImageId() {
+        return R.drawable.service_invoke;
+    }
+
+    @Override
+    public PluginFragment getFragment(ServiceDetails service) {
+        return InvokePluginFragment.createFragment(service);
+    }
+
+    @Override
+    public PluginTask getTask(PluginFragment fragment) {
+        InvokePluginFragment invokeFragment = (InvokePluginFragment) fragment;
+        return invokeFragment.createTask();
+    }
 
 }

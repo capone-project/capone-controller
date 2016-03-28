@@ -17,8 +17,29 @@
 
 package im.pks.sd.services;
 
-import android.app.Fragment;
+import im.pks.sd.controller.R;
+import im.pks.sd.controller.query.ServiceDetails;
 
-public abstract class PluginFragment extends Fragment {
+public class GenericPlugin implements Plugin {
+
+    @Override
+    public String getType() {
+        return null;
+    }
+
+    @Override
+    public int getImageId() {
+        return R.drawable.service_unknown;
+    }
+
+    @Override
+    public PluginFragment getFragment(ServiceDetails service) {
+        return GenericPluginFragment.createFragment(service);
+    }
+
+    @Override
+    public PluginTask getTask(PluginFragment fragment) {
+        return null;
+    }
 
 }

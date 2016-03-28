@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.query.ServiceDetails;
 
@@ -63,11 +62,6 @@ public class GenericPluginFragment extends PluginFragment {
         parameterList.setAdapter(parameterAdapter);
 
         return view;
-    }
-
-    @Override
-    public void onConnectClicked() {
-        Toast.makeText(getActivity(), R.string.service_handler_not_implemented, Toast.LENGTH_SHORT).show();
     }
 
 }

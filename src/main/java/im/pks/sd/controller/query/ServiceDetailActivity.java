@@ -35,7 +35,7 @@ import im.pks.sd.persistence.Identity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.protocol.QueryTask;
-import im.pks.sd.services.Services;
+import im.pks.sd.services.Plugins;
 import org.abstractj.kalium.keys.SigningKey;
 import org.apache.commons.lang.StringUtils;
 
@@ -58,7 +58,7 @@ public class ServiceDetailActivity extends Activity {
         ServiceTo service = (ServiceTo) intent.getSerializableExtra(EXTRA_SERVICE);
 
         ImageView serviceImage = (ImageView) findViewById(R.id.service_image);
-        serviceImage.setImageResource(Services.getImageId(service.type));
+        serviceImage.setImageResource(Plugins.getCategoryImageId(service.type));
         TextView serverKey = (TextView) findViewById(R.id.server_key);
         serverKey.setText(server.publicKey);
         TextView serverAddress = (TextView) findViewById(R.id.server_address);

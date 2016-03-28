@@ -17,8 +17,8 @@
 
 package im.pks.sd.services;
 
-import android.app.Fragment;
+import android.os.AsyncTask;
 
-public abstract class PluginFragment extends Fragment {
+public abstract class PluginTask extends AsyncTask<Void, Void, Void> {
 
 }

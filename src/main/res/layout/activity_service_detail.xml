@@ -12,7 +12,7 @@
         tools:context=".query.ServiceDetailActivity">
 
     <TextView
-            android:text="@string/service"
+            android:text="@string/invoker"
             android:textStyle="bold"
             android:textSize="30sp"
             android:layout_width="match_parent"

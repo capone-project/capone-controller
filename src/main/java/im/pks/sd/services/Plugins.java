@@ -17,14 +17,32 @@
 
 package im.pks.sd.services;
 
-import android.app.Fragment;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.query.ServiceDetails;
 
-public class Services {
+import java.util.HashMap;
+import java.util.Map;
 
-    public static int getImageId(String type) {
-        switch (type) {
+public class Plugins {
+
+    private static final Map<String, Plugin> plugins = new HashMap<>();
+    private static final Plugin fallback = new GenericPlugin();
+
+    static {
+        InvokePlugin invokePlugin = new InvokePlugin();
+        plugins.put(invokePlugin.getType(), invokePlugin);
+    }
+
+    public static Plugin getPlugin(ServiceDetails service) {
+        if (plugins.containsKey(service.subtype)) {
+            return plugins.get(service.subtype);
+        }
+
+        return fallback;
+    }
+
+    public static int getCategoryImageId(String category) {
+        switch (category) {
             case "Capabilities":
                 return R.drawable.service_capabilities;
             case "Display":
@@ -37,16 +55,6 @@ public class Services {
                 return R.drawable.service_shell;
             default:
                 return R.drawable.service_unknown;
-        }
-    }
-
-    public static PluginFragment getFragment(ServiceDetails service) {
-        switch (service.subtype) {
-            case "invoke":
-                return InvokePluginFragment.createFragment(service);
-            default: {
-                return GenericPluginFragment.createFragment(service);
-            }
         }
     }
 

@@ -28,14 +28,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RequestTask extends AsyncTask<RequestTask.RequestParameters, Void, RequestTask.Session> {
+public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void, RequestTask.Session> {
 
-    public static class RequestParameters {
+    public static class Parameters {
         public final SigningKey localKey;
         public final ServiceDetails service;
         public final List<ServiceDetails.Parameter> parameters;
 
-        public RequestParameters(SigningKey localKey, ServiceDetails service, List<ServiceDetails.Parameter> parameters) {
+        public Parameters(SigningKey localKey, ServiceDetails service, List<ServiceDetails.Parameter> parameters) {
             this.localKey = localKey;
             this.service = service;
             this.parameters = parameters;
@@ -55,8 +55,8 @@ public abstract class RequestTask extends AsyncTask<RequestTask.RequestParameter
     private Channel channel;
 
     @Override
-    protected Session doInBackground(RequestParameters... params) {
-        RequestParameters requestParameters = params[0];
+    protected Session doInBackground(Parameters... params) {
+        Parameters requestParameters = params[0];
 
         List<Connect.Parameter> parameters = new ArrayList<>();
         for (ServiceDetails.Parameter parameter : requestParameters.parameters) {
