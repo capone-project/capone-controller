@@ -65,6 +65,17 @@ public abstract class Channel {
         Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
                 buffer.array().length, new byte[0], 0);
 
+        byte[] ephemeralKeySignature = localKeys.sign(symmetricKey);
+        Encryption.EphemeralKeySignatureMessage ephemeralSignatureMessage =
+                new Encryption.EphemeralKeySignatureMessage();
+        ephemeralSignatureMessage.signature = ephemeralKeySignature;
+        writeProtobuf(ephemeralSignatureMessage);
+
+        Encryption.EphemeralKeySignatureMessage remoteEphemeralSignatureMessage =
+                new Encryption.EphemeralKeySignatureMessage();
+        readProtobuf(remoteEphemeralSignatureMessage);
+        remoteKey.verify(symmetricKey, remoteEphemeralSignatureMessage.signature);
+
         enableEncryption(new SecretBox(symmetricKey));
     }
 
