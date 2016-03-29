@@ -17,6 +17,13 @@
             android:layout_height="match_parent"/>
 
     <Button
+            android:id="@+id/button_favorite"
+            android:text="@string/favorites"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onFavoritesClicked"/>
+
+    <Button
             android:id="@+id/button_discovery"
             android:text="@string/discovery"
             android:layout_width="match_parent"

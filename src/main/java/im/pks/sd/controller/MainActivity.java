@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import im.pks.sd.controller.about.AboutActivity;
 import im.pks.sd.controller.discovery.DiscoveryListActivity;
+import im.pks.sd.controller.favorites.FavoritesActivity;
 import im.pks.sd.controller.identity.IdentityActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    public void onFavoritesClicked(View view) {
+        startActivity(new Intent(this, FavoritesActivity.class));
     }
 
     public void onDiscoveryClicked(View view) {
@@ -44,5 +49,4 @@ public class MainActivity extends AppCompatActivity {
     public void onAboutClicked(View view) {
         startActivity(new Intent(this, AboutActivity.class));
     }
-
 }

@@ -35,4 +35,6 @@
     <string name="service_handler_not_implemented">Service type not implemented</string>
     <string name="favorite_add">Add favorite</string>
     <string name="favorite_remove">Remove favorite</string>
+    <string name="favorites">Favorites</string>
+    <string name="server_name">Server name</string>
 </resources>

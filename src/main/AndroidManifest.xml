@@ -45,6 +45,9 @@
         <meta-data
                 android:name="DOMAIN_PACKAGE_NAME"
                 android:value="im.pks.sd.persistence"/>
+
+        <activity android:name=".favorites.FavoritesActivity">
+        </activity>
     </application>
 
 </manifest>
