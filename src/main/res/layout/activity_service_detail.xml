@@ -91,7 +91,7 @@
 
             <TableRow>
                 <TextView
-                        android:text="@string/service_type"
+                        android:text="@string/service_category"
                         android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -105,7 +105,7 @@
 
             <TableRow>
                 <TextView
-                        android:text="@string/service_subtype"
+                        android:text="@string/service_type"
                         android:textStyle="bold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>

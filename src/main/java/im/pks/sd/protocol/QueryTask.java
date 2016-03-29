@@ -93,7 +93,7 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceD
                     Arrays.asList(parameter.values)));
         }
 
-        return new ServiceDetails(params.server, params.service, queryResults.subtype,
+        return new ServiceDetails(params.server, params.service, queryResults.type,
                 queryResults.location, queryResults.version, parameters);
     }
 

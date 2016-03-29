@@ -6,7 +6,9 @@
     <string name="services">Services</string>
     <string name="service_image">Service Image</string>
     <string name="service_name">Service Name</string>
+    <string name="service_category">Service Category</string>
     <string name="service_type">Service Type</string>
+    <string name="service_location">Service Location</string>
     <string name="service_port">Service Port</string>
     <string name="server_key">Server Key</string>
     <string name="server_address">Server Address</string>
@@ -15,8 +17,6 @@
     <string name="query_loading">The invoker is being queried.</string>
     <string name="loading">Loading…</string>
     <string name="parameters">Parameters</string>
-    <string name="service_subtype">Service Subtype</string>
-    <string name="service_location">Service Location</string>
     <string name="not_available">N/A</string>
     <string name="generate_key">Generate Key</string>
     <string name="import_key">Import Key</string>

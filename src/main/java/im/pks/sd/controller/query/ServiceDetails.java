@@ -50,16 +50,16 @@ public class ServiceDetails implements Serializable {
 
     public final ServerTo server;
     public final ServiceTo service;
-    public final String subtype;
+    public final String type;
     public final String location;
     public final String version;
     public final List<Parameter> parameters;
 
-    public ServiceDetails(ServerTo server, ServiceTo service, String subtype, String location,
+    public ServiceDetails(ServerTo server, ServiceTo service, String type, String location,
                           String version, List<Parameter> parameters) {
         this.server = server;
         this.service = service;
-        this.subtype = subtype;
+        this.type = type;
         this.location = location;
         this.version = version;
         this.parameters = parameters;

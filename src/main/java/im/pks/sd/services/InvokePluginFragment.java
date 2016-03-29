@@ -103,7 +103,7 @@ public class InvokePluginFragment extends PluginFragment {
                                                     String.valueOf(
                                                             service.service.port)));
         parameters.add(new ServiceDetails.Parameter("service-type",
-                                                    service.subtype));
+                                                    service.type));
 
         for (ServiceDetails.Parameter parameter : pluginFragment.getParameters()) {
             parameters.add(new ServiceDetails.Parameter("service-args", parameter.name));

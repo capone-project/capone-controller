@@ -119,7 +119,7 @@ public class ServiceDetailActivity extends Activity {
         parameterAdapter.addAll(details.parameters);
 
         TextView subtype = (TextView) findViewById(R.id.service_subtype);
-        subtype.setText(details.subtype);
+        subtype.setText(details.type);
         TextView location = (TextView) findViewById(R.id.service_location);
         location.setText(details.location);
 

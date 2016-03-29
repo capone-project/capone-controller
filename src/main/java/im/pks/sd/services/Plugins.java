@@ -34,8 +34,8 @@ public class Plugins {
     }
 
     public static Plugin getPlugin(ServiceDetails service) {
-        if (plugins.containsKey(service.subtype)) {
-            return plugins.get(service.subtype);
+        if (plugins.containsKey(service.type)) {
+            return plugins.get(service.type);
         }
 
         return fallback;
