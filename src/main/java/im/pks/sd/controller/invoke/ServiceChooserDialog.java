@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import im.pks.sd.controller.R;
@@ -63,14 +64,15 @@ public abstract class ServiceChooserDialog extends DialogFragment {
     }
 
     private void startDiscovery() {
-        final ServerListAdapter serverAdapter = new ServerListAdapter(getActivity()) {
-            @Override
-            public void onServerClicked(final ServerTo server) {
-                discovery.cancel();
-                showServices(server);
-            }
-        };
+        final ServerListAdapter serverAdapter = new ServerListAdapter(getActivity());
         list.setAdapter(serverAdapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                discovery.cancel();
+                showServices(serverAdapter.getItem(position));
+            }
+        });
 
         discovery = new DiscoveryTask(null, Identity.getSigningKey().getVerifyKey()) {
             @Override
@@ -82,15 +84,17 @@ public abstract class ServiceChooserDialog extends DialogFragment {
     }
 
     private void showServices(final ServerTo server) {
-        ServiceListAdapter adapter = new ServiceListAdapter(getActivity()) {
+        final ServiceListAdapter adapter = new ServiceListAdapter(getActivity());
+        adapter.addAll(server.services);
+
+        list.setAdapter(adapter);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onServiceClicked(ServiceTo service) {
-                query(server, service);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                query(server, adapter.getItem(position));
                 dismiss();
             }
-        };
-        adapter.addAll(server.services);
-        list.setAdapter(adapter);
+        });
     }
 
     private void query(final ServerTo server, final ServiceTo service) {

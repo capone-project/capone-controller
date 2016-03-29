@@ -27,7 +27,7 @@ import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.services.Plugins;
 
-public abstract class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
+public class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
 
     public ServiceListAdapter(Context context) {
         super(context, R.layout.list_item_service);
@@ -41,13 +41,6 @@ public abstract class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
             view = View.inflate(getContext(), R.layout.list_item_service, null);
         }
 
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onServiceClicked(service);
-            }
-        });
-
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
         serviceImage.setImageResource(Plugins.getCategoryImageId(service.category));
 
@@ -60,7 +53,5 @@ public abstract class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
 
         return view;
     }
-
-    public abstract void onServiceClicked(ServiceTo service);
 
 }

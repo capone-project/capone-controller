@@ -28,7 +28,7 @@ import im.pks.sd.entities.ServerTo;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class ServerListAdapter extends ArrayAdapter<ServerTo> {
+public class ServerListAdapter extends ArrayAdapter<ServerTo> {
 
     private Set<ServerTo> servers = new HashSet<>();
 
@@ -48,13 +48,6 @@ public abstract class ServerListAdapter extends ArrayAdapter<ServerTo> {
             view = View.inflate(getContext(), R.layout.list_item_server, null);
         }
 
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onServerClicked(server);
-            }
-        });
-
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
         serverKey.setText(server.publicKey);
         TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
@@ -72,7 +65,5 @@ public abstract class ServerListAdapter extends ArrayAdapter<ServerTo> {
         servers.add(server);
         super.add(server);
     }
-
-    public abstract void onServerClicked(ServerTo server);
 
 }

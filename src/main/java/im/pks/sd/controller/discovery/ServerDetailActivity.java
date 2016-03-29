@@ -20,12 +20,13 @@ package im.pks.sd.controller.discovery;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.query.ServiceDetailActivity;
 import im.pks.sd.entities.ServerTo;
-import im.pks.sd.entities.ServiceTo;
 
 public class ServerDetailActivity extends Activity {
 
@@ -45,19 +46,21 @@ public class ServerDetailActivity extends Activity {
         TextView addressView = (TextView) findViewById(R.id.server_address);
         addressView.setText(server.address);
 
+        final ServiceListAdapter adapter = new ServiceListAdapter(this);
+        adapter.addAll(server.services);
+
         ListView serviceList = (ListView) findViewById(R.id.service_list);
-        ServiceListAdapter adapter = new ServiceListAdapter(this) {
+        serviceList.setAdapter(adapter);
+        serviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onServiceClicked(ServiceTo service) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ServerDetailActivity.this,
-                                                  ServiceDetailActivity.class);
-                intent.putExtra(ServiceDetailActivity.EXTRA_SERVICE, service);
+                        ServiceDetailActivity.class);
+                intent.putExtra(ServiceDetailActivity.EXTRA_SERVICE, adapter.getItem(position));
                 intent.putExtra(ServiceDetailActivity.EXTRA_SERVER, server);
                 startActivity(intent);
             }
-        };
-        adapter.addAll(server.services);
-        serviceList.setAdapter(adapter);
+        });
     }
 
 }

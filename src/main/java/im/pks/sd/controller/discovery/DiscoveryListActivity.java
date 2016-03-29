@@ -20,6 +20,8 @@ package im.pks.sd.controller.discovery;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ListView;
 import im.pks.sd.controller.R;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.entities.ServerTo;
@@ -39,15 +41,17 @@ public class DiscoveryListActivity extends ListActivity {
         setContentView(R.layout.activity_discovery_list);
 
         servers = new ArrayList<>();
-        adapter = new ServerListAdapter(this) {
-            @Override
-            public void onServerClicked(ServerTo server) {
-                Intent intent = new Intent(DiscoveryListActivity.this, ServerDetailActivity.class);
-                intent.putExtra(ServerDetailActivity.EXTRA_SERVER, server);
-                startActivity(intent);
-            }
-        };
+        adapter = new ServerListAdapter(this);
         setListAdapter(adapter);
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        Intent intent = new Intent(DiscoveryListActivity.this, ServerDetailActivity.class);
+        intent.putExtra(ServerDetailActivity.EXTRA_SERVER, adapter.getItem(position));
+        startActivity(intent);
     }
 
     @Override
