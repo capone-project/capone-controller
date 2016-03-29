@@ -133,7 +133,7 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
         for (Discovery.AnnounceMessage.Service announcedService : announceMessage.services) {
             ServiceTo service = new ServiceTo();
             service.name = announcedService.name;
-            service.type = announcedService.type;
+            service.category = announcedService.category;
             service.port = Integer.valueOf(announcedService.port);
             server.services.add(service);
         }

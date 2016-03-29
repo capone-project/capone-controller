@@ -58,7 +58,7 @@ public class ServiceDetailActivity extends Activity {
         ServiceTo service = (ServiceTo) intent.getSerializableExtra(EXTRA_SERVICE);
 
         ImageView serviceImage = (ImageView) findViewById(R.id.service_image);
-        serviceImage.setImageResource(Plugins.getCategoryImageId(service.type));
+        serviceImage.setImageResource(Plugins.getCategoryImageId(service.category));
         TextView serverKey = (TextView) findViewById(R.id.server_key);
         serverKey.setText(server.publicKey);
         TextView serverAddress = (TextView) findViewById(R.id.server_address);
@@ -68,7 +68,7 @@ public class ServiceDetailActivity extends Activity {
         TextView servicePort = (TextView) findViewById(R.id.service_port);
         servicePort.setText(String.valueOf(service.port));
         TextView serviceType = (TextView) findViewById(R.id.service_type);
-        serviceType.setText(service.type);
+        serviceType.setText(service.category);
 
         parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(this, R.layout.list_item_parameter) {
             @Override

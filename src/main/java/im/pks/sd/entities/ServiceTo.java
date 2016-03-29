@@ -24,7 +24,7 @@ import java.io.Serializable;
 
 public class ServiceTo implements Serializable {
     public String name;
-    public String type;
+    public String category;
     public int port;
 
     @Override

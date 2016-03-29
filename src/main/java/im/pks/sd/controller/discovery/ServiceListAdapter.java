@@ -49,12 +49,12 @@ public abstract class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
         });
 
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
-        serviceImage.setImageResource(Plugins.getCategoryImageId(service.type));
+        serviceImage.setImageResource(Plugins.getCategoryImageId(service.category));
 
         TextView serviceName = (TextView) view.findViewById(R.id.service_name);
         serviceName.setText(service.name);
         TextView serviceType = (TextView) view.findViewById(R.id.service_type);
-        serviceType.setText(service.type);
+        serviceType.setText(service.category);
         TextView servicePort = (TextView) view.findViewById(R.id.service_port);
         servicePort.setText(String.valueOf(service.port));
 

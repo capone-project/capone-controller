@@ -76,11 +76,11 @@ public class InvokePluginFragment extends PluginFragment {
         serverAddress.setText(service.server.address);
 
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
-        serviceImage.setImageResource(Plugins.getCategoryImageId(service.service.type));
+        serviceImage.setImageResource(Plugins.getCategoryImageId(service.service.category));
         TextView serviceName = (TextView) view.findViewById(R.id.service_name);
         serviceName.setText(service.service.name);
         TextView serviceType = (TextView) view.findViewById(R.id.service_type);
-        serviceType.setText(service.service.type);
+        serviceType.setText(service.service.category);
         TextView servicePort = (TextView) view.findViewById(R.id.service_port);
         servicePort.setText(String.valueOf(service.service.port));
 
