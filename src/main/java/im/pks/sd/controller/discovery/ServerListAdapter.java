@@ -46,13 +46,14 @@ public abstract class ServerListAdapter extends ArrayAdapter<ServerTo> {
 
         if (view == null) {
             view = View.inflate(getContext(), R.layout.list_item_server, null);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onServerClicked(server);
-                }
-            });
         }
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onServerClicked(server);
+            }
+        });
 
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
         serverKey.setText(server.publicKey);
