@@ -21,9 +21,11 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServerTo;
+import im.pks.sd.persistence.Server;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -53,7 +55,53 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
         TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
         serverAddress.setText(server.address);
 
+        final ImageButton favoriteButton = (ImageButton) view.findViewById(R.id.button_favorite);
+        final Server favorite = Server.findByNaturalKey(server.publicKey, server.address);
+        if (favorite == null) {
+            setAddButton(favoriteButton, server);
+        } else {
+            setRemoveButton(favoriteButton, server);
+        }
+
         return view;
+    }
+
+    private void setAddButton(final ImageButton button, final ServerTo server) {
+        button.setImageResource(R.drawable.favorite_add);
+        button.setContentDescription(getContext().getString(R.string.favorite_add));
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFavoriteAddClicked(server);
+                setRemoveButton(button, server);
+            }
+        });
+    }
+
+    private void setRemoveButton(final ImageButton button, final ServerTo server) {
+        button.setImageResource(R.drawable.favorite_remove);
+        button.setContentDescription(getContext().getString(R.string.favorite_remove));
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFavoriteRemoveClicked(server);
+                setAddButton(button, server);
+            }
+        });
+    }
+
+    private void onFavoriteAddClicked(ServerTo server) {
+        Server record = new Server();
+        record.setName(server.address);
+        record.setAddress(server.address);
+        record.setPublicKey(server.publicKey);
+        record.save();
+    }
+
+    private void onFavoriteRemoveClicked(ServerTo server) {
+        Server favorite = Server.findByNaturalKey(server.publicKey, server.address);
+        favorite.delete();
     }
 
     @Override
