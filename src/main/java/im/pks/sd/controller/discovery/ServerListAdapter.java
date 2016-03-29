@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.TableRow;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServerTo;
@@ -55,11 +56,18 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
         TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
         serverAddress.setText(server.address);
 
-        final ImageButton favoriteButton = (ImageButton) view.findViewById(R.id.button_favorite);
-        final Server favorite = Server.findByNaturalKey(server.publicKey, server.address);
+        TableRow row = (TableRow) view.findViewById(R.id.server_name_row);
+
+        ImageButton favoriteButton = (ImageButton) view.findViewById(R.id.button_favorite);
+        Server favorite = Server.findByNaturalKey(server.publicKey, server.address);
         if (favorite == null) {
+            row.setVisibility(View.GONE);
             setAddButton(favoriteButton, server);
         } else {
+            TextView serverName = (TextView) view.findViewById(R.id.server_name);
+            serverName.setText(favorite.getName());
+            row.setVisibility(View.VISIBLE);
+
             setRemoveButton(favoriteButton, server);
         }
 
