@@ -18,10 +18,13 @@
 package im.pks.sd.controller.favorites;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.DiscoveryTask;
@@ -34,12 +37,14 @@ import java.util.List;
 
 public class FavoritesActivity extends Activity {
 
+    private FavoritesAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
 
-        final FavoritesAdapter adapter = new FavoritesAdapter(this);
+        adapter = new FavoritesAdapter(this);
         List<Server> servers = Server.listAll(Server.class);
         adapter.addAll(servers);
 
@@ -51,6 +56,35 @@ public class FavoritesActivity extends Activity {
                 onServerClicked(adapter.getItem(position));
             }
         });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                onServerEdit(adapter.getItem(position));
+                return true;
+            }
+        });
+    }
+
+    private void onServerEdit(final Server server) {
+        final EditText name = new EditText(this);
+
+        new AlertDialog.Builder(this)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onServerNameEdited(server, name.getText().toString());
+                    }
+                })
+                .setView(name)
+                .setTitle(R.string.title_choose_server_name)
+                .create().show();
+    }
+
+    private void onServerNameEdited(Server server, String name) {
+        server.setName(name);
+        server.save();
+        adapter.notifyDataSetInvalidated();
     }
 
     private void onServerClicked(Server server) {

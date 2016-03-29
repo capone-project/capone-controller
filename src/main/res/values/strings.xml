@@ -37,4 +37,6 @@
     <string name="favorite_remove">Remove favorite</string>
     <string name="favorites">Favorites</string>
     <string name="server_name">Server name</string>
+    <string name="accept">Accept</string>
+    <string name="title_choose_server_name">Choose server name</string>
 </resources>
