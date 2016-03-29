@@ -21,6 +21,7 @@ import android.os.AsyncTask;
 import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
+import im.pks.sd.persistence.Server;
 import im.pks.sd.protocol.UdpChannel;
 import nano.Discovery;
 import org.abstractj.kalium.keys.PublicKey;
@@ -47,15 +48,28 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
 
     private Set<ServerTo> servers = new HashSet<>();
 
-    private VerifyKey key;
+    private final String address;
+    private final VerifyKey key;
+
     private DatagramSocket broadcastSocket;
     private DatagramSocket announceSocket;
+
+    public DiscoveryTask(VerifyKey key) {
+        this.key = key;
+        this.address = BROADCAST_ADDRESS;
+    }
 
     public DiscoveryTask(List<ServerTo> servers, VerifyKey key) {
         if (servers != null) {
             this.servers.addAll(servers);
         }
         this.key = key;
+        this.address = BROADCAST_ADDRESS;
+    }
+
+    public DiscoveryTask(Server server, VerifyKey key) {
+        this.key = key;
+        this.address = server.getAddress();
     }
 
     @Override
@@ -66,9 +80,12 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
         discoverMessage.signKey = key.toBytes();
 
         try {
-            InetAddress broadcastAddress = InetAddress.getByName(BROADCAST_ADDRESS);
+            InetAddress broadcastAddress = InetAddress.getByName(this.address);
             broadcastSocket = new DatagramSocket();
-            broadcastSocket.setBroadcast(true);
+            if (this.address.equals(BROADCAST_ADDRESS)) {
+                broadcastSocket.setBroadcast(true);
+            }
+
             UdpChannel broadcastChannel = UdpChannel.createFromSocket(broadcastSocket, broadcastAddress, REMOTE_DISCOVERY_PORT);
 
             announceSocket = new DatagramSocket(LOCAL_DISCOVERY_PORT);
