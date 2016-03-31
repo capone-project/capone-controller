@@ -48,7 +48,21 @@ public class DiscoveryListActivity extends ListActivity
 
         servers = new ArrayList<>();
         adapter = new ServerListAdapter(this);
-        setListAdapter(adapter);
+        adapter.setOnStarClickedListener(new ServerListAdapter.OnStarClickedListener() {
+            @Override
+            public boolean onStarClicked(ServerTo to) {
+                Server server = Server.findByTo(to);
+                if (server == null) {
+                    server = new Server(to);
+                    server.save();
+                    return true;
+                } else {
+                    server.delete();
+                    return false;
+                }
+            }
+        });
+        getListView().setAdapter(adapter);
         getListView().setOnItemLongClickListener(this);
     }
 

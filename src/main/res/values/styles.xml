@@ -11,6 +11,7 @@
         <item name="android:paddingBottom">@dimen/list_item_padding_bottom</item>
         <item name="android:layout_height">@dimen/list_item_height</item>
         <item name="android:layout_width">wrap_content</item>
+        <item name="android:descendantFocusability">blocksDescendants</item>
     </style>
 
     <style name="list_item_primary_text">
@@ -33,6 +34,15 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:paddingTop">@dimen/list_activity_vertical_margin</item>
         <item name="android:paddingBottom">@dimen/list_activity_vertical_margin</item>
+    </style>
+
+    <style name="list_item_right_icon">
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
 </resources>

@@ -21,6 +21,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServerTo;
@@ -31,6 +32,11 @@ import java.util.Set;
 
 public class ServerListAdapter extends ArrayAdapter<ServerTo> {
 
+    public interface OnStarClickedListener {
+        boolean onStarClicked(ServerTo server);
+    }
+
+    private OnStarClickedListener onStarClickedListener;
     private Set<ServerTo> servers = new HashSet<>();
 
     public ServerListAdapter(Context context) {
@@ -43,7 +49,7 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
     }
 
     private View getServerView(int position, View view) {
-        ServerTo to = getItem(position);
+        final ServerTo to = getItem(position);
         Server server = Server.findByTo(to);
 
         if (view == null) {
@@ -60,10 +66,31 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
             address.setText(server.getAddress());
         }
 
+        final ImageButton favorite = (ImageButton) view.findViewById(R.id.button_favorite);
+        if (server != null) {
+            favorite.setImageResource(android.R.drawable.star_on);
+        }
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onStarClickedListener == null) {
+                    return;
+                }
+
+                boolean starred = onStarClickedListener.onStarClicked(to);
+                favorite.setImageResource(starred ? android.R.drawable.star_on
+                                                  : android.R.drawable.star_off);
+            }
+        });
+
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
         serverKey.setText(to.publicKey);
 
         return view;
+    }
+
+    public void setOnStarClickedListener(OnStarClickedListener listener) {
+        this.onStarClickedListener = listener;
     }
 
     @Override
