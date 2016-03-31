@@ -37,14 +37,20 @@ public class FavoritesAdapter extends ArrayAdapter<Server> {
             view = View.inflate(getContext(), R.layout.list_item_favorite, null);
         }
 
-        Server server = getItem(position);
-
         TextView name = (TextView) view.findViewById(R.id.server_name);
-        name.setText(server.getName());
         TextView address = (TextView) view.findViewById(R.id.server_address);
-        address.setText(server.getAddress());
-        TextView key = (TextView) view.findViewById(R.id.server_key);
-        key.setText(server.getPublicKey());
+
+        Server server = getItem(position);
+        if (server.getName() == null) {
+            name.setText(server.getAddress());
+            address.setText(null);
+        } else {
+            name.setText(server.getName());
+            address.setText(server.getAddress());
+        }
+
+        TextView keyView = (TextView) view.findViewById(R.id.server_key);
+        keyView.setText(server.getPublicKey());
 
         return view;
     }

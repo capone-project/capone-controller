@@ -4,4 +4,28 @@
     <style name="AppTheme" parent="android:Theme.DeviceDefault">
     </style>
 
+    <style name="list_item">
+        <item name="android:paddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/list_item_padding_top</item>
+        <item name="android:paddingBottom">@dimen/list_item_padding_bottom</item>
+        <item name="android:layout_height">@dimen/list_item_height</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="list_item_primary_text">
+        <item name="android:lines">1</item>
+        <item name="android:textSize">@dimen/list_item_primary_font_size</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
+    <style name="list_item_secondary_text">
+        <item name="android:lines">1</item>
+        <item name="android:textSize">@dimen/list_item_secondary_font_size</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+    </style>
+
 </resources>
