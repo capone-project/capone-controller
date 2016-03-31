@@ -33,6 +33,7 @@ public class Server extends SugarRecord {
 
     public Server(ServerTo server) {
         this.publicKey = server.publicKey;
+        this.address = server.address;
     }
 
     public String getName() {
@@ -59,9 +60,9 @@ public class Server extends SugarRecord {
         this.address = address;
     }
 
-    public static Server findByNaturalKey(String publicKey, String address) {
+    public static Server findByTo(ServerTo server) {
         List<Server> favorites = find(Server.class, "public_key = ? and address = ?",
-                                      publicKey, address);
+                                      server.publicKey, server.address);
 
         if (favorites.isEmpty()) {
             return null;

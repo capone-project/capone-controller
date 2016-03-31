@@ -20,16 +20,22 @@ package im.pks.sd.controller.discovery;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import im.pks.sd.controller.R;
-import im.pks.sd.persistence.Identity;
 import im.pks.sd.entities.ServerTo;
+import im.pks.sd.persistence.Identity;
+import im.pks.sd.persistence.Server;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiscoveryListActivity extends ListActivity {
+public class DiscoveryListActivity extends ListActivity
+        implements AdapterView.OnItemLongClickListener {
 
     private List<ServerTo> servers;
     private DiscoveryTask serviceLoader;
@@ -43,6 +49,7 @@ public class DiscoveryListActivity extends ListActivity {
         servers = new ArrayList<>();
         adapter = new ServerListAdapter(this);
         setListAdapter(adapter);
+        getListView().setOnItemLongClickListener(this);
     }
 
     @Override
@@ -52,6 +59,60 @@ public class DiscoveryListActivity extends ListActivity {
         Intent intent = new Intent(DiscoveryListActivity.this, ServerDetailActivity.class);
         intent.putExtra(ServerDetailActivity.EXTRA_SERVER, adapter.getItem(position));
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        final ServerTo to = adapter.getItem(position);
+
+        startActionMode(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                getMenuInflater().inflate(R.menu.discovery, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                Server server = Server.findByTo(to);
+                if (server == null) {
+                    menu.findItem(R.id.remove).setVisible(false);
+                } else {
+                    menu.findItem(R.id.add).setVisible(false);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.add:
+                        onAddClicked(to);
+                        mode.finish();
+                        return true;
+                    case R.id.remove:
+                        onRemoveClicked(to);
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+            }
+        });
+
+        return true;
+    }
+
+    private void onAddClicked(ServerTo to) {
+        new Server(to).save();
+    }
+
+    private void onRemoveClicked(ServerTo server) {
+        Server.findByTo(server).delete();
     }
 
     @Override
@@ -72,5 +133,4 @@ public class DiscoveryListActivity extends ListActivity {
         super.onPause();
         serviceLoader.cancel();
     }
-
 }

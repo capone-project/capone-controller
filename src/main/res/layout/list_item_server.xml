@@ -1,81 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<TableLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <TableLayout
-            android:orientation="vertical"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content">
-        <TableRow
-                android:id="@+id/server_name_row">
-            <TextView
-                    android:text="@string/server_name"
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+    <TableRow
+            android:id="@+id/server_name_row">
+        <TextView
+                android:text="@string/server_name"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <Space
-                    android:layout_width="5dp"
-                    android:layout_height="wrap_content"/>
+        <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"/>
 
-            <TextView
-                    tools:text="Name"
-                    android:id="@+id/server_name"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
-        <TableRow>
-            <TextView
-                    android:text="@string/server_key"
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+        <TextView
+                tools:text="Name"
+                android:id="@+id/server_name"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </TableRow>
+    <TableRow>
+        <TextView
+                android:text="@string/server_key"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <Space
-                    android:layout_width="5dp"
-                    android:layout_height="wrap_content"/>
+        <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"/>
 
-            <TextView
-                    tools:text="c520f9ca204762328a1a021966466dfb7f038b8354743de27727d49c815d0449"
-                    android:id="@+id/server_key"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
+        <TextView
+                tools:text="c520f9ca204762328a1a021966466dfb7f038b8354743de27727d49c815d0449"
+                android:id="@+id/server_key"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </TableRow>
 
-        <TableRow>
-            <TextView
-                    android:text="@string/server_address"
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+    <TableRow>
+        <TextView
+                android:text="@string/server_address"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-            <Space
-                    android:layout_width="5dp"
-                    android:layout_height="wrap_content"/>
+        <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"/>
 
-            <TextView
-                    tools:text="192.168.0.2"
-                    android:id="@+id/server_address"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
-    </TableLayout>
+        <TextView
+                tools:text="192.168.0.2"
+                android:id="@+id/server_address"
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </TableRow>
 
-    <ImageButton
-            android:contentDescription="@string/favorite_add"
-            android:id="@+id/button_favorite"
-            android:src="@drawable/favorite_add"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-</LinearLayout>
+</TableLayout>
