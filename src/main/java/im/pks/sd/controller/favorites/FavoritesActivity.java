@@ -22,10 +22,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.view.*;
+import android.widget.*;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.DiscoveryTask;
 import im.pks.sd.controller.discovery.ServerDetailActivity;
@@ -59,13 +57,54 @@ public class FavoritesActivity extends Activity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                onServerEdit(adapter.getItem(position));
+                onServerLongClicked(adapter.getItem(position));
                 return true;
             }
         });
     }
 
-    private void onServerEdit(final Server server) {
+    private void onServerLongClicked(final Server server) {
+        startActionMode(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = getMenuInflater();
+                inflater.inflate(R.menu.favorites, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.edit:
+                        onEditClicked(server);
+                        mode.finish();
+                        return true;
+                    case R.id.remove:
+                        onRemoveClicked(server);
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+            }
+        });
+    }
+
+    private void onRemoveClicked(final Server server) {
+        server.delete();
+        adapter.remove(server);
+    }
+
+    private void onEditClicked(final Server server) {
         final EditText name = new EditText(this);
 
         new AlertDialog.Builder(this)
@@ -73,18 +112,14 @@ public class FavoritesActivity extends Activity {
                 .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        onServerNameEdited(server, name.getText().toString());
+                        server.setName(name.getText().toString());
+                        server.save();
+                        adapter.notifyDataSetInvalidated();
                     }
                 })
                 .setView(name)
                 .setTitle(R.string.title_choose_server_name)
                 .create().show();
-    }
-
-    private void onServerNameEdited(Server server, String name) {
-        server.setName(name);
-        server.save();
-        adapter.notifyDataSetInvalidated();
     }
 
     private void onServerClicked(Server server) {

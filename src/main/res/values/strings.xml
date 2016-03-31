@@ -39,4 +39,7 @@
     <string name="server_name">Server name</string>
     <string name="accept">Accept</string>
     <string name="title_choose_server_name">Choose server name</string>
+    <string name="edit_name">Edit name</string>
+    <string name="remove">Remove</string>
+    <string name="edit">Edit</string>
 </resources>
