@@ -1,11 +1,14 @@
 package im.pks.sd.controller.about;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import im.pks.sd.controller.R;
 
 import java.io.InputStream;

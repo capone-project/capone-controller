@@ -18,12 +18,14 @@
 package im.pks.sd.controller.favorites;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.view.*;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ListView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.DiscoveryTask;
 import im.pks.sd.controller.discovery.ServerDetailActivity;
