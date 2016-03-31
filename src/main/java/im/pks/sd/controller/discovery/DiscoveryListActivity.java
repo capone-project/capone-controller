@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import im.pks.sd.controller.R;
+import im.pks.sd.controller.services.ServiceListActivity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.persistence.Server;
@@ -70,8 +71,8 @@ public class DiscoveryListActivity extends ListActivity
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        Intent intent = new Intent(DiscoveryListActivity.this, ServerDetailActivity.class);
-        intent.putExtra(ServerDetailActivity.EXTRA_SERVER, adapter.getItem(position));
+        Intent intent = new Intent(DiscoveryListActivity.this, ServiceListActivity.class);
+        intent.putExtra(ServiceListActivity.EXTRA_SERVER, adapter.getItem(position));
         startActivity(intent);
     }
 

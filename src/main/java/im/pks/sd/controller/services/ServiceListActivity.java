@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.controller.discovery;
+package im.pks.sd.controller.services;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,7 +27,7 @@ import im.pks.sd.controller.R;
 import im.pks.sd.controller.query.ServiceDetailActivity;
 import im.pks.sd.entities.ServerTo;
 
-public class ServerDetailActivity extends Activity {
+public class ServiceListActivity extends Activity {
 
     public static final String EXTRA_SERVER = "server";
 
@@ -36,7 +36,7 @@ public class ServerDetailActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_server_detail);
+        setContentView(R.layout.activity_service_list);
 
         server = (ServerTo) getIntent().getSerializableExtra(EXTRA_SERVER);
 
@@ -48,7 +48,7 @@ public class ServerDetailActivity extends Activity {
         serviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ServerDetailActivity.this,
+                Intent intent = new Intent(ServiceListActivity.this,
                         ServiceDetailActivity.class);
                 intent.putExtra(ServiceDetailActivity.EXTRA_SERVICE, adapter.getItem(position));
                 intent.putExtra(ServiceDetailActivity.EXTRA_SERVER, server);

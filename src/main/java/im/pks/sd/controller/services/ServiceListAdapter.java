@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.controller.discovery;
+package im.pks.sd.controller.services;
 
 import android.content.Context;
 import android.view.View;

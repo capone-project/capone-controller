@@ -29,7 +29,7 @@ import android.widget.ListView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.DiscoveryTask;
 import im.pks.sd.controller.discovery.ServerListAdapter;
-import im.pks.sd.controller.discovery.ServiceListAdapter;
+import im.pks.sd.controller.services.ServiceListAdapter;
 import im.pks.sd.controller.query.ServiceDetails;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;

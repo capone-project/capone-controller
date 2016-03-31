@@ -28,7 +28,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.DiscoveryTask;
-import im.pks.sd.controller.discovery.ServerDetailActivity;
+import im.pks.sd.controller.services.ServiceListActivity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.persistence.Server;
@@ -132,8 +132,8 @@ public class FavoritesActivity extends Activity {
                         cancel();
 
                         Intent intent = new Intent(FavoritesActivity.this,
-                                                   ServerDetailActivity.class);
-                        intent.putExtra(ServerDetailActivity.EXTRA_SERVER, server[0]);
+                                                   ServiceListActivity.class);
+                        intent.putExtra(ServiceListActivity.EXTRA_SERVER, server[0]);
                         startActivity(intent);
                     }
                 };
