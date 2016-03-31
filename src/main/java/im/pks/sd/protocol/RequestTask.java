@@ -18,7 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.controller.query.ServiceDetails;
+import im.pks.sd.controller.invoke.QueryResults;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
@@ -32,10 +32,10 @@ public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void
 
     public static class Parameters {
         public final SigningKey localKey;
-        public final ServiceDetails service;
-        public final List<ServiceDetails.Parameter> parameters;
+        public final QueryResults service;
+        public final List<QueryResults.Parameter> parameters;
 
-        public Parameters(SigningKey localKey, ServiceDetails service, List<ServiceDetails.Parameter> parameters) {
+        public Parameters(SigningKey localKey, QueryResults service, List<QueryResults.Parameter> parameters) {
             this.localKey = localKey;
             this.service = service;
             this.parameters = parameters;
@@ -59,7 +59,7 @@ public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void
         Parameters requestParameters = params[0];
 
         List<Connect.Parameter> parameters = new ArrayList<>();
-        for (ServiceDetails.Parameter parameter : requestParameters.parameters) {
+        for (QueryResults.Parameter parameter : requestParameters.parameters) {
             Connect.Parameter serviceParam = new Connect.Parameter();
             serviceParam.key = parameter.name;
             serviceParam.values = parameter.values.toArray(new String[0]);

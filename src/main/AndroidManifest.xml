@@ -28,11 +28,10 @@
                 android:name=".services.ServiceListActivity"
                 android:label="@string/services">
         </activity>
-        <activity android:name=".query.ServiceDetailActivity">
+        <activity android:name=".invoke.InvokeActivity"
+                android:label="@string/service">
         </activity>
         <activity android:name=".about.AboutActivity">
-        </activity>
-        <activity android:name=".invoke.InvokeActivity">
         </activity>
         <activity
                 android:name=".favorites.FavoritesActivity"

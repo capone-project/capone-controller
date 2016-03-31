@@ -5,13 +5,11 @@
     <string name="identity">Identity</string>
     <string name="services">Services</string>
     <string name="service_image">Service Image</string>
-    <string name="service_name">Service Name</string>
-    <string name="service_category">Service Category</string>
-    <string name="service_type">Service Type</string>
-    <string name="service_location">Service Location</string>
-    <string name="service_port">Service Port</string>
-    <string name="server_key">Server Key</string>
-    <string name="server_address">Server Address</string>
+    <string name="service_name">Name</string>
+    <string name="service_type">Type</string>
+    <string name="service_location">Location</string>
+    <string name="server_key">Key</string>
+    <string name="server_address">Address</string>
     <string name="server">Server</string>
     <string name="invoker">Service</string>
     <string name="query_loading">The invoker is being queried.</string>
@@ -44,4 +42,5 @@
     <string name="edit">Edit</string>
     <string name="add">Add</string>
     <string name="add_favorite_button">Add favorite button</string>
+    <string name="service">Service</string>
 </resources>

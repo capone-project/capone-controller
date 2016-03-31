@@ -18,7 +18,7 @@
 package im.pks.sd.services;
 
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.query.ServiceDetails;
+import im.pks.sd.controller.invoke.QueryResults;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class Plugins {
         plugins.put(invokePlugin.getType(), invokePlugin);
     }
 
-    public static Plugin getPlugin(ServiceDetails service) {
+    public static Plugin getPlugin(QueryResults service) {
         if (plugins.containsKey(service.type)) {
             return plugins.get(service.type);
         }

@@ -24,7 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.query.ServiceDetailActivity;
+import im.pks.sd.controller.invoke.InvokeActivity;
 import im.pks.sd.entities.ServerTo;
 
 public class ServiceListActivity extends Activity {
@@ -49,9 +49,9 @@ public class ServiceListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(ServiceListActivity.this,
-                        ServiceDetailActivity.class);
-                intent.putExtra(ServiceDetailActivity.EXTRA_SERVICE, adapter.getItem(position));
-                intent.putExtra(ServiceDetailActivity.EXTRA_SERVER, server);
+                        InvokeActivity.class);
+                intent.putExtra(InvokeActivity.EXTRA_SERVICE, adapter.getItem(position));
+                intent.putExtra(InvokeActivity.EXTRA_SERVER, server);
                 startActivity(intent);
             }
         });

@@ -18,7 +18,7 @@
 package im.pks.sd.services;
 
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.query.ServiceDetails;
+import im.pks.sd.controller.invoke.QueryResults;
 
 public class InvokePlugin implements Plugin {
 
@@ -33,7 +33,7 @@ public class InvokePlugin implements Plugin {
     }
 
     @Override
-    public PluginFragment getFragment(ServiceDetails service) {
+    public PluginFragment getFragment(QueryResults service) {
         return InvokePluginFragment.createFragment(service);
     }
 

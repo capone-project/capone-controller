@@ -26,7 +26,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.query.ServiceDetails;
+import im.pks.sd.controller.invoke.QueryResults;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +37,10 @@ import static android.view.View.inflate;
 
 public class GenericPluginFragment extends PluginFragment {
 
-    private ServiceDetails service;
+    private QueryResults service;
     private Map<String, EditText> parameterEdits;
 
-    public static GenericPluginFragment createFragment(ServiceDetails service) {
+    public static GenericPluginFragment createFragment(QueryResults service) {
         GenericPluginFragment fragment = new GenericPluginFragment();
         fragment.service = service;
         return fragment;
@@ -52,8 +52,8 @@ public class GenericPluginFragment extends PluginFragment {
 
         parameterEdits = new HashMap<>();
 
-        ArrayAdapter<ServiceDetails.Parameter> parameterAdapter = new ArrayAdapter<ServiceDetails.Parameter>(container.getContext(),
-                                                                                                             R.layout.list_item_editable_parameter) {
+        ArrayAdapter<QueryResults.Parameter> parameterAdapter = new ArrayAdapter<QueryResults.Parameter>(container.getContext(),
+                                                                                                         R.layout.list_item_editable_parameter) {
             @Override
             public View getView(final int position, View view, ViewGroup group) {
                 if (view == null) {
@@ -78,13 +78,13 @@ public class GenericPluginFragment extends PluginFragment {
     }
 
     @Override
-    public List<ServiceDetails.Parameter> getParameters() {
-        List<ServiceDetails.Parameter> parameters = new ArrayList<>();
+    public List<QueryResults.Parameter> getParameters() {
+        List<QueryResults.Parameter> parameters = new ArrayList<>();
 
         for (Map.Entry<String, EditText> edit : parameterEdits.entrySet()) {
-            ServiceDetails.Parameter parameter
-                    = new ServiceDetails.Parameter(edit.getKey(),
-                                                   edit.getValue().getText().toString());
+            QueryResults.Parameter parameter
+                    = new QueryResults.Parameter(edit.getKey(),
+                                                 edit.getValue().getText().toString());
             parameters.add(parameter);
         }
 

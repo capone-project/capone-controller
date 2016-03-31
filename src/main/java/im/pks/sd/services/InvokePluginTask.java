@@ -17,7 +17,7 @@
 
 package im.pks.sd.services;
 
-import im.pks.sd.controller.query.ServiceDetails;
+import im.pks.sd.controller.invoke.QueryResults;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
@@ -32,13 +32,13 @@ import java.util.List;
 
 public class InvokePluginTask extends PluginTask {
 
-    private final List<ServiceDetails.Parameter> parameters;
-    private final ServiceDetails invoker;
-    private final ServiceDetails service;
+    private final List<QueryResults.Parameter> parameters;
+    private final QueryResults invoker;
+    private final QueryResults service;
 
-    public InvokePluginTask(ServiceDetails invoker,
-                            ServiceDetails service,
-                            List<ServiceDetails.Parameter> parameters) {
+    public InvokePluginTask(QueryResults invoker,
+                            QueryResults service,
+                            List<QueryResults.Parameter> parameters) {
         this.invoker = invoker;
         this.service = service;
         this.parameters = parameters;
@@ -62,17 +62,17 @@ public class InvokePluginTask extends PluginTask {
         RequestTask.Parameters parameters =
                 new RequestTask.Parameters(Identity.getSigningKey(),
                                            service,
-                                           Collections.<ServiceDetails.Parameter>emptyList());
+                                           Collections.<QueryResults.Parameter>emptyList());
         request.execute(parameters);
     }
 
     private void sendInvokeRequest(RequestTask.Session session) {
-        List<ServiceDetails.Parameter> parameters = new ArrayList<>();
+        List<QueryResults.Parameter> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
-        parameters.add(new ServiceDetails.Parameter("sessionid",
-                                                    Integer.toString(session.sessionId)));
-        parameters.add(new ServiceDetails.Parameter("sessionkey",
-                                                    Encoder.HEX.encode(session.key)));
+        parameters.add(new QueryResults.Parameter("sessionid",
+                                                  Integer.toString(session.sessionId)));
+        parameters.add(new QueryResults.Parameter("sessionkey",
+                                                  Encoder.HEX.encode(session.key)));
 
         RequestTask invocationServiceRequest = new RequestTask() {
             @Override

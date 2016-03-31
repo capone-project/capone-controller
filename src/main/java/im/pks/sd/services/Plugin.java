@@ -17,7 +17,7 @@
 
 package im.pks.sd.services;
 
-import im.pks.sd.controller.query.ServiceDetails;
+import im.pks.sd.controller.invoke.QueryResults;
 
 public interface Plugin {
 
@@ -25,7 +25,7 @@ public interface Plugin {
 
     int getImageId();
 
-    PluginFragment getFragment(ServiceDetails service);
+    PluginFragment getFragment(QueryResults service);
 
     PluginTask getTask(PluginFragment fragment);
 

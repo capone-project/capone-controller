@@ -20,7 +20,7 @@ package im.pks.sd.protocol;
 import android.os.AsyncTask;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
-import im.pks.sd.controller.query.ServiceDetails;
+import im.pks.sd.controller.invoke.QueryResults;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceDetails, Void> {
+public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryResults, Void> {
 
     public static class Parameters {
         public final SigningKey localKey;
@@ -86,15 +86,15 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceD
         return null;
     }
 
-    private ServiceDetails convertQuery(Parameters params, Connect.QueryResults queryResults) {
-        List<ServiceDetails.Parameter> parameters = new ArrayList<>();
+    private QueryResults convertQuery(Parameters params, Connect.QueryResults queryResults) {
+        List<QueryResults.Parameter> parameters = new ArrayList<>();
         for (Connect.Parameter parameter : queryResults.parameters) {
-            parameters.add(new ServiceDetails.Parameter(parameter.key,
-                    Arrays.asList(parameter.values)));
+            parameters.add(new QueryResults.Parameter(parameter.key,
+                                                      Arrays.asList(parameter.values)));
         }
 
-        return new ServiceDetails(params.server, params.service, queryResults.type,
-                queryResults.location, queryResults.version, parameters);
+        return new QueryResults(params.server, params.service, queryResults.type,
+                                queryResults.location, queryResults.version, parameters);
     }
 
     public void cancel() {
@@ -107,6 +107,6 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceD
     }
 
     @Override
-    public abstract void onProgressUpdate(ServiceDetails... details);
+    public abstract void onProgressUpdate(QueryResults... details);
 
 }

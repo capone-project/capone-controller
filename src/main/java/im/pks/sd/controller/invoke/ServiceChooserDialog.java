@@ -30,7 +30,6 @@ import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.DiscoveryTask;
 import im.pks.sd.controller.discovery.ServerListAdapter;
 import im.pks.sd.controller.services.ServiceListAdapter;
-import im.pks.sd.controller.query.ServiceDetails;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.persistence.Identity;
@@ -100,13 +99,13 @@ public abstract class ServiceChooserDialog extends DialogFragment {
     private void query(final ServerTo server, final ServiceTo service) {
         QueryTask task = new QueryTask() {
             @Override
-            public void onProgressUpdate(ServiceDetails... details) {
+            public void onProgressUpdate(QueryResults... details) {
                 onServiceChosen(details[0]);
             }
         };
         task.execute(new QueryTask.Parameters(Identity.getSigningKey(), server, service));
     }
 
-    public abstract void onServiceChosen(ServiceDetails details);
+    public abstract void onServiceChosen(QueryResults details);
 
 }

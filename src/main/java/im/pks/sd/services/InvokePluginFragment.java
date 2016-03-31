@@ -28,7 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
-import im.pks.sd.controller.query.ServiceDetails;
+import im.pks.sd.controller.invoke.QueryResults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +38,10 @@ public class InvokePluginFragment extends PluginFragment {
     private View view;
     private PluginFragment pluginFragment;
 
-    private ServiceDetails invoker;
-    private ServiceDetails service;
+    private QueryResults invoker;
+    private QueryResults service;
 
-    public static InvokePluginFragment createFragment(ServiceDetails invoker) {
+    public static InvokePluginFragment createFragment(QueryResults invoker) {
         InvokePluginFragment fragment = new InvokePluginFragment();
         fragment.invoker = invoker;
         return fragment;
@@ -56,7 +56,7 @@ public class InvokePluginFragment extends PluginFragment {
             public void onClick(View v) {
                 ServiceChooserDialog dialog = new ServiceChooserDialog() {
                     @Override
-                    public void onServiceChosen(ServiceDetails details) {
+                    public void onServiceChosen(QueryResults details) {
                         setServiceDetails(details);
                     }
                 };
@@ -67,7 +67,7 @@ public class InvokePluginFragment extends PluginFragment {
         return view;
     }
 
-    private void setServiceDetails(ServiceDetails details) {
+    private void setServiceDetails(QueryResults details) {
         service = details;
 
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
@@ -93,21 +93,21 @@ public class InvokePluginFragment extends PluginFragment {
     }
 
     @Override
-    public List<ServiceDetails.Parameter> getParameters() {
-        List<ServiceDetails.Parameter> parameters = new ArrayList<>();
-        parameters.add(new ServiceDetails.Parameter("service-identity",
-                                                    service.server.publicKey));
-        parameters.add(new ServiceDetails.Parameter("service-address",
-                                                    service.server.address));
-        parameters.add(new ServiceDetails.Parameter("service-port",
-                                                    String.valueOf(
+    public List<QueryResults.Parameter> getParameters() {
+        List<QueryResults.Parameter> parameters = new ArrayList<>();
+        parameters.add(new QueryResults.Parameter("service-identity",
+                                                  service.server.publicKey));
+        parameters.add(new QueryResults.Parameter("service-address",
+                                                  service.server.address));
+        parameters.add(new QueryResults.Parameter("service-port",
+                                                  String.valueOf(
                                                             service.service.port)));
-        parameters.add(new ServiceDetails.Parameter("service-type",
-                                                    service.type));
+        parameters.add(new QueryResults.Parameter("service-type",
+                                                  service.type));
 
-        for (ServiceDetails.Parameter parameter : pluginFragment.getParameters()) {
-            parameters.add(new ServiceDetails.Parameter("service-args", parameter.name));
-            parameters.add(new ServiceDetails.Parameter("service-args", parameter.values));
+        for (QueryResults.Parameter parameter : pluginFragment.getParameters()) {
+            parameters.add(new QueryResults.Parameter("service-args", parameter.name));
+            parameters.add(new QueryResults.Parameter("service-args", parameter.values));
         }
 
         return parameters;
