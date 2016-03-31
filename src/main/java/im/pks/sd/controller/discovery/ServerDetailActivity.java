@@ -23,7 +23,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.query.ServiceDetailActivity;
 import im.pks.sd.entities.ServerTo;
@@ -40,11 +39,6 @@ public class ServerDetailActivity extends Activity {
         setContentView(R.layout.activity_server_detail);
 
         server = (ServerTo) getIntent().getSerializableExtra(EXTRA_SERVER);
-
-        TextView keyView = (TextView) findViewById(R.id.server_key);
-        keyView.setText(server.publicKey);
-        TextView addressView = (TextView) findViewById(R.id.server_address);
-        addressView.setText(server.address);
 
         final ServiceListAdapter adapter = new ServiceListAdapter(this);
         adapter.addAll(server.services);

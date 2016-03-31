@@ -36,6 +36,15 @@
         <item name="android:paddingBottom">@dimen/list_activity_vertical_margin</item>
     </style>
 
+    <style name="list_item_left_icon">
+        <item name="android:contentDescription">@string/service_image</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+
     <style name="list_item_right_icon">
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">0dp</item>

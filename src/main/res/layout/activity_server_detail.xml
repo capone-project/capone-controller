@@ -4,70 +4,9 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
+        style="@style/list_view"
         android:orientation="vertical"
         tools:context="im.pks.sd.controller.discovery.ServerDetailActivity">
-
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="30sp"
-            android:text="@string/server"/>
-
-    <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        <TableRow>
-
-            <TextView
-                    android:text="@string/server_key"
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            <Space
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent"/>
-
-            <TextView
-                    android:id="@+id/server_key"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
-
-        <TableRow>
-
-            <TextView
-                    android:text="@string/server_address"
-                    android:textStyle="bold"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-            <Space
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent"/>
-
-            <TextView
-                    android:id="@+id/server_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-        </TableRow>
-
-    </TableLayout>
-
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="30sp"
-            android:text="@string/services"/>
 
     <ListView
             android:id="@+id/service_list"

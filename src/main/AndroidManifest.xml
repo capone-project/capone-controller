@@ -24,7 +24,9 @@
         </activity>
         <activity android:name=".identity.IdentityActivity">
         </activity>
-        <activity android:name=".discovery.ServerDetailActivity">
+        <activity
+                android:name=".discovery.ServerDetailActivity"
+                android:label="@string/services">
         </activity>
         <activity android:name=".query.ServiceDetailActivity">
         </activity>

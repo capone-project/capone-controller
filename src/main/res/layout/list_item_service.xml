@@ -1,85 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              xmlns:tools="http://schemas.android.com/tools"
+              style="@style/list_item"
+              android:orientation="horizontal">
 
     <ImageView
+            style="@style/list_item_left_icon"
             android:id="@+id/service_image"
-            android:src="@drawable/service_unknown"
-            android:contentDescription="@string/service_image"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:src="@drawable/service_unknown"/>
 
-    <Space
-            android:layout_width="10dp"
-            android:layout_height="match_parent"/>
-
-    <TableLayout
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_width="0dp"
             android:layout_height="wrap_content">
 
-        <TableRow
-                android:layout_width="match_parent"
+        <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
             <TextView
-                    android:text="@string/service_name"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            <Space
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent"/>
-
-            <TextView
+                    style="@style/list_item_primary_text"
+                    tools:text="Display Foo"
                     android:id="@+id/service_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
-
-        <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    android:layout_alignParentStart="true"/>
 
             <TextView
-                    android:text="@string/service_category"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            <Space
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent"/>
-
-            <TextView
-                    android:id="@+id/service_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
-
-        <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <TextView
-                    android:text="@string/service_port"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-            <Space
-                    android:layout_width="10dp"
-                    android:layout_height="match_parent"/>
-
-            <TextView
+                    style="@style/list_item_secondary_text"
+                    tools:text="65556"
                     android:id="@+id/service_port"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-        </TableRow>
-    </TableLayout>
+                    android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+
+        <TextView
+                style="@style/list_item_secondary_text"
+                tools:text="Display"
+                android:id="@+id/service_type"/>
+
+    </LinearLayout>
 
 </LinearLayout>
