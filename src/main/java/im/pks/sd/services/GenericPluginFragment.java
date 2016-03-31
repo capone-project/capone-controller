@@ -77,7 +77,6 @@ public class GenericPluginFragment extends PluginFragment {
         return view;
     }
 
-    @Override
     public List<QueryResults.Parameter> getParameters() {
         List<QueryResults.Parameter> parameters = new ArrayList<>();
 

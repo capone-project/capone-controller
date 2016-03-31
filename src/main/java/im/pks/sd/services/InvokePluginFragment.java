@@ -17,18 +17,18 @@
 
 package im.pks.sd.services;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.controller.invoke.ServiceChooserDialog;
+import im.pks.sd.controller.invoke.ServiceParametersDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,11 @@ import java.util.List;
 public class InvokePluginFragment extends PluginFragment {
 
     private View view;
-    private PluginFragment pluginFragment;
+    private LinearLayout pluginLayout;
 
     private QueryResults invoker;
     private QueryResults service;
+    private List<QueryResults.Parameter> serviceParameters;
 
     public static InvokePluginFragment createFragment(QueryResults invoker) {
         InvokePluginFragment fragment = new InvokePluginFragment();
@@ -50,14 +51,25 @@ public class InvokePluginFragment extends PluginFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_plugin_invoke, container, false);
 
+        pluginLayout = (LinearLayout) view.findViewById(R.id.plugin_layout);
+
         Button button = (Button) view.findViewById(R.id.button_select_server);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ServiceChooserDialog dialog = new ServiceChooserDialog() {
                     @Override
-                    public void onServiceChosen(QueryResults details) {
-                        setServiceDetails(details);
+                    public void onServiceChosen(final QueryResults details) {
+                        ServiceParametersDialog parametersDialog
+                                = ServiceParametersDialog.createDialog(details);
+                        parametersDialog.setOnParametersChosenListener(
+                                new ServiceParametersDialog.OnParametersChosenListener() {
+                                    @Override
+                                    public void onParametersChosen(List<QueryResults.Parameter> parameters) {
+                                        setServiceDetails(details, parameters);
+                                    }
+                                });
+                        parametersDialog.show(getFragmentManager(), "ServiceParametersDialog");
                     }
                 };
                 dialog.show(getFragmentManager(), "ServiceChooserDialog");
@@ -67,32 +79,25 @@ public class InvokePluginFragment extends PluginFragment {
         return view;
     }
 
-    private void setServiceDetails(QueryResults details) {
-        service = details;
-
-        TextView serverKey = (TextView) view.findViewById(R.id.server_key);
-        serverKey.setText(service.server.publicKey);
-        TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
-        serverAddress.setText(service.server.address);
+    private void setServiceDetails(QueryResults results, List<QueryResults.Parameter> parameters) {
+        this.service = results;
+        this.serviceParameters = parameters;
 
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
         serviceImage.setImageResource(Plugins.getCategoryImageId(service.service.category));
+
+        TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
+        serverAddress.setText(String.format("%s:%d", service.server.address, service.service.port));
+        TextView serverKey = (TextView) view.findViewById(R.id.server_key);
+        serverKey.setText(service.server.publicKey);
         TextView serviceName = (TextView) view.findViewById(R.id.service_name);
         serviceName.setText(service.service.name);
         TextView serviceType = (TextView) view.findViewById(R.id.service_type);
         serviceType.setText(service.service.category);
-        TextView servicePort = (TextView) view.findViewById(R.id.service_port);
-        servicePort.setText(String.valueOf(service.service.port));
 
-        Plugin plugin = Plugins.getPlugin(details);
-        FragmentManager fragmentManager = getChildFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        pluginFragment = plugin.getFragment(service);
-        transaction.add(R.id.plugin_view, pluginFragment);
-        transaction.commit();
+        pluginLayout.setVisibility(View.VISIBLE);
     }
 
-    @Override
     public List<QueryResults.Parameter> getParameters() {
         List<QueryResults.Parameter> parameters = new ArrayList<>();
         parameters.add(new QueryResults.Parameter("service-identity",
@@ -101,11 +106,11 @@ public class InvokePluginFragment extends PluginFragment {
                                                   service.server.address));
         parameters.add(new QueryResults.Parameter("service-port",
                                                   String.valueOf(
-                                                            service.service.port)));
+                                                          service.service.port)));
         parameters.add(new QueryResults.Parameter("service-type",
                                                   service.type));
 
-        for (QueryResults.Parameter parameter : pluginFragment.getParameters()) {
+        for (QueryResults.Parameter parameter : serviceParameters) {
             parameters.add(new QueryResults.Parameter("service-args", parameter.name));
             parameters.add(new QueryResults.Parameter("service-args", parameter.values));
         }

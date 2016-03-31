@@ -93,8 +93,8 @@ public class InvokeActivity extends Activity {
     }
 
     private void setServiceDetails(QueryResults results) {
-        TextView subtype = (TextView) findViewById(R.id.service_type);
-        subtype.setText(results.type);
+        TextView type = (TextView) findViewById(R.id.service_type);
+        type.setText(results.type);
         TextView location = (TextView) findViewById(R.id.service_location);
         location.setText(results.location);
 

@@ -101,6 +101,10 @@
         </TableRow>
     </TableLayout>
 
+    <TextView
+            style="@style/subheader"
+            android:text="@string/parameters"/>
+
     <FrameLayout
             android:id="@+id/plugin_view"
             android:layout_weight="1"
