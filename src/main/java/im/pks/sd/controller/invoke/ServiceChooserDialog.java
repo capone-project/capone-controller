@@ -40,6 +40,7 @@ public abstract class ServiceChooserDialog extends DialogFragment {
     private ListView list;
 
     private DiscoveryTask discovery;
+    private QueryTask query;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -50,7 +51,6 @@ public abstract class ServiceChooserDialog extends DialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                discovery.cancel();
                 dismiss();
             }
         });
@@ -69,6 +69,7 @@ public abstract class ServiceChooserDialog extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 discovery.cancel();
+                discovery = null;
                 showServices(serverAdapter.getItem(position));
             }
         });
@@ -82,6 +83,18 @@ public abstract class ServiceChooserDialog extends DialogFragment {
         discovery.execute();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        if (discovery != null) {
+            discovery.cancel();
+        }
+        if (query != null) {
+            query.cancel();
+        }
+    }
+
     private void showServices(final ServerTo server) {
         final ServiceListAdapter adapter = new ServiceListAdapter(getActivity());
         adapter.addAll(server.services);
@@ -91,19 +104,19 @@ public abstract class ServiceChooserDialog extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 query(server, adapter.getItem(position));
-                dismiss();
             }
         });
     }
 
     private void query(final ServerTo server, final ServiceTo service) {
-        QueryTask task = new QueryTask() {
+        query = new QueryTask() {
             @Override
             public void onProgressUpdate(QueryResults... details) {
                 onServiceChosen(details[0]);
+                dismiss();
             }
         };
-        task.execute(new QueryTask.Parameters(Identity.getSigningKey(), server, service));
+        query.execute(new QueryTask.Parameters(Identity.getSigningKey(), server, service));
     }
 
     public abstract void onServiceChosen(QueryResults details);
