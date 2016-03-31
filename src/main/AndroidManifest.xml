@@ -18,7 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".discovery.DiscoveryListActivity">
+        <activity
+                android:name=".discovery.DiscoveryListActivity"
+                android:label="@string/discovery">
         </activity>
         <activity android:name=".identity.IdentityActivity">
         </activity>

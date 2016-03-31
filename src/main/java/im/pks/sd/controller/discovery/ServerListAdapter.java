@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServerTo;
+import im.pks.sd.persistence.Server;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,16 +43,25 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
     }
 
     private View getServerView(int position, View view) {
-        final ServerTo server = getItem(position);
+        ServerTo to = getItem(position);
+        Server server = Server.findByTo(to);
 
         if (view == null) {
             view = View.inflate(getContext(), R.layout.list_item_server, null);
         }
 
+        TextView name = (TextView) view.findViewById(R.id.server_name);
+        TextView address = (TextView) view.findViewById(R.id.server_address);
+        if (server.getName() == null) {
+            name.setText(server.getAddress());
+            address.setText(null);
+        } else {
+            name.setText(server.getName());
+            address.setText(server.getAddress());
+        }
+
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
-        serverKey.setText(server.publicKey);
-        TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
-        serverAddress.setText(server.address);
+        serverKey.setText(to.publicKey);
 
         return view;
     }
