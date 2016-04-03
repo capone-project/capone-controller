@@ -6,8 +6,9 @@
         android:orientation="vertical"
         tools:context="im.pks.sd.controller.favorites.FavoritesActivity">
 
-    <ListView
-            android:id="@+id/favorites_list"
+    <fragment
+            android:name="im.pks.sd.controller.favorites.FavoritesFragment"
+            android:id="@+id/fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
