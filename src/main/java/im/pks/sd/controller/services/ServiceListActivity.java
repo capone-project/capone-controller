@@ -17,9 +17,9 @@
 
 package im.pks.sd.controller.services;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,7 +27,7 @@ import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.InvokeActivity;
 import im.pks.sd.entities.ServerTo;
 
-public class ServiceListActivity extends Activity {
+public class ServiceListActivity extends AppCompatActivity {
 
     public static final String EXTRA_SERVER = "server";
 

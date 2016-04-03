@@ -17,7 +17,6 @@
 
 package im.pks.sd.controller.invoke;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -25,6 +24,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,7 +40,7 @@ import im.pks.sd.services.PluginTask;
 import im.pks.sd.services.Plugins;
 import org.abstractj.kalium.keys.SigningKey;
 
-public class InvokeActivity extends Activity {
+public class InvokeActivity extends AppCompatActivity {
 
     public static final String EXTRA_SERVER = "server";
     public static final String EXTRA_SERVICE = "service";

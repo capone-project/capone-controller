@@ -17,11 +17,11 @@
 
 package im.pks.sd.controller.favorites;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import im.pks.sd.controller.R;
 
-public class FavoritesActivity extends Activity {
+public class FavoritesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

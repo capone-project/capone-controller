@@ -17,10 +17,10 @@
 
 package im.pks.sd.controller.identity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,7 +33,7 @@ import org.abstractj.kalium.keys.SigningKey;
 
 import java.util.Iterator;
 
-public class IdentityActivity extends Activity {
+public class IdentityActivity extends AppCompatActivity {
 
     private Identity identity;
     private SigningKey signingKey;

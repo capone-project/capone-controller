@@ -1,8 +1,8 @@
 package im.pks.sd.controller.about;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,7 +14,7 @@ import im.pks.sd.controller.R;
 import java.io.InputStream;
 import java.util.Scanner;
 
-public class AboutActivity extends Activity {
+public class AboutActivity extends AppCompatActivity {
 
     private class Library {
         public final String name;

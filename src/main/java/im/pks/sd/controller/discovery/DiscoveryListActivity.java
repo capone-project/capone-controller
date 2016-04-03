@@ -17,11 +17,11 @@
 
 package im.pks.sd.controller.discovery;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import im.pks.sd.controller.R;
 
-public class DiscoveryListActivity extends Activity {
+public class DiscoveryListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
