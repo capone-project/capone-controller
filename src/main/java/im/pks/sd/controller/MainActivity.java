@@ -20,6 +20,8 @@ package im.pks.sd.controller;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import im.pks.sd.controller.about.AboutActivity;
 import im.pks.sd.controller.discovery.DiscoveryListActivity;
@@ -34,6 +36,23 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.about:
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void onFavoritesClicked(View view) {
         startActivity(new Intent(this, FavoritesActivity.class));
     }
@@ -46,7 +65,4 @@ public class MainActivity extends Activity {
         startActivity(new Intent(this, IdentityActivity.class));
     }
 
-    public void onAboutClicked(View view) {
-        startActivity(new Intent(this, AboutActivity.class));
-    }
 }

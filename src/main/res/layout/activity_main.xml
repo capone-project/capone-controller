@@ -37,13 +37,6 @@
             android:layout_height="wrap_content"
             android:onClick="onIdentityClicked"/>
 
-    <Button
-            android:id="@+id/button_about"
-            android:text="@string/about"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="onAboutClicked"/>
-
     <Space
             android:layout_weight="0.5"
             android:layout_width="match_parent"
