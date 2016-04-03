@@ -18,10 +18,10 @@
 package im.pks.sd.controller.favorites;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -39,6 +39,7 @@ public class FavoritesFragment extends Fragment
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private FavoritesAdapter adapter;
+    private DiscoveryTask discovery;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,7 +60,11 @@ public class FavoritesFragment extends Fragment
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Server server = adapter.getItem(position);
 
-        DiscoveryTask discovery =
+        if (discovery != null) {
+            discovery.cancel();
+        }
+
+        discovery =
                 new DiscoveryTask(server, Identity.getSigningKey().getVerifyKey()) {
                     @Override
                     public void onProgressUpdate(ServerTo... server) {
@@ -71,7 +76,6 @@ public class FavoritesFragment extends Fragment
                     }
                 };
         discovery.execute();
-
     }
 
     @Override
@@ -135,6 +139,15 @@ public class FavoritesFragment extends Fragment
                 .setView(name)
                 .setTitle(R.string.title_choose_server_name)
                 .create().show();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (discovery != null) {
+            discovery.cancel();
+            discovery = null;
+        }
     }
 
 }

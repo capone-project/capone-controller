@@ -18,10 +18,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-                android:name=".discovery.DiscoveryListActivity"
-                android:label="@string/discovery">
-        </activity>
         <activity android:name=".identity.IdentityActivity">
         </activity>
         <activity
@@ -32,10 +28,6 @@
                 android:label="@string/service">
         </activity>
         <activity android:name=".about.AboutActivity">
-        </activity>
-        <activity
-                android:name=".favorites.FavoritesActivity"
-                android:label="@string/favorites">
         </activity>
 
         <!-- Plugin activities -->
