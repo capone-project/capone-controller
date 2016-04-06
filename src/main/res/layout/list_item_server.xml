@@ -17,6 +17,7 @@
                     style="@style/list_item_primary_text"
                     tools:text="Name"
                     android:id="@+id/server_name"
+                    android:layout_width="0dp"
                     android:layout_weight="1"/>
 
             <TextView
