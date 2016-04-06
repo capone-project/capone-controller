@@ -22,7 +22,6 @@ import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import nano.Connect;
 import org.abstractj.kalium.crypto.SecretBox;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
@@ -61,7 +60,7 @@ public abstract class ConnectTask extends AsyncTask<ConnectTask.Parameters, Void
             channel.enableEncryption(param.key);
 
             handleConnection(channel);
-        } catch (VerifyKey.SignatureException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {

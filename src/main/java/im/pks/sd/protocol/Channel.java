@@ -79,7 +79,7 @@ public abstract class Channel {
         enableEncryption(new SecretBox(symmetricKey));
     }
 
-    public void enableEncryption(SecretBox key) throws IOException, VerifyKey.SignatureException {
+    public void enableEncryption(SecretBox key) {
         this.key = key;
         this.localNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
         this.remoteNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
