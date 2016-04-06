@@ -7,6 +7,7 @@
 
         <item name="actionBarStyle">@style/AppTheme.ActionBar</item>
         <item name="actionBarTheme">@style/AppTheme.ActionBar.Theme</item>
+        <item name="actionModeStyle">@style/AppTheme.ActionMode</item>
 
         <item name="android:windowContentOverlay">@null</item>
     </style>
@@ -22,6 +23,11 @@
 
     <style name="AppTheme.ActionBar.Text">
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.ActionMode" parent="Widget.AppCompat.ActionMode">
+        <item name="background">@color/accent</item>
+        <item name="backgroundSplit">@color/accent</item>
     </style>
 
     <style name="AppTheme.TabBar" parent="Widget.Design.TabLayout">
