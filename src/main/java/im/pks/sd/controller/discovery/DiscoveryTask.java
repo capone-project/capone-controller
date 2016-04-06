@@ -18,7 +18,6 @@
 package im.pks.sd.controller.discovery;
 
 import android.os.AsyncTask;
-import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.persistence.Server;
@@ -32,9 +31,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -86,10 +82,13 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
                 broadcastSocket.setBroadcast(true);
             }
 
-            UdpChannel broadcastChannel = UdpChannel.createFromSocket(broadcastSocket, broadcastAddress, REMOTE_DISCOVERY_PORT);
+            UdpChannel broadcastChannel = UdpChannel.createFromSocket(broadcastSocket,
+                                                                      broadcastAddress,
+                                                                      REMOTE_DISCOVERY_PORT);
 
             announceSocket = new DatagramSocket(LOCAL_DISCOVERY_PORT);
             announceSocket.setSoTimeout(10000);
+            UdpChannel announceChannel = UdpChannel.createFromSocket(announceSocket, null, 0);
 
             while (true) {
                 broadcastChannel.writeProtobuf(discoverMessage);
@@ -100,26 +99,12 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
                     }
 
                     try {
-                        ByteBuffer lenBuf = ByteBuffer.allocate(4);
-                        DatagramPacket lenPacket = new DatagramPacket(lenBuf.array(), lenBuf.array().length);
-                        announceSocket.receive(lenPacket);
-                        int len = lenBuf.order(ByteOrder.BIG_ENDIAN).getInt();
-                        if (len < 0) {
-                            throw new InvalidParameterException();
-                        }
-
-                        DatagramPacket announcePacket = new DatagramPacket(new byte[len], len);
-                        announceSocket.receive(announcePacket);
-
-                        if (!lenPacket.getAddress().equals(announcePacket.getAddress())) {
-                            continue;
-                        }
-
+                        DatagramPacket announcePacket = announceChannel.peek(512);
                         Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
-                        MessageNano.mergeFrom(announceMessage, announcePacket.getData());
+                        announceChannel.readProtobuf(announceMessage);
 
-                        /* TODO: announce to activities */
-                        ServerTo server = convertAnnouncement(announcePacket.getAddress(), announceMessage);
+                        ServerTo server = convertAnnouncement(announcePacket.getAddress(),
+                                                              announceMessage);
 
                         if (!servers.contains(server)) {
                             servers.add(server);

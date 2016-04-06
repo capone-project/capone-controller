@@ -25,6 +25,7 @@ public class UdpChannel extends Channel {
     private DatagramSocket socket;
     private InetAddress address;
     private int port;
+    private DatagramPacket peekPacket;
 
     private UdpChannel(DatagramSocket socket, InetAddress remoteAddress, int remotePort) {
         super();
@@ -51,8 +52,26 @@ public class UdpChannel extends Channel {
 
     @Override
     protected void read(byte[] msg, int len) throws IOException {
+        if (peekPacket != null) {
+            System.arraycopy(peekPacket.getData(), 0, msg, 0,
+                             Math.min(peekPacket.getLength(), len));
+            peekPacket = null;
+            return;
+        }
+
         DatagramPacket packet = new DatagramPacket(msg, len);
         socket.receive(packet);
+    }
+
+    public DatagramPacket peek(int len) throws IOException {
+        if (peekPacket != null) {
+            return peekPacket;
+        }
+
+        DatagramPacket packet = new DatagramPacket(new byte[len], len);
+        socket.receive(packet);
+        this.peekPacket = packet;
+        return peekPacket;
     }
 
     @Override

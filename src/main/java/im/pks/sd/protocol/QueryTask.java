@@ -18,9 +18,9 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
+import im.pks.sd.controller.invoke.QueryResults;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
-import im.pks.sd.controller.invoke.QueryResults;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
