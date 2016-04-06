@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<ListView
+        android:id="@+id/service_list"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         style="@style/list_view"
         tools:context=".services.ServiceListActivity">
-
-    <ListView
-            android:id="@+id/service_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-</FrameLayout>
+</ListView>
