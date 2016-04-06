@@ -8,7 +8,9 @@
         tools:context="im.pks.sd.controller.MainActivity">
 
     <android.support.design.widget.TabLayout
+            style="@style/AppTheme.TabBar"
             android:id="@+id/tabs"
+            android:background="@color/accent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
