@@ -33,4 +33,8 @@
     <string name="add">Add</string>
     <string name="add_favorite_button">Add favorite button</string>
     <string name="service">Service</string>
+    <string name="title_add_favorite">Add favorite</string>
+    <string name="server_name">Server name</string>
+    <string name="invalid_key">Invalid public key</string>
+    <string name="invalid_address">Invalid address</string>
 </resources>

@@ -21,22 +21,23 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.*;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.*;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.discovery.DiscoveryTask;
 import im.pks.sd.controller.services.ServiceListActivity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.persistence.Server;
+import org.abstractj.kalium.encoders.Encoder;
+import org.abstractj.kalium.keys.VerifyKey;
 
 import java.util.List;
 
 public class FavoritesFragment extends Fragment
-        implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+        implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, View.OnClickListener {
 
     private FavoritesAdapter adapter;
     private DiscoveryTask discovery;
@@ -44,6 +45,9 @@ public class FavoritesFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorites_list, container, false);
+
+        FloatingActionButton button = (FloatingActionButton) view.findViewById(R.id.button_add);
+        button.setOnClickListener(this);
 
         adapter = new FavoritesAdapter(getActivity());
         List<Server> servers = Server.listAll(Server.class);
@@ -55,6 +59,65 @@ public class FavoritesFragment extends Fragment
         list.setOnItemLongClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                              ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        final EditText name = new EditText(getActivity());
+        name.setHint(R.string.server_name);
+        final EditText address = new EditText(getActivity());
+        address.setHint(R.string.server_address);
+        final EditText publicKey = new EditText(getActivity());
+        publicKey.setHint(R.string.public_key);
+
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(name, params);
+        layout.addView(address, params);
+        layout.addView(publicKey, params);
+
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.title_add_favorite)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        addServer(name.getText().toString(),
+                                  address.getText().toString(),
+                                  publicKey.getText().toString());
+                    }
+                })
+                .setView(layout)
+                .show();
+    }
+
+    private void addServer(String name, String address, String publicKey) {
+        try {
+            VerifyKey key = new VerifyKey(publicKey, Encoder.HEX);
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), R.string.invalid_key, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (address == null || address.isEmpty()) {
+            Toast.makeText(getActivity(), R.string.invalid_address, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (name != null && name.isEmpty()) {
+            name = null;
+        }
+
+        Server server = new Server();
+        server.setName(name);
+        server.setAddress(address);
+        server.setPublicKey(publicKey);
+        server.save();
+
+        adapter.add(server);
     }
 
     @Override
