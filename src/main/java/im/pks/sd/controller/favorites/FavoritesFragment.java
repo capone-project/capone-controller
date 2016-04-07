@@ -43,17 +43,18 @@ public class FavoritesFragment extends Fragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ListView list = new ListView(getActivity());
+        View view = inflater.inflate(R.layout.fragment_favorites_list, container, false);
 
         adapter = new FavoritesAdapter(getActivity());
         List<Server> servers = Server.listAll(Server.class);
         adapter.addAll(servers);
 
+        ListView list = (ListView) view.findViewById(R.id.favorites_list);
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
         list.setOnItemLongClickListener(this);
 
-        return list;
+        return view;
     }
 
     @Override
