@@ -128,10 +128,11 @@ public class DiscoveryListFragment extends Fragment
         Server.findByTo(server).delete();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    public void notifyDataSetChanged() {
+        adapter.notifyDataSetChanged();
+    }
 
+    public void startDiscovery() {
         serviceLoader = new DiscoveryTask(servers, Identity.getSigningKey().getVerifyKey()) {
             @Override
             public void onProgressUpdate(ServerTo... server) {
@@ -141,10 +142,11 @@ public class DiscoveryListFragment extends Fragment
         serviceLoader.execute();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        serviceLoader.cancel();
+    public void stopDiscovery() {
+        if (serviceLoader != null) {
+            serviceLoader.cancel();
+            serviceLoader = null;
+        }
     }
 
 }

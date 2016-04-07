@@ -31,15 +31,10 @@ import im.pks.sd.controller.discovery.DiscoveryListFragment;
 import im.pks.sd.controller.favorites.FavoritesFragment;
 import im.pks.sd.controller.identity.IdentityActivity;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
-    private List<Fragment> fragments = Arrays.asList(new Fragment[]{
-            new FavoritesFragment(),
-            new DiscoveryListFragment(),
-    });
+    private FavoritesFragment favoritesFragment = new FavoritesFragment();
+    private DiscoveryListFragment discoveryFragment = new DiscoveryListFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,23 +51,46 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 pager.setCurrentItem(tab.getPosition());
+
+                switch (tab.getPosition()) {
+                    case 0:
+                        favoritesFragment.notifyDataSetChanged();
+                        break;
+                    case 1:
+                        discoveryFragment.notifyDataSetChanged();
+                        discoveryFragment.startDiscovery();
+                        break;
+                }
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                fragments.get(tab.getPosition()).onPause();
+                switch (tab.getPosition()) {
+                    case 0:
+                        favoritesFragment.stopDiscovery();
+                        break;
+                    case 1:
+                        discoveryFragment.stopDiscovery();
+                        break;
+                }
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                fragments.get(tab.getPosition()).onResume();
             }
         });
 
         pager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return fragments.get(position);
+                switch (position) {
+                    case 0:
+                        return favoritesFragment;
+                    case 1:
+                        return discoveryFragment;
+                    default:
+                        return null;
+                }
             }
 
             @Override

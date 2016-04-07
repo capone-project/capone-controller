@@ -141,9 +141,11 @@ public class FavoritesFragment extends Fragment
                 .create().show();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    public void notifyDataSetChanged() {
+        adapter.notifyDataSetChanged();
+    }
+
+    public void stopDiscovery() {
         if (discovery != null) {
             discovery.cancel();
             discovery = null;
