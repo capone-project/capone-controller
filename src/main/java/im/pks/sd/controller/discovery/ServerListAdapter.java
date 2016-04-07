@@ -69,6 +69,8 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
         final ImageButton favorite = (ImageButton) view.findViewById(R.id.button_favorite);
         if (server != null) {
             favorite.setImageResource(android.R.drawable.star_on);
+        } else {
+            favorite.setImageResource(android.R.drawable.star_off);
         }
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -142,7 +142,9 @@ public class FavoritesFragment extends Fragment
     }
 
     public void notifyDataSetChanged() {
-        adapter.notifyDataSetChanged();
+        adapter.clear();
+        List<Server> servers = Server.listAll(Server.class);
+        adapter.addAll(servers);
     }
 
     public void stopDiscovery() {
