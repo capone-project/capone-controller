@@ -33,7 +33,8 @@ import im.pks.sd.controller.invoke.ServiceParametersDialog;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvokePluginFragment extends PluginFragment {
+public class InvokePluginFragment extends PluginFragment
+        implements View.OnClickListener {
 
     private View view;
     private LinearLayout pluginLayout;
@@ -54,29 +55,29 @@ public class InvokePluginFragment extends PluginFragment {
         pluginLayout = (LinearLayout) view.findViewById(R.id.plugin_layout);
 
         Button button = (Button) view.findViewById(R.id.button_select_server);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ServiceChooserDialog dialog = new ServiceChooserDialog() {
-                    @Override
-                    public void onServiceChosen(final QueryResults details) {
-                        ServiceParametersDialog parametersDialog
-                                = ServiceParametersDialog.createDialog(details);
-                        parametersDialog.setOnParametersChosenListener(
-                                new ServiceParametersDialog.OnParametersChosenListener() {
-                                    @Override
-                                    public void onParametersChosen(List<QueryResults.Parameter> parameters) {
-                                        setServiceDetails(details, parameters);
-                                    }
-                                });
-                        parametersDialog.show(getFragmentManager(), "ServiceParametersDialog");
-                    }
-                };
-                dialog.show(getFragmentManager(), "ServiceChooserDialog");
-            }
-        });
+        button.setOnClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        ServiceChooserDialog dialog = new ServiceChooserDialog() {
+            @Override
+            public void onServiceChosen(final QueryResults details) {
+                ServiceParametersDialog parametersDialog
+                        = ServiceParametersDialog.createDialog(details);
+                parametersDialog.setOnParametersChosenListener(
+                        new ServiceParametersDialog.OnParametersChosenListener() {
+                            @Override
+                            public void onParametersChosen(List<QueryResults.Parameter> parameters) {
+                                setServiceDetails(details, parameters);
+                            }
+                        });
+                parametersDialog.show(getFragmentManager(), "ServiceParametersDialog");
+            }
+        };
+        dialog.show(getFragmentManager(), "ServiceChooserDialog");
     }
 
     private void setServiceDetails(QueryResults results, List<QueryResults.Parameter> parameters) {
@@ -101,14 +102,14 @@ public class InvokePluginFragment extends PluginFragment {
     public List<QueryResults.Parameter> getParameters() {
         List<QueryResults.Parameter> parameters = new ArrayList<>();
         parameters.add(new QueryResults.Parameter("service-identity",
-                                                  service.server.publicKey));
+                service.server.publicKey));
         parameters.add(new QueryResults.Parameter("service-address",
-                                                  service.server.address));
+                service.server.address));
         parameters.add(new QueryResults.Parameter("service-port",
-                                                  String.valueOf(
-                                                          service.service.port)));
+                String.valueOf(
+                        service.service.port)));
         parameters.add(new QueryResults.Parameter("service-type",
-                                                  service.type));
+                service.type));
 
         for (QueryResults.Parameter parameter : serviceParameters) {
             parameters.add(new QueryResults.Parameter("service-args", parameter.name));
