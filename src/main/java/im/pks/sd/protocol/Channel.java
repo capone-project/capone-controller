@@ -27,7 +27,6 @@ import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
-import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -92,98 +91,62 @@ public abstract class Channel {
     }
 
     public void write(byte[] msg) throws IOException {
-        if (isEncrypted()) {
-            writeEncrypted(msg);
-        } else {
-            writeUnencrypted(msg);
-        }
-    }
+        ByteBuffer msgBuffer = ByteBuffer.wrap(msg);
 
-    private void writeEncrypted(byte[] msg) throws IOException {
-        ByteBuffer buffer = ByteBuffer.wrap(msg);
-        ByteBuffer plain = ByteBuffer.allocate(512 - SodiumConstants.BOXZERO_BYTES);
+        ByteBuffer plain = ByteBuffer.allocate(512);
+        byte[] pkg;
+
         plain.order(ByteOrder.BIG_ENDIAN).putInt(msg.length);
 
-        while (buffer.hasRemaining()) {
-            try {
-                plain.put(buffer);
-            } catch (BufferOverflowException e) {
-                /* ignore */
+        while (plain.position() > 0 || msgBuffer.hasRemaining()) {
+            int len;
+            if (isEncrypted()) {
+                len = Math.min(plain.capacity() - plain.position(), msgBuffer.remaining());
+            } else {
+                len = Math.min(plain.capacity() - plain.position() - SodiumConstants.BOXZERO_BYTES,
+                        msgBuffer.remaining());
             }
 
-            byte[] cipher = key.encrypt(localNonce, plain.array());
-            incrementNonce(localNonce);
-            incrementNonce(localNonce);
-            write(cipher, cipher.length);
-        }
-    }
+            plain.put(msgBuffer.array(), msgBuffer.position(), len);
+            msgBuffer.position(msgBuffer.position() + len);
 
-    private void writeUnencrypted(byte[] msg) throws IOException {
-        ByteBuffer buffer = ByteBuffer.wrap(msg);
+            if (isEncrypted()) {
+                pkg = key.encrypt(localNonce, plain.array());
+                incrementNonce(localNonce);
+                incrementNonce(localNonce);
+            } else {
+                pkg = plain.array();
+            }
 
-        ByteBuffer packet = ByteBuffer.allocate(512);
-        packet.order(ByteOrder.BIG_ENDIAN).putInt(msg.length);
-
-        while (buffer.hasRemaining()) {
-            buffer.get(packet.array(), packet.position(), Math.min(packet.remaining(),
-                                                                   buffer.remaining()));
-
-            write(packet.array(), packet.capacity());
-            packet.clear();
+            write(pkg, pkg.length);
+            plain.clear();
         }
     }
 
     public byte[] read() throws IOException {
-        if (isEncrypted()) {
-            return readEncrypted();
-        } else {
-            return readUnencrypted();
-        }
-    }
-
-    private byte[] readEncrypted() throws IOException {
-        ByteBuffer cipher = ByteBuffer.allocate(512);
-        read(cipher.array(), cipher.capacity());
-
-        ByteBuffer decrypted = ByteBuffer.wrap(key.decrypt(remoteNonce, cipher.array()));
-        incrementNonce(remoteNonce);
-        incrementNonce(remoteNonce);
-
-        int len = decrypted.order(ByteOrder.BIG_ENDIAN).getInt();
-        ByteBuffer plain = ByteBuffer.allocate(len);
-        plain.put(decrypted.array(), decrypted.position(),
-                  Math.min(decrypted.remaining(), plain.remaining()));
-
-        while (plain.position() < plain.capacity()) {
-            cipher.clear();
-            read(cipher.array(), cipher.capacity());
-
-            plain.put(key.decrypt(remoteNonce, cipher.array()),
-                      0, Math.min(decrypted.capacity(), plain.remaining()));
-            incrementNonce(remoteNonce);
-            incrementNonce(remoteNonce);
-        }
-
-        return plain.array();
-    }
-
-    private byte[] readUnencrypted() throws IOException {
+        ByteBuffer message = null;
         ByteBuffer pkg = ByteBuffer.allocate(512);
-        read(pkg.array(), pkg.capacity());
 
-        int len = pkg.order(ByteOrder.BIG_ENDIAN).getInt();
-        ByteBuffer message = ByteBuffer.allocate(len);
-        message.put(pkg.array(), pkg.position(), len);
-
-        while (message.position() < message.capacity()) {
-            pkg.clear();
+        while (message == null || message.position() < message.capacity()) {
             read(pkg.array(), pkg.capacity());
 
-            try {
-                message.put(pkg);
-            } catch (BufferOverflowException e) {
-                /* ignore */
+            ByteBuffer plain;
+            if (isEncrypted()) {
+                plain = ByteBuffer.wrap(key.decrypt(remoteNonce, pkg.array()));
+                incrementNonce(remoteNonce);
+                incrementNonce(remoteNonce);
+            } else {
+                plain = ByteBuffer.wrap(pkg.array());
             }
+
+            if (message == null) {
+                message = ByteBuffer.allocate(plain.order(ByteOrder.BIG_ENDIAN).getInt());
+            }
+
+            message.put(plain.array(), plain.position(),
+                        Math.min(message.remaining(), plain.remaining()));
+
+            pkg.clear();
         }
 
         return message.array();
