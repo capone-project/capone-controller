@@ -73,6 +73,7 @@ public abstract class ServiceChooserDialog extends DialogFragment {
             }
         });
 
+        stopTasks();
         discovery = new DiscoveryTask(Identity.getSigningKey().getVerifyKey()) {
             @Override
             public void onProgressUpdate(ServerTo... server) {
@@ -85,12 +86,17 @@ public abstract class ServiceChooserDialog extends DialogFragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        stopTasks();
+    }
 
+    private void stopTasks() {
         if (discovery != null) {
             discovery.cancel();
+            discovery = null;
         }
         if (query != null) {
             query.cancel();
+            query = null;
         }
     }
 
@@ -102,12 +108,13 @@ public abstract class ServiceChooserDialog extends DialogFragment {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                query(server, adapter.getItem(position));
+                startQuery(server, adapter.getItem(position));
             }
         });
     }
 
-    private void query(final ServerTo server, final ServiceTo service) {
+    private void startQuery(final ServerTo server, final ServiceTo service) {
+        stopTasks();
         query = new QueryTask() {
             @Override
             public void onProgressUpdate(QueryResults... details) {

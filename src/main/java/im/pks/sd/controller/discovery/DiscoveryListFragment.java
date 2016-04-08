@@ -149,4 +149,10 @@ public class DiscoveryListFragment extends Fragment
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopDiscovery();
+    }
+
 }
