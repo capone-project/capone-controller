@@ -29,6 +29,7 @@ import org.abstractj.kalium.keys.VerifyKey;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public abstract class Channel {
 
@@ -93,8 +94,13 @@ public abstract class Channel {
     public void write(byte[] msg) throws IOException {
         ByteBuffer msgBuffer = ByteBuffer.wrap(msg);
 
-        ByteBuffer plain = ByteBuffer.allocate(512);
         byte[] pkg;
+        ByteBuffer plain;
+        if (isEncrypted()) {
+            plain = ByteBuffer.allocate(512 - SodiumConstants.BOXZERO_BYTES);
+        } else {
+            plain = ByteBuffer.allocate(512);
+        }
 
         plain.order(ByteOrder.BIG_ENDIAN).putInt(msg.length);
 
@@ -109,6 +115,7 @@ public abstract class Channel {
 
             plain.put(msgBuffer.array(), msgBuffer.position(), len);
             msgBuffer.position(msgBuffer.position() + len);
+            Arrays.fill(plain.array(), plain.position(), plain.capacity(), (byte) 0);
 
             if (isEncrypted()) {
                 pkg = key.encrypt(localNonce, plain.array());
