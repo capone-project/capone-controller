@@ -20,8 +20,11 @@ package im.pks.sd.protocol;
 import android.os.AsyncTask;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
+import im.pks.sd.persistence.Identity;
 import nano.Connect;
 import org.abstractj.kalium.crypto.SecretBox;
+import org.abstractj.kalium.encoders.Encoder;
+import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
@@ -55,12 +58,15 @@ public abstract class ConnectTask extends AsyncTask<ConnectTask.Parameters, Void
         try {
             channel = new TcpChannel(param.server.address, param.service.port);
             channel.connect();
+            channel.enableEncryption(Identity.getSigningKey(),
+                    new VerifyKey(param.server.publicKey, Encoder.HEX));
             channel.writeProtobuf(connectionInitiation);
             channel.writeProtobuf(sessionInitiation);
+
             channel.enableEncryption(param.key);
 
             handleConnection(channel);
-        } catch (IOException e) {
+        } catch (VerifyKey.SignatureException | IOException e) {
             e.printStackTrace();
         } finally {
             try {

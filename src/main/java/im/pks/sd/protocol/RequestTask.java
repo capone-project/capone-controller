@@ -19,6 +19,7 @@ package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
 import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.persistence.Identity;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
@@ -67,16 +68,16 @@ public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void
         }
 
         try {
+            VerifyKey remoteKey = new VerifyKey(requestParameters.service.server.publicKey, Encoder.HEX);
+
             channel = new TcpChannel(requestParameters.service.server.address, requestParameters.service.service.port);
             channel.connect();
+            channel.enableEncryption(Identity.getSigningKey(), remoteKey);
 
             Connect.ConnectionInitiationMessage initiation = new Connect
                     .ConnectionInitiationMessage();
             initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
             channel.writeProtobuf(initiation);
-
-            VerifyKey remoteKey = new VerifyKey(requestParameters.service.server.publicKey, Encoder.HEX);
-            channel.enableEncryption(requestParameters.localKey, remoteKey);
 
             Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
             requestMessage.parameters = parameters.toArray(new Connect.Parameter[parameters.size()]);

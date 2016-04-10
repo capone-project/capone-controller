@@ -53,17 +53,16 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryRes
             try {
                 if (isCancelled())
                     return null;
+                VerifyKey remoteKey = new VerifyKey(param.server.publicKey, Encoder.HEX);
 
                 channel = new TcpChannel(param.server.address, param.service.port);
                 channel.connect();
+                channel.enableEncryption(param.localKey, remoteKey);
 
                 Connect.ConnectionInitiationMessage initiation = new Connect
                         .ConnectionInitiationMessage();
                 initiation.type = Connect.ConnectionInitiationMessage.QUERY;
                 channel.writeProtobuf(initiation);
-
-                VerifyKey remoteKey = new VerifyKey(param.server.publicKey, Encoder.HEX);
-                channel.enableEncryption(param.localKey, remoteKey);
 
                 Connect.QueryResults queryResults = new Connect.QueryResults();
                 channel.readProtobuf(queryResults);
@@ -90,11 +89,11 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryRes
         List<QueryResults.Parameter> parameters = new ArrayList<>();
         for (Connect.Parameter parameter : queryResults.parameters) {
             parameters.add(new QueryResults.Parameter(parameter.key,
-                                                      Arrays.asList(parameter.values)));
+                    Arrays.asList(parameter.values)));
         }
 
         return new QueryResults(params.server, params.service, queryResults.type,
-                                queryResults.location, queryResults.version, parameters);
+                queryResults.location, queryResults.version, parameters);
     }
 
     public void cancel() {
