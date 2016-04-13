@@ -22,8 +22,8 @@ import im.pks.sd.persistence.Identity;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.RequestTask;
-import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.encoders.Encoder;
+import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class InvokePluginTask extends PluginTask {
 
         /* TODO: fill parameters with parameters for the specific invoker */
         RequestTask.Parameters parameters =
-                new RequestTask.Parameters(Identity.getSigningKey(),
+                new RequestTask.Parameters(new VerifyKey(invoker.server.publicKey, Encoder.HEX),
                                            service,
                                            Collections.<QueryResults.Parameter>emptyList());
         request.execute(parameters);
@@ -71,8 +71,6 @@ public class InvokePluginTask extends PluginTask {
         parameters.addAll(this.parameters);
         parameters.add(new QueryResults.Parameter("sessionid",
                                                   Integer.toString(session.sessionId)));
-        parameters.add(new QueryResults.Parameter("sessionkey",
-                                                  Encoder.HEX.encode(session.key)));
 
         RequestTask invocationServiceRequest = new RequestTask() {
             @Override
@@ -82,7 +80,7 @@ public class InvokePluginTask extends PluginTask {
         };
 
         RequestTask.Parameters request =
-                new RequestTask.Parameters(Identity.getSigningKey(),
+                new RequestTask.Parameters(Identity.getSigningKey().getVerifyKey(),
                                            invoker,
                                            parameters);
         invocationServiceRequest.execute(request);
@@ -102,7 +100,6 @@ public class InvokePluginTask extends PluginTask {
 
         ConnectTask.Parameters connectParameter =
                 new ConnectTask.Parameters(session.sessionId,
-                                           new SecretBox(session.key),
                                            invoker.server,
                                            invoker.service);
         connectTask.execute(connectParameter);

@@ -22,7 +22,6 @@ import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
-import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -31,14 +30,12 @@ import java.io.IOException;
 public abstract class ConnectTask extends AsyncTask<ConnectTask.Parameters, Void, Void> {
 
     public static class Parameters {
-        public final SecretBox key;
         public final int sessionId;
         public final ServerTo server;
         public final ServiceTo service;
 
-        public Parameters(int sessionId, SecretBox key, ServerTo server, ServiceTo service) {
+        public Parameters(int sessionId, ServerTo server, ServiceTo service) {
             this.sessionId = sessionId;
-            this.key = key;
             this.server = server;
             this.service = service;
         }
@@ -62,8 +59,6 @@ public abstract class ConnectTask extends AsyncTask<ConnectTask.Parameters, Void
                     new VerifyKey(param.server.publicKey, Encoder.HEX));
             channel.writeProtobuf(connectionInitiation);
             channel.writeProtobuf(sessionInitiation);
-
-            channel.enableEncryption(param.key);
 
             handleConnection(channel);
         } catch (VerifyKey.SignatureException | IOException e) {

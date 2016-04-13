@@ -22,7 +22,6 @@ import im.pks.sd.controller.invoke.QueryResults;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
-import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
@@ -32,12 +31,13 @@ import java.util.List;
 public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void, RequestTask.Session> {
 
     public static class Parameters {
-        public final SigningKey localKey;
+        public final VerifyKey identity;
         public final QueryResults service;
         public final List<QueryResults.Parameter> parameters;
 
-        public Parameters(SigningKey localKey, QueryResults service, List<QueryResults.Parameter> parameters) {
-            this.localKey = localKey;
+        public Parameters(VerifyKey identity, QueryResults service,
+                          List<QueryResults.Parameter> parameters) {
+            this.identity = identity;
             this.service = service;
             this.parameters = parameters;
         }
@@ -45,11 +45,9 @@ public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void
 
     public static class Session {
         public final int sessionId;
-        public final byte[] key;
 
-        public Session(int sessionId, byte[] key) {
+        public Session(int sessionId) {
             this.sessionId = sessionId;
-            this.key = key;
         }
     }
 
@@ -67,27 +65,30 @@ public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void
             parameters.add(serviceParam);
         }
 
-        try {
-            VerifyKey remoteKey = new VerifyKey(requestParameters.service.server.publicKey, Encoder.HEX);
+        Connect.ConnectionInitiationMessage initiation = new Connect.ConnectionInitiationMessage();
+        initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
 
-            channel = new TcpChannel(requestParameters.service.server.address, requestParameters.service.service.port);
+        Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
+        requestMessage.parameters = parameters.toArray(new Connect.Parameter[parameters.size()]);
+        requestMessage.identity = requestParameters.identity.toBytes();
+
+        Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
+
+        try {
+            VerifyKey remoteKey = new VerifyKey(requestParameters.service.server.publicKey,
+                                                Encoder.HEX);
+
+            channel = new TcpChannel(requestParameters.service.server.address,
+                                     requestParameters.service.service.port);
             channel.connect();
             channel.enableEncryption(Identity.getSigningKey(), remoteKey);
 
-            Connect.ConnectionInitiationMessage initiation = new Connect
-                    .ConnectionInitiationMessage();
-            initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
             channel.writeProtobuf(initiation);
-
-            Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
-            requestMessage.parameters = parameters.toArray(new Connect.Parameter[parameters.size()]);
-
             channel.writeProtobuf(requestMessage);
 
-            Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
             channel.readProtobuf(sessionMessage);
 
-            return new Session(sessionMessage.sessionid, sessionMessage.sessionkey);
+            return new Session(sessionMessage.sessionid);
         } catch (IOException | VerifyKey.SignatureException e) {
             e.printStackTrace();
             return null;
