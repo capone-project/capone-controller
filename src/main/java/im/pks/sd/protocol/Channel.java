@@ -37,45 +37,61 @@ public abstract class Channel {
     private byte[] remoteNonce;
     private SecretBox key;
 
-    public void enableEncryption(SigningKey localKeys, VerifyKey remoteKey) throws IOException, VerifyKey.SignatureException {
-        final KeyPair keys = new KeyPair();
+    public void enableEncryption(SigningKey signKeys, VerifyKey remoteKey)
+            throws IOException, VerifyKey.SignatureException {
+        final KeyPair emphKeys = new KeyPair();
+        ByteBuffer signBuffer;
 
-        Encryption.SessionKeyMessage sessionKey = new Encryption.SessionKeyMessage();
-        sessionKey.signPk = localKeys.getVerifyKey().toBytes();
-        sessionKey.encryptPk = keys.getPublicKey().toBytes();
-        sessionKey.signature = localKeys.sign(sessionKey.encryptPk);
-        writeProtobuf(sessionKey);
+        signBuffer = ByteBuffer.allocate(SodiumConstants.PUBLICKEY_BYTES * 2);
+        signBuffer.put(signKeys.getVerifyKey().toBytes());
+        signBuffer.put(emphKeys.getPublicKey().toBytes());
 
-        Encryption.SessionKeyMessage remoteSessionKey = new Encryption.SessionKeyMessage();
-        readProtobuf(remoteSessionKey);
+        Encryption.SignedKey signedKey = new Encryption.SignedKey();
+        signedKey.signPk = signKeys.getVerifyKey().toBytes();
+        signedKey.encryptPk = emphKeys.getPublicKey().toBytes();
+        signedKey.signature = signKeys.sign(signBuffer.array());
+        writeProtobuf(signedKey);
 
-        remoteKey.verify(remoteSessionKey.encryptPk, remoteSessionKey.signature);
+        Encryption.SignedKeys signedRemoteKeys = new Encryption.SignedKeys();
+        readProtobuf(signedRemoteKeys);
+
+        if (signedRemoteKeys.signature.length != SodiumConstants.SIGNATURE_BYTES
+                    || signedRemoteKeys.senderPk.length != SodiumConstants.PUBLICKEY_BYTES
+                    || signedRemoteKeys.receiverPk.length != SodiumConstants.PUBLICKEY_BYTES) {
+            throw new RuntimeException();
+        }
+
+        if (!Arrays.equals(signedRemoteKeys.receiverPk, emphKeys.getPublicKey().toBytes())) {
+            throw new RuntimeException();
+        }
+
+        signBuffer.clear();
+        signBuffer.put(signedRemoteKeys.senderPk);
+        signBuffer.put(signedRemoteKeys.receiverPk);
+        remoteKey.verify(signBuffer.array(), signedRemoteKeys.signature);
+
+        signBuffer.clear();
+        signBuffer.put(emphKeys.getPublicKey().toBytes());
+        signBuffer.put(signedRemoteKeys.senderPk);
+        Encryption.SignedKeys signedKeys = new Encryption.SignedKeys();
+        signedKeys.senderPk = emphKeys.getPublicKey().toBytes();
+        signedKeys.receiverPk = signedRemoteKeys.senderPk;
+        signedKeys.signature = signKeys.sign(signBuffer.array());
+        writeProtobuf(signedKeys);
 
         byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
-        Sodium.crypto_scalarmult_curve25519(scalarmult, keys.getPrivateKey().toBytes(),
-                                            remoteSessionKey.encryptPk);
+        Sodium.crypto_scalarmult_curve25519(scalarmult, emphKeys.getPrivateKey().toBytes(),
+                                            signedRemoteKeys.senderPk);
 
-        int bufferLength = scalarmult.length + keys.getPublicKey().toBytes().length +
-                                   remoteSessionKey.encryptPk.length;
+        int bufferLength = scalarmult.length + SodiumConstants.PUBLICKEY_BYTES * 2;
         ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
         buffer.put(scalarmult);
-        buffer.put(keys.getPublicKey().toBytes());
-        buffer.put(remoteSessionKey.encryptPk);
+        buffer.put(emphKeys.getPublicKey().toBytes());
+        buffer.put(signedRemoteKeys.senderPk);
 
         byte[] symmetricKey = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_KEYBYTES];
         Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
                                           buffer.array().length, new byte[0], 0);
-
-        byte[] ephemeralKeySignature = localKeys.sign(symmetricKey);
-        Encryption.EphemeralKeySignatureMessage ephemeralSignatureMessage =
-                new Encryption.EphemeralKeySignatureMessage();
-        ephemeralSignatureMessage.signature = ephemeralKeySignature;
-        writeProtobuf(ephemeralSignatureMessage);
-
-        Encryption.EphemeralKeySignatureMessage remoteEphemeralSignatureMessage =
-                new Encryption.EphemeralKeySignatureMessage();
-        readProtobuf(remoteEphemeralSignatureMessage);
-        remoteKey.verify(symmetricKey, remoteEphemeralSignatureMessage.signature);
 
         enableEncryption(new SecretBox(symmetricKey));
     }
@@ -110,7 +126,7 @@ public abstract class Channel {
                 len = Math.min(plain.capacity() - plain.position(), msgBuffer.remaining());
             } else {
                 len = Math.min(plain.capacity() - plain.position() - SodiumConstants.BOXZERO_BYTES,
-                        msgBuffer.remaining());
+                               msgBuffer.remaining());
             }
 
             plain.put(msgBuffer.array(), msgBuffer.position(), len);
