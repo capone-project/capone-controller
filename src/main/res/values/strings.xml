@@ -38,4 +38,13 @@
     <string name="invalid_key">Invalid public key</string>
     <string name="invalid_address">Invalid address</string>
     <string name="service_was_invoked">The service has been invoked</string>
+    <string name="environment">Environment</string>
+    <string name="executable">Executable</string>
+    <string name="parameter">Parameter</string>
+    <string name="value">Value</string>
+    <string name="title_add_parameter">Add parameter</string>
+    <string name="title_add_environment">Add environment variable</string>
+    <string name="environment_value">Environment value</string>
+    <string name="environment_variable">Environment variable</string>
+    <string name="toast_executable_not_set">Executable is not set</string>
 </resources>

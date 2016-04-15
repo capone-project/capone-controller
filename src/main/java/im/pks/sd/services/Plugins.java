@@ -26,6 +26,8 @@ public class Plugins {
         switch (service.type) {
             case "invoke":
                 return InvokePluginFragment.createFragment(service);
+            case "exec":
+                return ExecPluginFragment.createFragment(service);
             default:
                 return GenericPluginFragment.createFragment(service);
         }
