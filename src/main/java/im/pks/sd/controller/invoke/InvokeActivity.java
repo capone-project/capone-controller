@@ -25,18 +25,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.protocol.QueryTask;
-import im.pks.sd.services.Plugin;
 import im.pks.sd.services.PluginFragment;
-import im.pks.sd.services.PluginTask;
 import im.pks.sd.services.Plugins;
 import org.abstractj.kalium.keys.SigningKey;
 
@@ -46,8 +40,6 @@ public class InvokeActivity extends AppCompatActivity {
     public static final String EXTRA_SERVICE = "service";
 
     private ProgressDialog progressDialog;
-    private PluginFragment fragment;
-    private Plugin plugin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +49,6 @@ public class InvokeActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ServerTo server = (ServerTo) intent.getSerializableExtra(EXTRA_SERVER);
         ServiceTo service = (ServiceTo) intent.getSerializableExtra(EXTRA_SERVICE);
-
-        ImageView serviceImage = (ImageView) findViewById(R.id.service_image);
-        serviceImage.setImageResource(Plugins.getCategoryImageId(service.category));
-
-        TextView serverAddress = (TextView) findViewById(R.id.server_address);
-        serverAddress.setText(String.format("%s:%d", server.address, service.port));
-
-        TextView serviceName = (TextView) findViewById(R.id.service_name);
-        serviceName.setText(service.name);
 
         final QueryTask queryTask = new QueryTask() {
             @Override
@@ -93,30 +76,14 @@ public class InvokeActivity extends AppCompatActivity {
     }
 
     private void setServiceDetails(QueryResults results) {
-        TextView type = (TextView) findViewById(R.id.service_type);
-        type.setText(results.type);
-        TextView location = (TextView) findViewById(R.id.service_location);
-        location.setText(results.location);
+        PluginFragment plugin = Plugins.getPlugin(results);
 
-        plugin = Plugins.getPlugin(results);
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        fragment = plugin.getFragment(results);
-        transaction.add(R.id.plugin_view, fragment);
+        transaction.add(R.id.plugin_view, plugin);
         transaction.commit();
 
         progressDialog.dismiss();
-    }
-
-    public void onInvokeClicked(View view) {
-        PluginTask task = plugin.getTask(fragment);
-        if (task == null) {
-            Toast.makeText(this, R.string.service_handler_not_implemented, Toast.LENGTH_SHORT)
-                    .show();
-            return;
-        }
-
-        task.execute();
     }
 
 }

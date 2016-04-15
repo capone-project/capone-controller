@@ -17,6 +17,7 @@
 
 package im.pks.sd.services;
 
+import android.os.AsyncTask;
 import im.pks.sd.controller.invoke.QueryResults;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.protocol.Channel;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class InvokePluginTask extends PluginTask {
+public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
 
     private final List<QueryResults.Parameter> parameters;
     private final QueryResults invoker;

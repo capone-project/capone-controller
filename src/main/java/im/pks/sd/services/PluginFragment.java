@@ -1,4 +1,4 @@
-/*
+/*GenericPluginFragment
  * Copyright (C) 2016 Patrick Steinhardt
  *
  * This program is free software: you can redistribute it and/or modify

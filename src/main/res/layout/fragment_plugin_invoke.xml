@@ -13,8 +13,9 @@
             android:id="@+id/plugin_layout"
             android:visibility="invisible"
             android:orientation="horizontal"
+            android:layout_weight="1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp">
 
         <ImageView
                 style="@style/list_item_left_icon"
@@ -50,9 +51,24 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
-            android:id="@+id/button_select_server"
-            android:text="@string/select"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <Button
+                style="@style/AppTheme.ButtonBarButton"
+                android:id="@+id/button_select_server"
+                android:text="@string/select"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        <Button
+                style="@style/AppTheme.ButtonBarButton"
+                android:id="@+id/button_invoke"
+                android:text="@string/invoke"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
 </LinearLayout>

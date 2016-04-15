@@ -20,25 +20,15 @@ package im.pks.sd.services;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.QueryResults;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Plugins {
 
-    private static final Map<String, Plugin> plugins = new HashMap<>();
-    private static final Plugin fallback = new GenericPlugin();
-
-    static {
-        InvokePlugin invokePlugin = new InvokePlugin();
-        plugins.put(invokePlugin.getType(), invokePlugin);
-    }
-
-    public static Plugin getPlugin(QueryResults service) {
-        if (plugins.containsKey(service.type)) {
-            return plugins.get(service.type);
+    public static PluginFragment getPlugin(QueryResults service) {
+        switch (service.type) {
+            case "invoke":
+                return InvokePluginFragment.createFragment(service);
+            default:
+                return GenericPluginFragment.createFragment(service);
         }
-
-        return fallback;
     }
 
     public static int getCategoryImageId(String category) {

@@ -58,7 +58,7 @@ public class ServiceParametersDialog extends DialogFragment
         Button button = (Button) view.findViewById(R.id.button_ok);
         button.setOnClickListener(this);
 
-        fragment = Plugins.getPlugin(queryResults).getFragment(queryResults);
+        fragment = Plugins.getPlugin(queryResults);
 
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
