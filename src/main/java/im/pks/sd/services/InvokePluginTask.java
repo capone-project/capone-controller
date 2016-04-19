@@ -52,39 +52,35 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void sendServiceRequest() {
-        RequestTask request = new RequestTask() {
+        /* TODO: fill parameters with parameters for the specific invoker */
+        List<QueryResults.Parameter> parameters = Collections.emptyList();
+        VerifyKey identity = new VerifyKey(invoker.server.publicKey, Encoder.HEX);
+
+        RequestTask request = new RequestTask(identity, service, parameters) {
             @Override
             public void onPostExecute(Session session) {
                 sendInvokeRequest(session);
             }
         };
 
-        /* TODO: fill parameters with parameters for the specific invoker */
-        RequestTask.Parameters parameters =
-                new RequestTask.Parameters(new VerifyKey(invoker.server.publicKey, Encoder.HEX),
-                                           service,
-                                           Collections.<QueryResults.Parameter>emptyList());
-        request.execute(parameters);
+        request.execute();
     }
 
     private void sendInvokeRequest(RequestTask.Session session) {
+        VerifyKey verifyKey = Identity.getSigningKey().getVerifyKey();
         List<QueryResults.Parameter> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
         parameters.add(new QueryResults.Parameter("sessionid",
                                                   Integer.toString(session.sessionId)));
 
-        RequestTask invocationServiceRequest = new RequestTask() {
+        RequestTask invocationServiceRequest = new RequestTask(verifyKey, invoker, parameters) {
             @Override
             public void onPostExecute(Session session) {
                 startSession(session);
             }
         };
 
-        RequestTask.Parameters request =
-                new RequestTask.Parameters(Identity.getSigningKey().getVerifyKey(),
-                                           invoker,
-                                           parameters);
-        invocationServiceRequest.execute(request);
+        invocationServiceRequest.execute();
     }
 
     private void startSession(RequestTask.Session session) {

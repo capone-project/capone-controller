@@ -28,20 +28,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void, RequestTask.Session> {
+public abstract class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
 
-    public static class Parameters {
-        public final VerifyKey identity;
-        public final QueryResults service;
-        public final List<QueryResults.Parameter> parameters;
-
-        public Parameters(VerifyKey identity, QueryResults service,
-                          List<QueryResults.Parameter> parameters) {
-            this.identity = identity;
-            this.service = service;
-            this.parameters = parameters;
-        }
-    }
+    private final VerifyKey identity;
+    private final QueryResults service;
+    private final List<QueryResults.Parameter> parameters;
 
     public static class Session {
         public final int sessionId;
@@ -53,33 +44,36 @@ public abstract class RequestTask extends AsyncTask<RequestTask.Parameters, Void
 
     private Channel channel;
 
-    @Override
-    protected Session doInBackground(Parameters... params) {
-        Parameters requestParameters = params[0];
+    public RequestTask(VerifyKey identity, QueryResults service,
+                       List<QueryResults.Parameter> parameters) {
+        this.identity = identity;
+        this.service = service;
+        this.parameters = parameters;
+    }
 
-        List<Connect.Parameter> parameters = new ArrayList<>();
-        for (QueryResults.Parameter parameter : requestParameters.parameters) {
+    @Override
+    protected Session doInBackground(Void... params) {
+        List<Connect.Parameter> connectParams = new ArrayList<>();
+        for (QueryResults.Parameter parameter : parameters) {
             Connect.Parameter serviceParam = new Connect.Parameter();
             serviceParam.key = parameter.name;
             serviceParam.values = parameter.values.toArray(new String[0]);
-            parameters.add(serviceParam);
+            connectParams.add(serviceParam);
         }
 
         Connect.ConnectionInitiationMessage initiation = new Connect.ConnectionInitiationMessage();
         initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
 
         Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
-        requestMessage.parameters = parameters.toArray(new Connect.Parameter[parameters.size()]);
-        requestMessage.identity = requestParameters.identity.toBytes();
+        requestMessage.parameters = connectParams.toArray(new Connect.Parameter[connectParams.size()]);
+        requestMessage.identity = identity.toBytes();
 
         Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
 
         try {
-            VerifyKey remoteKey = new VerifyKey(requestParameters.service.server.publicKey,
-                                                Encoder.HEX);
+            VerifyKey remoteKey = new VerifyKey(service.server.publicKey, Encoder.HEX);
 
-            channel = new TcpChannel(requestParameters.service.server.address,
-                                     requestParameters.service.service.port);
+            channel = new TcpChannel(service.server.address, service.service.port);
             channel.connect();
             channel.enableEncryption(Identity.getSigningKey(), remoteKey);
 
