@@ -26,7 +26,11 @@ import android.view.ViewGroup;
 import android.widget.*;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.protocol.Channel;
+import im.pks.sd.protocol.ConnectTask;
+import im.pks.sd.protocol.SessionTask;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +110,36 @@ public class ExecPluginFragment extends PluginFragment {
             return;
         }
 
-        return;
+        final TextView consoleView = new TextView(getActivity());
+
+        new AlertDialog.Builder(getActivity())
+                .setView(consoleView)
+                .show();
+
+        SessionTask task = new SessionTask(service, getParameters(), new ConnectTask.Handler() {
+            @Override
+            public void handleConnection(Channel channel) {
+
+                try {
+                    while (true) {
+                        final byte[] bytes = channel.read();
+                        if (bytes == null) {
+                            return;
+                        }
+
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                consoleView.setText(new String(bytes));
+                            }
+                        });
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        task.execute();
     }
 
     private void onAddParameterClicked() {
