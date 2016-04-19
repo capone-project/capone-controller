@@ -39,8 +39,8 @@ public class TcpChannel extends Channel {
     }
 
     @Override
-    protected void read(byte[] msg, int len) throws IOException {
-        socket.getInputStream().read(msg, 0, len);
+    protected int read(byte[] msg, int len) throws IOException {
+        return socket.getInputStream().read(msg, 0, len);
     }
 
     @Override

@@ -151,7 +151,9 @@ public abstract class Channel {
         ByteBuffer pkg = ByteBuffer.allocate(512);
 
         while (message == null || message.position() < message.capacity()) {
-            read(pkg.array(), pkg.capacity());
+            if (read(pkg.array(), pkg.capacity()) < 0) {
+                return null;
+            }
 
             ByteBuffer plain;
             if (isEncrypted()) {
@@ -197,7 +199,7 @@ public abstract class Channel {
 
     protected abstract void write(byte[] msg, int len) throws IOException;
 
-    protected abstract void read(byte[] msg, int len) throws IOException;
+    protected abstract int read(byte[] msg, int len) throws IOException;
 
     public abstract void connect() throws IOException;
 

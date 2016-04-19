@@ -51,16 +51,18 @@ public class UdpChannel extends Channel {
     }
 
     @Override
-    protected void read(byte[] msg, int len) throws IOException {
+    protected int read(byte[] msg, int len) throws IOException {
         if (peekPacket != null) {
+            int length = peekPacket.getLength();
             System.arraycopy(peekPacket.getData(), 0, msg, 0,
-                             Math.min(peekPacket.getLength(), len));
+                             Math.min(length, len));
             peekPacket = null;
-            return;
+            return length;
         }
 
         DatagramPacket packet = new DatagramPacket(msg, len);
         socket.receive(packet);
+        return packet.getLength();
     }
 
     public DatagramPacket peek(int len) throws IOException {
