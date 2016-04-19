@@ -19,9 +19,8 @@ package im.pks.sd.services;
 
 import android.os.AsyncTask;
 import im.pks.sd.controller.invoke.QueryResults;
-import im.pks.sd.persistence.Identity;
-import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.RequestTask;
+import im.pks.sd.protocol.SessionTask;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -65,25 +64,13 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void sendInvokeRequest(RequestTask.Session session) {
-        VerifyKey verifyKey = Identity.getSigningKey().getVerifyKey();
         List<QueryResults.Parameter> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
         parameters.add(new QueryResults.Parameter("sessionid",
                                                   Integer.toString(session.sessionId)));
 
-        RequestTask invocationServiceRequest = new RequestTask(verifyKey, invoker, parameters) {
-            @Override
-            public void onPostExecute(Session session) {
-                startSession(session);
-            }
-        };
-
-        invocationServiceRequest.execute();
-    }
-
-    private void startSession(RequestTask.Session session) {
-        ConnectTask connectTask = new ConnectTask(session.sessionId, invoker);
-        connectTask.execute();
+        SessionTask sessionTask = new SessionTask(invoker, parameters, null);
+        sessionTask.execute();
     }
 
 }
