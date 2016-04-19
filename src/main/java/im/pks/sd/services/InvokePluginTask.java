@@ -84,7 +84,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void startSession(RequestTask.Session session) {
-        ConnectTask connectTask = new ConnectTask() {
+        ConnectTask connectTask = new ConnectTask(session.sessionId, invoker) {
             @Override
             public void handleConnection(Channel channel) {
                 try {
@@ -95,11 +95,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
             }
         };
 
-        ConnectTask.Parameters connectParameter =
-                new ConnectTask.Parameters(session.sessionId,
-                                           invoker.server,
-                                           invoker.service);
-        connectTask.execute(connectParameter);
+        connectTask.execute();
     }
 
 }

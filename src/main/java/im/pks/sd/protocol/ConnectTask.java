@@ -18,8 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.entities.ServerTo;
-import im.pks.sd.entities.ServiceTo;
+import im.pks.sd.controller.invoke.QueryResults;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
@@ -27,36 +26,30 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
-public abstract class ConnectTask extends AsyncTask<ConnectTask.Parameters, Void, Void> {
+public abstract class ConnectTask extends AsyncTask<Void, Void, Void> {
 
-    public static class Parameters {
-        public final int sessionId;
-        public final ServerTo server;
-        public final ServiceTo service;
-
-        public Parameters(int sessionId, ServerTo server, ServiceTo service) {
-            this.sessionId = sessionId;
-            this.server = server;
-            this.service = service;
-        }
-    }
+    private final int sessionId;
+    private final QueryResults service;
 
     private Channel channel = null;
 
-    @Override
-    protected Void doInBackground(Parameters... params) {
-        Parameters param = params[0];
+    public ConnectTask(int sessionId, QueryResults service) {
+        this.sessionId = sessionId;
+        this.service = service;
+    }
 
+    @Override
+    protected Void doInBackground(Void... params) {
         Connect.ConnectionInitiationMessage connectionInitiation = new Connect.ConnectionInitiationMessage();
         connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
         Connect.SessionInitiationMessage sessionInitiation = new Connect.SessionInitiationMessage();
-        sessionInitiation.sessionid = param.sessionId;
+        sessionInitiation.sessionid = sessionId;
 
         try {
-            channel = new TcpChannel(param.server.address, param.service.port);
+            channel = new TcpChannel(service.server.address, service.service.port);
             channel.connect();
             channel.enableEncryption(Identity.getSigningKey(),
-                    new VerifyKey(param.server.publicKey, Encoder.HEX));
+                                     new VerifyKey(service.server.publicKey, Encoder.HEX));
             channel.writeProtobuf(connectionInitiation);
             channel.writeProtobuf(sessionInitiation);
 
