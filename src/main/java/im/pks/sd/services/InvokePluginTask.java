@@ -20,13 +20,11 @@ package im.pks.sd.services;
 import android.os.AsyncTask;
 import im.pks.sd.controller.invoke.QueryResults;
 import im.pks.sd.persistence.Identity;
-import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.RequestTask;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,17 +82,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void startSession(RequestTask.Session session) {
-        ConnectTask connectTask = new ConnectTask(session.sessionId, invoker) {
-            @Override
-            public void handleConnection(Channel channel) {
-                try {
-                    channel.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        };
-
+        ConnectTask connectTask = new ConnectTask(session.sessionId, invoker);
         connectTask.execute();
     }
 

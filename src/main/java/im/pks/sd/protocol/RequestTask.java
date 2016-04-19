@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
+public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
 
     private final VerifyKey identity;
     private final QueryResults service;
@@ -53,6 +53,10 @@ public abstract class RequestTask extends AsyncTask<Void, Void, RequestTask.Sess
 
     @Override
     protected Session doInBackground(Void... params) {
+        return requestSession();
+    }
+
+    public Session requestSession() {
         List<Connect.Parameter> connectParams = new ArrayList<>();
         for (QueryResults.Parameter parameter : parameters) {
             Connect.Parameter serviceParam = new Connect.Parameter();
@@ -65,7 +69,8 @@ public abstract class RequestTask extends AsyncTask<Void, Void, RequestTask.Sess
         initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
 
         Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
-        requestMessage.parameters = connectParams.toArray(new Connect.Parameter[connectParams.size()]);
+        requestMessage.parameters = connectParams.toArray(
+                new Connect.Parameter[connectParams.size()]);
         requestMessage.identity = identity.toBytes();
 
         Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
@@ -98,8 +103,5 @@ public abstract class RequestTask extends AsyncTask<Void, Void, RequestTask.Sess
             }
         }
     }
-
-    @Override
-    public abstract void onPostExecute(RequestTask.Session details);
 
 }

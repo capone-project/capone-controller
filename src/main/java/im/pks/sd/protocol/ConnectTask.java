@@ -26,12 +26,17 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
-public abstract class ConnectTask extends AsyncTask<Void, Void, Void> {
+public class ConnectTask extends AsyncTask<Void, Void, Void> {
+
+    public interface Handler {
+        void handleConnection(Channel channel);
+    }
 
     private final int sessionId;
     private final QueryResults service;
 
-    private Channel channel = null;
+    private Channel channel;
+    private Handler handler;
 
     public ConnectTask(int sessionId, QueryResults service) {
         this.sessionId = sessionId;
@@ -40,6 +45,11 @@ public abstract class ConnectTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
+        connect();
+        return null;
+    }
+
+    public void connect() {
         Connect.ConnectionInitiationMessage connectionInitiation = new Connect.ConnectionInitiationMessage();
         connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
         Connect.SessionInitiationMessage sessionInitiation = new Connect.SessionInitiationMessage();
@@ -53,7 +63,11 @@ public abstract class ConnectTask extends AsyncTask<Void, Void, Void> {
             channel.writeProtobuf(connectionInitiation);
             channel.writeProtobuf(sessionInitiation);
 
-            handleConnection(channel);
+            if (handler != null) {
+                handler.handleConnection(channel);
+            }
+
+            channel.close();
         } catch (VerifyKey.SignatureException | IOException e) {
             e.printStackTrace();
         } finally {
@@ -64,8 +78,10 @@ public abstract class ConnectTask extends AsyncTask<Void, Void, Void> {
                 e.printStackTrace();
             }
         }
+    }
 
-        return null;
+    public void setHandler(Handler handler) {
+        this.handler = handler;
     }
 
     public void cancel() {
@@ -76,7 +92,5 @@ public abstract class ConnectTask extends AsyncTask<Void, Void, Void> {
             }
         }
     }
-
-    public abstract void handleConnection(Channel channel);
 
 }
