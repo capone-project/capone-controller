@@ -61,7 +61,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
         for (QueryResults.Parameter parameter : parameters) {
             Connect.Parameter serviceParam = new Connect.Parameter();
             serviceParam.key = parameter.name;
-            serviceParam.values = parameter.values.toArray(new String[0]);
+            serviceParam.value = parameter.value;
             connectParams.add(serviceParam);
         }
 

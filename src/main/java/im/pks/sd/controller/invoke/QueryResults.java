@@ -28,23 +28,17 @@ import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 public class QueryResults implements Serializable {
 
     public static class Parameter implements Serializable {
         public String name;
-        public List<String> values;
-
-        public Parameter(String name, List<String> values) {
-            this.name = name;
-            this.values = values;
-        }
+        public String value;
 
         public Parameter(String name, String value) {
             this.name = name;
-            this.values = Collections.singletonList(value);
+            this.value = value;
         }
     }
 

@@ -28,7 +28,6 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryResults, Void> {
@@ -88,8 +87,7 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryRes
     private QueryResults convertQuery(Parameters params, Connect.QueryResults queryResults) {
         List<QueryResults.Parameter> parameters = new ArrayList<>();
         for (Connect.Parameter parameter : queryResults.parameters) {
-            parameters.add(new QueryResults.Parameter(parameter.key,
-                    Arrays.asList(parameter.values)));
+            parameters.add(new QueryResults.Parameter(parameter.key, parameter.value));
         }
 
         return new QueryResults(params.server, params.service, queryResults.type,

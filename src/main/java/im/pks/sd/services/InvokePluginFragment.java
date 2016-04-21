@@ -131,7 +131,7 @@ public class InvokePluginFragment extends PluginFragment {
 
         for (QueryResults.Parameter parameter : serviceParameters) {
             parameters.add(new QueryResults.Parameter("service-args", parameter.name));
-            parameters.add(new QueryResults.Parameter("service-args", parameter.values));
+            parameters.add(new QueryResults.Parameter("service-args", parameter.value));
         }
 
         return parameters;
