@@ -17,16 +17,35 @@
 
 package im.pks.sd.entities;
 
+import nano.Discovery;
+import org.abstractj.kalium.keys.PublicKey;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ServerTo implements Serializable {
     public String publicKey;
     public String address;
     public List<ServiceTo> services;
+
+    public static ServerTo fromAnnounce(String address, Discovery.AnnounceMessage announce) {
+        ServerTo server = new ServerTo();
+        server.publicKey = new PublicKey(announce.signKey).toString();
+        server.address = address;
+        server.services = new ArrayList<>();
+
+        for (Discovery.AnnounceMessage.Service announcedService : announce.services) {
+            ServiceTo service = new ServiceTo();
+            service.name = announcedService.name;
+            service.category = announcedService.category;
+            service.port = Integer.valueOf(announcedService.port);
+            server.services.add(service);
+        }
+        return server;
+    }
 
     @Override
     public String toString() {

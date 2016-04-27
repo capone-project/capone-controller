@@ -19,10 +19,7 @@ package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
 import im.pks.sd.entities.ServerTo;
-import im.pks.sd.entities.ServiceTo;
-import im.pks.sd.persistence.Server;
 import nano.Discovery;
-import org.abstractj.kalium.keys.PublicKey;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
@@ -30,7 +27,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 
 public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
 
@@ -38,7 +34,6 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
     public static final int REMOTE_DISCOVERY_PORT = 6667;
     public static final String BROADCAST_ADDRESS = "224.0.0.1";
 
-    private final String address;
     private final VerifyKey key;
 
     private DatagramSocket broadcastSocket;
@@ -46,12 +41,6 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
 
     public DiscoveryTask(VerifyKey key) {
         this.key = key;
-        this.address = BROADCAST_ADDRESS;
-    }
-
-    public DiscoveryTask(Server server, VerifyKey key) {
-        this.key = key;
-        this.address = server.getAddress();
     }
 
     @Override
@@ -62,11 +51,9 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
         discoverMessage.signKey = key.toBytes();
 
         try {
-            InetAddress broadcastAddress = InetAddress.getByName(this.address);
+            InetAddress broadcastAddress = InetAddress.getByName(BROADCAST_ADDRESS);
             broadcastSocket = new DatagramSocket();
-            if (this.address.equals(BROADCAST_ADDRESS)) {
-                broadcastSocket.setBroadcast(true);
-            }
+            broadcastSocket.setBroadcast(true);
 
             UdpChannel broadcastChannel = UdpChannel.createFromSocket(broadcastSocket,
                                                                       broadcastAddress,
@@ -89,8 +76,9 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
                         Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
                         announceChannel.readProtobuf(announceMessage);
 
-                        ServerTo server = convertAnnouncement(announcePacket.getAddress(),
-                                                              announceMessage);
+                        ServerTo server = ServerTo.fromAnnounce(
+                                announcePacket.getAddress().getCanonicalHostName(),
+                                announceMessage);
 
                         publishProgress(server);
                     } catch (SocketTimeoutException e) {
@@ -107,22 +95,6 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
                 announceSocket.close();
         }
         return null;
-    }
-
-    private ServerTo convertAnnouncement(InetAddress address, Discovery.AnnounceMessage announceMessage) {
-        ServerTo server = new ServerTo();
-        server.publicKey = new PublicKey(announceMessage.signKey).toString();
-        server.address = address.getCanonicalHostName();
-        server.services = new ArrayList<>();
-
-        for (Discovery.AnnounceMessage.Service announcedService : announceMessage.services) {
-            ServiceTo service = new ServiceTo();
-            service.name = announcedService.name;
-            service.category = announcedService.category;
-            service.port = Integer.valueOf(announcedService.port);
-            server.services.add(service);
-        }
-        return server;
     }
 
     public void cancel() {

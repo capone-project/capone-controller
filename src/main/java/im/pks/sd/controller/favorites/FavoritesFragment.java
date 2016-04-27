@@ -26,11 +26,11 @@ import android.support.v4.app.Fragment;
 import android.view.*;
 import android.widget.*;
 import im.pks.sd.controller.R;
-import im.pks.sd.protocol.DiscoveryTask;
 import im.pks.sd.controller.services.ServiceListActivity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.persistence.Server;
+import im.pks.sd.protocol.DirectedDiscoveryTask;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -40,7 +40,7 @@ public class FavoritesFragment extends Fragment
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, View.OnClickListener {
 
     private FavoritesAdapter adapter;
-    private DiscoveryTask discovery;
+    private DirectedDiscoveryTask discovery;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -129,13 +129,11 @@ public class FavoritesFragment extends Fragment
         }
 
         discovery =
-                new DiscoveryTask(server, Identity.getSigningKey().getVerifyKey()) {
+                new DirectedDiscoveryTask(Identity.getSigningKey(), server) {
                     @Override
-                    public void onProgressUpdate(ServerTo... server) {
-                        cancel();
-
+                    protected void onPostExecute(ServerTo server) {
                         Intent intent = new Intent(getActivity(), ServiceListActivity.class);
-                        intent.putExtra(ServiceListActivity.EXTRA_SERVER, server[0]);
+                        intent.putExtra(ServiceListActivity.EXTRA_SERVER, server);
                         startActivity(intent);
                     }
                 };
