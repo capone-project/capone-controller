@@ -26,7 +26,7 @@ import android.support.v4.app.Fragment;
 import android.view.*;
 import android.widget.*;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.discovery.DiscoveryTask;
+import im.pks.sd.protocol.DiscoveryTask;
 import im.pks.sd.controller.services.ServiceListActivity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.persistence.Identity;

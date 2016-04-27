@@ -28,6 +28,7 @@ import im.pks.sd.controller.services.ServiceListActivity;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.persistence.Server;
+import im.pks.sd.protocol.DiscoveryTask;
 
 import java.util.ArrayList;
 import java.util.List;

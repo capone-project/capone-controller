@@ -15,13 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.controller.discovery;
+package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.persistence.Server;
-import im.pks.sd.protocol.UdpChannel;
 import nano.Discovery;
 import org.abstractj.kalium.keys.PublicKey;
 import org.abstractj.kalium.keys.VerifyKey;
