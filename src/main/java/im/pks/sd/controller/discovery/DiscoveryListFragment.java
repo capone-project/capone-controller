@@ -134,10 +134,12 @@ public class DiscoveryListFragment extends Fragment
     }
 
     public void startDiscovery() {
-        serviceLoader = new DiscoveryTask(servers, Identity.getSigningKey().getVerifyKey()) {
+        serviceLoader = new DiscoveryTask(Identity.getSigningKey().getVerifyKey()) {
             @Override
             public void onProgressUpdate(ServerTo... server) {
-                adapter.add(server[0]);
+                if (adapter.getPosition(server[0]) == -1) {
+                    adapter.add(server[0]);
+                }
             }
         };
         serviceLoader.execute();

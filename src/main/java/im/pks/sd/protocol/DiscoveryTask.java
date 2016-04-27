@@ -31,17 +31,12 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
 
     public static final int LOCAL_DISCOVERY_PORT = 6668;
     public static final int REMOTE_DISCOVERY_PORT = 6667;
     public static final String BROADCAST_ADDRESS = "224.0.0.1";
-
-    private Set<ServerTo> servers = new HashSet<>();
 
     private final String address;
     private final VerifyKey key;
@@ -50,14 +45,6 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
     private DatagramSocket announceSocket;
 
     public DiscoveryTask(VerifyKey key) {
-        this.key = key;
-        this.address = BROADCAST_ADDRESS;
-    }
-
-    public DiscoveryTask(List<ServerTo> servers, VerifyKey key) {
-        if (servers != null) {
-            this.servers.addAll(servers);
-        }
         this.key = key;
         this.address = BROADCAST_ADDRESS;
     }
@@ -105,10 +92,7 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
                         ServerTo server = convertAnnouncement(announcePacket.getAddress(),
                                                               announceMessage);
 
-                        if (!servers.contains(server)) {
-                            servers.add(server);
-                            publishProgress(server);
-                        }
+                        publishProgress(server);
                     } catch (SocketTimeoutException e) {
                         break;
                     }
