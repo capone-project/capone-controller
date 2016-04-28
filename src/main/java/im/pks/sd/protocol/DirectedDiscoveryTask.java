@@ -47,6 +47,11 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, ServerTo> {
             channel.connect();
             channel.enableEncryption(key, new VerifyKey(server.getPublicKey(), Encoder.HEX));
 
+            Discovery.DiscoverMessage discoverMessage = new Discovery.DiscoverMessage();
+            discoverMessage.version = "0.0.1";
+            discoverMessage.port = 0;
+            discoverMessage.signKey = key.getVerifyKey().toBytes();
+
             Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
             channel.readProtobuf(announceMessage);
 
