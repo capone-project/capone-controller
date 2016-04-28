@@ -50,6 +50,7 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, ServerTo> {
             Discovery.DiscoverMessage discoverMessage = new Discovery.DiscoverMessage();
             discoverMessage.version = "0.0.1";
             discoverMessage.port = 0;
+            channel.writeProtobuf(discoverMessage);
 
             Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
             channel.readProtobuf(announceMessage);
