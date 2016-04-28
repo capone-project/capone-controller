@@ -20,7 +20,6 @@ package im.pks.sd.protocol;
 import android.os.AsyncTask;
 import im.pks.sd.entities.ServerTo;
 import nano.Discovery;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -34,21 +33,14 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
     public static final int REMOTE_DISCOVERY_PORT = 6667;
     public static final String BROADCAST_ADDRESS = "224.0.0.1";
 
-    private final VerifyKey key;
-
     private DatagramSocket broadcastSocket;
     private DatagramSocket announceSocket;
-
-    public DiscoveryTask(VerifyKey key) {
-        this.key = key;
-    }
 
     @Override
     protected Void doInBackground(Void... ignored) {
         Discovery.DiscoverMessage discoverMessage = new Discovery.DiscoverMessage();
         discoverMessage.version = "0.0.1";
         discoverMessage.port = LOCAL_DISCOVERY_PORT;
-        discoverMessage.signKey = key.toBytes();
 
         try {
             InetAddress broadcastAddress = InetAddress.getByName(BROADCAST_ADDRESS);

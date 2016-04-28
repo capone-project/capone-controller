@@ -26,7 +26,6 @@ import android.widget.ListView;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.services.ServiceListActivity;
 import im.pks.sd.entities.ServerTo;
-import im.pks.sd.persistence.Identity;
 import im.pks.sd.persistence.Server;
 import im.pks.sd.protocol.DiscoveryTask;
 
@@ -134,7 +133,7 @@ public class DiscoveryListFragment extends Fragment
     }
 
     public void startDiscovery() {
-        serviceLoader = new DiscoveryTask(Identity.getSigningKey().getVerifyKey()) {
+        serviceLoader = new DiscoveryTask() {
             @Override
             public void onProgressUpdate(ServerTo... server) {
                 if (adapter.getPosition(server[0]) == -1) {

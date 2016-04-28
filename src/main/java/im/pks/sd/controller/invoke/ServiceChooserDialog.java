@@ -75,7 +75,7 @@ public abstract class ServiceChooserDialog extends DialogFragment {
         });
 
         stopTasks();
-        discovery = new DiscoveryTask(Identity.getSigningKey().getVerifyKey()) {
+        discovery = new DiscoveryTask() {
             @Override
             public void onProgressUpdate(ServerTo... server) {
                 serverAdapter.add(server[0]);
