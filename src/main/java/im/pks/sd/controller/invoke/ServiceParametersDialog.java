@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import im.pks.sd.controller.R;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.services.PluginFragment;
 import im.pks.sd.services.Plugins;
 
@@ -35,16 +36,16 @@ public class ServiceParametersDialog extends DialogFragment
         implements View.OnClickListener {
 
     private PluginFragment fragment;
-    private QueryResults queryResults;
+    private ServiceDescriptionTo serviceDescription;
     private OnParametersChosenListener listener;
 
     public interface OnParametersChosenListener {
-        void onParametersChosen(List<QueryResults.Parameter> parameters);
+        void onParametersChosen(List<ServiceDescriptionTo.Parameter> parameters);
     }
 
-    public static ServiceParametersDialog createDialog(QueryResults results) {
+    public static ServiceParametersDialog createDialog(ServiceDescriptionTo serviceDescription) {
         ServiceParametersDialog dialog = new ServiceParametersDialog();
-        dialog.queryResults = results;
+        dialog.serviceDescription = serviceDescription;
         return dialog;
     }
 
@@ -58,7 +59,7 @@ public class ServiceParametersDialog extends DialogFragment
         Button button = (Button) view.findViewById(R.id.button_ok);
         button.setOnClickListener(this);
 
-        fragment = Plugins.getPlugin(queryResults);
+        fragment = Plugins.getPlugin(serviceDescription);
 
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();

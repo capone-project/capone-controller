@@ -23,7 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.invoke.ServiceParametersDialog;
 
@@ -35,13 +35,13 @@ public class InvokePluginFragment extends PluginFragment {
     private View view;
     private LinearLayout pluginLayout;
 
-    private QueryResults invoker;
-    private QueryResults service;
-    private List<QueryResults.Parameter> serviceParameters;
+    private ServiceDescriptionTo invoker;
+    private ServiceDescriptionTo service;
+    private List<ServiceDescriptionTo.Parameter> serviceParameters;
 
     private Button invokeButton;
 
-    public static InvokePluginFragment createFragment(QueryResults invoker) {
+    public static InvokePluginFragment createFragment(ServiceDescriptionTo invoker) {
         InvokePluginFragment fragment = new InvokePluginFragment();
         fragment.invoker = invoker;
         return fragment;
@@ -75,13 +75,13 @@ public class InvokePluginFragment extends PluginFragment {
     private void onSelectClicked() {
         ServiceChooserDialog dialog = new ServiceChooserDialog() {
             @Override
-            public void onServiceChosen(final QueryResults details) {
+            public void onServiceChosen(final ServiceDescriptionTo details) {
                 ServiceParametersDialog parametersDialog
                         = ServiceParametersDialog.createDialog(details);
                 parametersDialog.setOnParametersChosenListener(
                         new ServiceParametersDialog.OnParametersChosenListener() {
                             @Override
-                            public void onParametersChosen(List<QueryResults.Parameter> parameters) {
+                            public void onParametersChosen(List<ServiceDescriptionTo.Parameter> parameters) {
                                 setServiceDetails(details, parameters);
                                 invokeButton.setEnabled(true);
                             }
@@ -98,7 +98,7 @@ public class InvokePluginFragment extends PluginFragment {
         Toast.makeText(getActivity(), R.string.service_was_invoked, Toast.LENGTH_SHORT).show();
     }
 
-    private void setServiceDetails(QueryResults results, List<QueryResults.Parameter> parameters) {
+    private void setServiceDetails(ServiceDescriptionTo results, List<ServiceDescriptionTo.Parameter> parameters) {
         this.service = results;
         this.serviceParameters = parameters;
 
@@ -117,21 +117,21 @@ public class InvokePluginFragment extends PluginFragment {
         pluginLayout.setVisibility(View.VISIBLE);
     }
 
-    public List<QueryResults.Parameter> getParameters() {
-        List<QueryResults.Parameter> parameters = new ArrayList<>();
-        parameters.add(new QueryResults.Parameter("service-identity",
-                                                  service.server.publicKey));
-        parameters.add(new QueryResults.Parameter("service-address",
-                                                  service.server.address));
-        parameters.add(new QueryResults.Parameter("service-port",
-                                                  String.valueOf(
+    public List<ServiceDescriptionTo.Parameter> getParameters() {
+        List<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
+        parameters.add(new ServiceDescriptionTo.Parameter("service-identity",
+                                                          service.server.publicKey));
+        parameters.add(new ServiceDescriptionTo.Parameter("service-address",
+                                                          service.server.address));
+        parameters.add(new ServiceDescriptionTo.Parameter("service-port",
+                                                          String.valueOf(
                                                           service.service.port)));
-        parameters.add(new QueryResults.Parameter("service-type",
-                                                  service.type));
+        parameters.add(new ServiceDescriptionTo.Parameter("service-type",
+                                                          service.type));
 
-        for (QueryResults.Parameter parameter : serviceParameters) {
-            parameters.add(new QueryResults.Parameter("service-args", parameter.name));
-            parameters.add(new QueryResults.Parameter("service-args", parameter.value));
+        for (ServiceDescriptionTo.Parameter parameter : serviceParameters) {
+            parameters.add(new ServiceDescriptionTo.Parameter("service-args", parameter.name));
+            parameters.add(new ServiceDescriptionTo.Parameter("service-args", parameter.value));
         }
 
         return parameters;

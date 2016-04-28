@@ -18,7 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
@@ -31,8 +31,8 @@ import java.util.List;
 public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
 
     private final VerifyKey identity;
-    private final QueryResults service;
-    private final List<QueryResults.Parameter> parameters;
+    private final ServiceDescriptionTo service;
+    private final List<ServiceDescriptionTo.Parameter> parameters;
 
     public static class Session {
         public final int sessionId;
@@ -44,8 +44,8 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
 
     private Channel channel;
 
-    public RequestTask(VerifyKey identity, QueryResults service,
-                       List<QueryResults.Parameter> parameters) {
+    public RequestTask(VerifyKey identity, ServiceDescriptionTo service,
+                       List<ServiceDescriptionTo.Parameter> parameters) {
         this.identity = identity;
         this.service = service;
         this.parameters = parameters;
@@ -58,7 +58,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
 
     public Session requestSession() {
         List<Connect.Parameter> connectParams = new ArrayList<>();
-        for (QueryResults.Parameter parameter : parameters) {
+        for (ServiceDescriptionTo.Parameter parameter : parameters) {
             Connect.Parameter serviceParam = new Connect.Parameter();
             serviceParam.key = parameter.name;
             serviceParam.value = parameter.value;

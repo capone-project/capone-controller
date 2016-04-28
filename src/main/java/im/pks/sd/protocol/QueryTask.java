@@ -18,7 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import nano.Connect;
@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryResults, Void> {
+public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceDescriptionTo, Void> {
 
     public static class Parameters {
         public final SigningKey localKey;
@@ -84,14 +84,14 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryRes
         return null;
     }
 
-    private QueryResults convertQuery(Parameters params, Connect.ServiceDescription queryResults) {
-        List<QueryResults.Parameter> parameters = new ArrayList<>();
+    private ServiceDescriptionTo convertQuery(Parameters params, Connect.ServiceDescription queryResults) {
+        List<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
         for (Connect.Parameter parameter : queryResults.parameters) {
-            parameters.add(new QueryResults.Parameter(parameter.key, parameter.value));
+            parameters.add(new ServiceDescriptionTo.Parameter(parameter.key, parameter.value));
         }
 
-        return new QueryResults(params.server, params.service, queryResults.type,
-                                queryResults.location, queryResults.version, parameters);
+        return new ServiceDescriptionTo(params.server, params.service, queryResults.type,
+                                        queryResults.location, queryResults.version, parameters);
     }
 
     public void cancel() {
@@ -104,6 +104,6 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryRes
     }
 
     @Override
-    public abstract void onProgressUpdate(QueryResults... details);
+    public abstract void onProgressUpdate(ServiceDescriptionTo... description);
 
 }

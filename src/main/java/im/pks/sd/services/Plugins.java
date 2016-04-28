@@ -18,11 +18,11 @@
 package im.pks.sd.services;
 
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 
 public class Plugins {
 
-    public static PluginFragment getPlugin(QueryResults service) {
+    public static PluginFragment getPlugin(ServiceDescriptionTo service) {
         switch (service.type) {
             case "invoke":
                 return InvokePluginFragment.createFragment(service);

@@ -18,7 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.persistence.Identity;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -26,14 +26,14 @@ import java.util.List;
 
 public class SessionTask extends AsyncTask<Void, Void, Void> {
 
-    private final QueryResults service;
-    private final List<QueryResults.Parameter> parameters;
+    private final ServiceDescriptionTo service;
+    private final List<ServiceDescriptionTo.Parameter> parameters;
     private final ConnectTask.Handler handler;
 
     private RequestTask request;
     private ConnectTask connect;
 
-    public SessionTask(QueryResults service, List<QueryResults.Parameter> parameters,
+    public SessionTask(ServiceDescriptionTo service, List<ServiceDescriptionTo.Parameter> parameters,
                        ConnectTask.Handler handler) {
         this.service = service;
         this.parameters = parameters;

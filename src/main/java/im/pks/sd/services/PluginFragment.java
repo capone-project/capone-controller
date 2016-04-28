@@ -18,12 +18,12 @@
 package im.pks.sd.services;
 
 import android.app.Fragment;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 
 import java.util.List;
 
 public abstract class PluginFragment extends Fragment {
 
-    public abstract List<QueryResults.Parameter> getParameters();
+    public abstract List<ServiceDescriptionTo.Parameter> getParameters();
 
 }

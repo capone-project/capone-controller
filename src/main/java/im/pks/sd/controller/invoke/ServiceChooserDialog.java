@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import im.pks.sd.controller.R;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.DiscoveryTask;
 import im.pks.sd.controller.discovery.ServerListAdapter;
 import im.pks.sd.controller.services.ServiceListAdapter;
@@ -117,14 +118,14 @@ public abstract class ServiceChooserDialog extends DialogFragment {
         stopTasks();
         query = new QueryTask() {
             @Override
-            public void onProgressUpdate(QueryResults... details) {
-                onServiceChosen(details[0]);
+            public void onProgressUpdate(ServiceDescriptionTo... description) {
+                onServiceChosen(description[0]);
                 dismiss();
             }
         };
         query.execute(new QueryTask.Parameters(Identity.getSigningKey(), server, service));
     }
 
-    public abstract void onServiceChosen(QueryResults details);
+    public abstract void onServiceChosen(ServiceDescriptionTo description);
 
 }

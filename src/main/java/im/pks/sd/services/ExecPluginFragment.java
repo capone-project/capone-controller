@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import im.pks.sd.controller.R;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.SessionTask;
@@ -36,7 +36,7 @@ import java.util.List;
 
 public class ExecPluginFragment extends PluginFragment {
 
-    private QueryResults service;
+    private ServiceDescriptionTo service;
 
     private EditText executable;
 
@@ -58,7 +58,7 @@ public class ExecPluginFragment extends PluginFragment {
         }
     }
 
-    public static ExecPluginFragment createFragment(QueryResults service) {
+    public static ExecPluginFragment createFragment(ServiceDescriptionTo service) {
         ExecPluginFragment fragment = new ExecPluginFragment();
         fragment.service = service;
         return fragment;
@@ -196,20 +196,20 @@ public class ExecPluginFragment extends PluginFragment {
     }
 
     @Override
-    public List<QueryResults.Parameter> getParameters() {
-        List<QueryResults.Parameter> parameters = new ArrayList<>();
+    public List<ServiceDescriptionTo.Parameter> getParameters() {
+        List<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
 
-        parameters.add(new QueryResults.Parameter("command",
-                                                  executable.getText().toString().trim()));
+        parameters.add(new ServiceDescriptionTo.Parameter("command",
+                                                          executable.getText().toString().trim()));
 
         for (int i = 0; i < parametersAdapter.getCount(); i++) {
             String parameter = parametersAdapter.getItem(i);
-            parameters.add(new QueryResults.Parameter("arg", parameter));
+            parameters.add(new ServiceDescriptionTo.Parameter("arg", parameter));
         }
 
         for (int i = 0; i < environmentAdapter.getCount(); i++) {
             EnvironmentVariable variable = environmentAdapter.getItem(i);
-            parameters.add(new QueryResults.Parameter("env", variable.toString()));
+            parameters.add(new ServiceDescriptionTo.Parameter("env", variable.toString()));
         }
 
         return parameters;

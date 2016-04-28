@@ -22,15 +22,12 @@ submitgit commented on pull request git/git#219
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.controller.invoke;
-
-import im.pks.sd.entities.ServerTo;
-import im.pks.sd.entities.ServiceTo;
+package im.pks.sd.entities;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class QueryResults implements Serializable {
+public class ServiceDescriptionTo implements Serializable {
 
     public static class Parameter implements Serializable {
         public String name;
@@ -49,8 +46,8 @@ public class QueryResults implements Serializable {
     public final String version;
     public final List<Parameter> parameters;
 
-    public QueryResults(ServerTo server, ServiceTo service, String type, String location,
-                        String version, List<Parameter> parameters) {
+    public ServiceDescriptionTo(ServerTo server, ServiceTo service, String type, String location,
+                                String version, List<Parameter> parameters) {
         this.server = server;
         this.service = service;
         this.type = type;

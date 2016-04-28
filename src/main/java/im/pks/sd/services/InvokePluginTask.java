@@ -18,7 +18,7 @@
 package im.pks.sd.services;
 
 import android.os.AsyncTask;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.RequestTask;
 import im.pks.sd.protocol.SessionTask;
 import org.abstractj.kalium.encoders.Encoder;
@@ -30,13 +30,13 @@ import java.util.List;
 
 public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
 
-    private final List<QueryResults.Parameter> parameters;
-    private final QueryResults invoker;
-    private final QueryResults service;
+    private final List<ServiceDescriptionTo.Parameter> parameters;
+    private final ServiceDescriptionTo invoker;
+    private final ServiceDescriptionTo service;
 
-    public InvokePluginTask(QueryResults invoker,
-                            QueryResults service,
-                            List<QueryResults.Parameter> parameters) {
+    public InvokePluginTask(ServiceDescriptionTo invoker,
+                            ServiceDescriptionTo service,
+                            List<ServiceDescriptionTo.Parameter> parameters) {
         this.invoker = invoker;
         this.service = service;
         this.parameters = parameters;
@@ -50,7 +50,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
 
     private void sendServiceRequest() {
         /* TODO: fill parameters with parameters for the specific invoker */
-        List<QueryResults.Parameter> parameters = Collections.emptyList();
+        List<ServiceDescriptionTo.Parameter> parameters = Collections.emptyList();
         VerifyKey identity = new VerifyKey(invoker.server.publicKey, Encoder.HEX);
 
         RequestTask request = new RequestTask(identity, service, parameters) {
@@ -64,10 +64,10 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
     }
 
     private void sendInvokeRequest(RequestTask.Session session) {
-        List<QueryResults.Parameter> parameters = new ArrayList<>();
+        List<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
-        parameters.add(new QueryResults.Parameter("sessionid",
-                                                  Integer.toString(session.sessionId)));
+        parameters.add(new ServiceDescriptionTo.Parameter("sessionid",
+                                                          Integer.toString(session.sessionId)));
 
         SessionTask sessionTask = new SessionTask(invoker, parameters, null);
         sessionTask.execute();

@@ -18,7 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.controller.invoke.QueryResults;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
@@ -33,12 +33,12 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
     }
 
     private final int sessionId;
-    private final QueryResults service;
+    private final ServiceDescriptionTo service;
 
     private Channel channel;
     private Handler handler;
 
-    public ConnectTask(int sessionId, QueryResults service) {
+    public ConnectTask(int sessionId, ServiceDescriptionTo service) {
         this.sessionId = sessionId;
         this.service = service;
     }

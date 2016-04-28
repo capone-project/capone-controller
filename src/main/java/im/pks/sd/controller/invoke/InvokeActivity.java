@@ -26,6 +26,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import im.pks.sd.controller.R;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.persistence.Identity;
@@ -52,8 +53,8 @@ public class InvokeActivity extends AppCompatActivity {
 
         final QueryTask queryTask = new QueryTask() {
             @Override
-            public void onProgressUpdate(QueryResults... details) {
-                setServiceDetails(details[0]);
+            public void onProgressUpdate(ServiceDescriptionTo... description) {
+                setServiceDescription(description[0]);
             }
         };
 
@@ -75,7 +76,7 @@ public class InvokeActivity extends AppCompatActivity {
         });
     }
 
-    private void setServiceDetails(QueryResults results) {
+    private void setServiceDescription(ServiceDescriptionTo results) {
         PluginFragment plugin = Plugins.getPlugin(results);
 
         FragmentManager fragmentManager = getFragmentManager();
