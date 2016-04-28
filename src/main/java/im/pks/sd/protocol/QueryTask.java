@@ -63,7 +63,7 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryRes
                 initiation.type = Connect.ConnectionInitiationMessage.QUERY;
                 channel.writeProtobuf(initiation);
 
-                Connect.QueryResults queryResults = new Connect.QueryResults();
+                Connect.ServiceDescription queryResults = new Connect.ServiceDescription();
                 channel.readProtobuf(queryResults);
 
                 publishProgress(convertQuery(param, queryResults));
@@ -84,14 +84,14 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, QueryRes
         return null;
     }
 
-    private QueryResults convertQuery(Parameters params, Connect.QueryResults queryResults) {
+    private QueryResults convertQuery(Parameters params, Connect.ServiceDescription queryResults) {
         List<QueryResults.Parameter> parameters = new ArrayList<>();
         for (Connect.Parameter parameter : queryResults.parameters) {
             parameters.add(new QueryResults.Parameter(parameter.key, parameter.value));
         }
 
         return new QueryResults(params.server, params.service, queryResults.type,
-                queryResults.location, queryResults.version, parameters);
+                                queryResults.location, queryResults.version, parameters);
     }
 
     public void cancel() {

@@ -55,7 +55,7 @@ public class GenericPluginFragment extends PluginFragment {
         parameters = new HashMap<>();
 
         ArrayAdapter<QueryResults.Parameter> parameterAdapter = new ArrayAdapter<QueryResults.Parameter>(container.getContext(),
-                R.layout.list_item_editable_parameter) {
+                                                                                                         R.layout.list_item_editable_parameter) {
             @Override
             public View getView(final int position, View view, ViewGroup group) {
                 if (view == null) {
