@@ -27,7 +27,6 @@ import android.view.*;
 import android.widget.*;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.services.ServiceListActivity;
-import im.pks.sd.entities.ServerTo;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.persistence.Server;
 import im.pks.sd.protocol.DirectedDiscoveryTask;
@@ -131,10 +130,16 @@ public class FavoritesFragment extends Fragment
         discovery =
                 new DirectedDiscoveryTask(Identity.getSigningKey(), server) {
                     @Override
-                    protected void onPostExecute(ServerTo server) {
-                        Intent intent = new Intent(getActivity(), ServiceListActivity.class);
-                        intent.putExtra(ServiceListActivity.EXTRA_SERVER, server);
-                        startActivity(intent);
+                    protected void onPostExecute(DirectedDiscoveryTask.Result result) {
+                        if (result.server != null) {
+                            Intent intent = new Intent(getActivity(), ServiceListActivity.class);
+                            intent.putExtra(ServiceListActivity.EXTRA_SERVER, result.server);
+                            startActivity(intent);
+                        } else if (result.throwable != null) {
+                            Toast.makeText(FavoritesFragment.this.getActivity(),
+                                           result.throwable.getLocalizedMessage(),
+                                           Toast.LENGTH_SHORT).show();
+                        }
                     }
                 };
         discovery.execute();

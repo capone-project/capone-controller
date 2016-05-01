@@ -27,7 +27,22 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
-public class DirectedDiscoveryTask extends AsyncTask<Void, Void, ServerTo> {
+public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscoveryTask.Result> {
+
+    public static class Result {
+        public final Throwable throwable;
+        public final ServerTo server;
+
+        public Result(ServerTo server) {
+            this.server = server;
+            this.throwable = null;
+        }
+
+        public Result(Throwable throwable) {
+            this.server = null;
+            this.throwable = throwable;
+        }
+    }
 
     private final SigningKey key;
     private final Server server;
@@ -40,7 +55,7 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, ServerTo> {
     }
 
     @Override
-    protected ServerTo doInBackground(Void... params) {
+    protected Result doInBackground(Void... params) {
         channel = new TcpChannel(server.getAddress(), DiscoveryTask.REMOTE_DISCOVERY_PORT);
 
         try {
@@ -55,22 +70,20 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, ServerTo> {
             Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
             channel.readProtobuf(announceMessage);
 
-            return ServerTo.fromAnnounce(server.getAddress(), announceMessage);
+            return new Result(ServerTo.fromAnnounce(server.getAddress(), announceMessage));
         } catch (VerifyKey.SignatureException | IOException e) {
-            e.printStackTrace();
+            return new Result(e);
         } finally {
             try {
                 if (channel != null) {
                     channel.close();
                 }
             } catch (IOException e) {
-                // do nothing
+                // ignore
             } finally {
                 channel = null;
             }
         }
-
-        return null;
     }
 
     public void cancel() {
