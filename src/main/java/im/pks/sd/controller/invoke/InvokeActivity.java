@@ -64,6 +64,7 @@ public class InvokeActivity extends AppCompatActivity {
                     Toast.makeText(InvokeActivity.this,
                                    throwable.getLocalizedMessage(),
                                    Toast.LENGTH_SHORT).show();
+                    finish();
                 }
             }
         };
