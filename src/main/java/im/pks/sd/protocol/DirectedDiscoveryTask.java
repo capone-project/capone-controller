@@ -60,7 +60,9 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, ServerTo> {
             e.printStackTrace();
         } finally {
             try {
-                channel.close();
+                if (channel != null) {
+                    channel.close();
+                }
             } catch (IOException e) {
                 // do nothing
             } finally {
@@ -81,6 +83,7 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, ServerTo> {
                 channel = null;
             }
         }
+        super.cancel(true);
     }
 
 }
