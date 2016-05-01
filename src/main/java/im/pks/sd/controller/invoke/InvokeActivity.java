@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.entities.ServerTo;
@@ -55,6 +56,15 @@ public class InvokeActivity extends AppCompatActivity {
             @Override
             public void onProgressUpdate(ServiceDescriptionTo... description) {
                 setServiceDescription(description[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Throwable throwable) {
+                if (throwable != null) {
+                    Toast.makeText(InvokeActivity.this,
+                                   throwable.getLocalizedMessage(),
+                                   Toast.LENGTH_SHORT).show();
+                }
             }
         };
 

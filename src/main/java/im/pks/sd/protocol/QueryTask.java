@@ -29,7 +29,8 @@ import org.abstractj.kalium.keys.VerifyKey;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceDescriptionTo, Void> {
+public abstract class QueryTask
+        extends AsyncTask<QueryTask.Parameters, ServiceDescriptionTo, Throwable> {
 
     public static class Parameters {
         public final SigningKey localKey;
@@ -46,7 +47,7 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceD
     private Channel channel = null;
 
     @Override
-    protected Void doInBackground(Parameters... params) {
+    protected Throwable doInBackground(Parameters... params) {
         for (Parameters param : params) {
             try {
                 if (isCancelled())
@@ -58,7 +59,7 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceD
                 channel.enableEncryption(param.localKey, remoteKey);
 
                 Connect.ConnectionInitiationMessage initiation = new Connect
-                        .ConnectionInitiationMessage();
+                                                                             .ConnectionInitiationMessage();
                 initiation.type = Connect.ConnectionInitiationMessage.QUERY;
                 channel.writeProtobuf(initiation);
 
@@ -66,16 +67,16 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceD
                 channel.readProtobuf(queryResults);
 
                 publishProgress(convertQuery(param, queryResults));
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (VerifyKey.SignatureException e) {
-                e.printStackTrace();
+
+                return null;
+            } catch (VerifyKey.SignatureException | IOException e) {
+                return e;
             } finally {
                 try {
                     if (channel != null)
                         channel.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    // do nothing
                 }
             }
         }
