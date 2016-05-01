@@ -30,20 +30,19 @@ import im.pks.sd.persistence.Server;
 import im.pks.sd.protocol.DiscoveryTask;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DiscoveryListFragment extends Fragment
         implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
-    private List<ServerTo> servers;
+    private static String EXTRA_SERVERS = "servers";
+
     private DiscoveryTask serviceLoader;
     private ServerListAdapter adapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ListView list = new ListView(getActivity());
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        servers = new ArrayList<>();
         adapter = new ServerListAdapter(getActivity());
         adapter.setOnStarClickedListener(new ServerListAdapter.OnStarClickedListener() {
             @Override
@@ -59,6 +58,27 @@ public class DiscoveryListFragment extends Fragment
                 }
             }
         });
+
+        if (savedInstanceState != null) {
+            ArrayList<ServerTo> servers = savedInstanceState.getParcelableArrayList(EXTRA_SERVERS);
+            adapter.addAll(servers);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        ArrayList<ServerTo> servers = new ArrayList<>(adapter.getCount());
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            servers.add(adapter.getItem(i));
+        }
+
+        outState.putParcelableArrayList(EXTRA_SERVERS, servers);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ListView list = new ListView(getActivity());
 
         list.setAdapter(adapter);
         list.setOnItemClickListener(this);
@@ -129,15 +149,19 @@ public class DiscoveryListFragment extends Fragment
     }
 
     public void notifyDataSetChanged() {
-        adapter.notifyDataSetChanged();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public void startDiscovery() {
         serviceLoader = new DiscoveryTask() {
             @Override
             public void onProgressUpdate(ServerTo... server) {
-                if (adapter.getPosition(server[0]) == -1) {
-                    adapter.add(server[0]);
+                if (adapter != null) {
+                    if (adapter.getPosition(server[0]) == -1) {
+                        adapter.add(server[0]);
+                    }
                 }
             }
         };
