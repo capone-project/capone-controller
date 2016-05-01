@@ -17,19 +17,46 @@
 
 package im.pks.sd.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import nano.Discovery;
 import org.abstractj.kalium.keys.PublicKey;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerTo implements Serializable {
+public class ServerTo implements Parcelable {
     public String publicKey;
     public String address;
     public List<ServiceTo> services;
+
+    public ServerTo() {
+    }
+
+    private ServerTo(Parcel in) {
+        publicKey = in.readString();
+        address = in.readString();
+        services = in.createTypedArrayList(ServiceTo.CREATOR);
+    }
+
+    @Override
+    public String toString() {
+        return publicKey;
+    }
+
+    public static final Creator<ServerTo> CREATOR = new Creator<ServerTo>() {
+        @Override
+        public ServerTo createFromParcel(Parcel in) {
+            return new ServerTo(in);
+        }
+
+        @Override
+        public ServerTo[] newArray(int size) {
+            return new ServerTo[size];
+        }
+    };
 
     public static ServerTo fromAnnounce(String address, Discovery.AnnounceMessage announce) {
         ServerTo server = new ServerTo();
@@ -48,11 +75,6 @@ public class ServerTo implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return publicKey;
-    }
-
-    @Override
     public boolean equals(Object other) {
         return EqualsBuilder.reflectionEquals(this, other);
     }
@@ -60,6 +82,18 @@ public class ServerTo implements Serializable {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(publicKey);
+        dest.writeString(address);
+        dest.writeTypedList(services);
     }
 
 }

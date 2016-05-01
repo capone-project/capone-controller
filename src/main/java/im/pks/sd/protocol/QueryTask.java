@@ -18,8 +18,8 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.entities.ServerTo;
+import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.entities.ServiceTo;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
@@ -28,7 +28,6 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceDescriptionTo, Void> {
 
@@ -85,7 +84,7 @@ public abstract class QueryTask extends AsyncTask<QueryTask.Parameters, ServiceD
     }
 
     private ServiceDescriptionTo convertQuery(Parameters params, Connect.ServiceDescription queryResults) {
-        List<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
+        ArrayList<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
         for (Connect.Parameter parameter : queryResults.parameters) {
             parameters.add(new ServiceDescriptionTo.Parameter(parameter.key, parameter.value));
         }

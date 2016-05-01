@@ -24,12 +24,26 @@ submitgit commented on pull request git/git#219
 
 package im.pks.sd.entities;
 
-import java.io.Serializable;
-import java.util.List;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class ServiceDescriptionTo implements Serializable {
+import java.util.ArrayList;
 
-    public static class Parameter implements Serializable {
+public class ServiceDescriptionTo implements Parcelable {
+
+    public static class Parameter implements Parcelable {
+        public static final Creator<Parameter> CREATOR = new Creator<Parameter>() {
+            @Override
+            public Parameter createFromParcel(Parcel in) {
+                return new Parameter(in);
+            }
+
+            @Override
+            public Parameter[] newArray(int size) {
+                return new Parameter[size];
+            }
+        };
+
         public String name;
         public String value;
 
@@ -37,23 +51,75 @@ public class ServiceDescriptionTo implements Serializable {
             this.name = name;
             this.value = value;
         }
+
+        private Parameter(Parcel in) {
+            name = in.readString();
+            value = in.readString();
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(name);
+            dest.writeString(value);
+        }
     }
+
+    public static final Creator<ServiceDescriptionTo> CREATOR = new Creator<ServiceDescriptionTo>() {
+        @Override
+        public ServiceDescriptionTo createFromParcel(Parcel in) {
+            return new ServiceDescriptionTo(in);
+        }
+
+        @Override
+        public ServiceDescriptionTo[] newArray(int size) {
+            return new ServiceDescriptionTo[size];
+        }
+    };
 
     public final ServerTo server;
     public final ServiceTo service;
     public final String type;
     public final String location;
     public final String version;
-    public final List<Parameter> parameters;
+    public final ArrayList<Parameter> parameters;
 
     public ServiceDescriptionTo(ServerTo server, ServiceTo service, String type, String location,
-                                String version, List<Parameter> parameters) {
+                                String version, ArrayList<Parameter> parameters) {
         this.server = server;
         this.service = service;
         this.type = type;
         this.location = location;
         this.version = version;
         this.parameters = parameters;
+    }
+
+    private ServiceDescriptionTo(Parcel in) {
+        server = in.readParcelable(ServerTo.class.getClassLoader());
+        service = in.readParcelable(ServiceTo.class.getClassLoader());
+        type = in.readString();
+        location = in.readString();
+        version = in.readString();
+        parameters = in.createTypedArrayList(Parameter.CREATOR);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(server, flags);
+        dest.writeParcelable(service, flags);
+        dest.writeString(type);
+        dest.writeString(location);
+        dest.writeString(version);
+        dest.writeTypedList(parameters);
     }
 
 }

@@ -17,15 +17,36 @@
 
 package im.pks.sd.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import java.io.Serializable;
-
-public class ServiceTo implements Serializable {
+public class ServiceTo implements Parcelable {
     public String name;
     public String category;
     public int port;
+
+    public ServiceTo() {
+    }
+
+    private ServiceTo(Parcel in) {
+        name = in.readString();
+        category = in.readString();
+        port = in.readInt();
+    }
+
+    public static final Creator<ServiceTo> CREATOR = new Creator<ServiceTo>() {
+        @Override
+        public ServiceTo createFromParcel(Parcel in) {
+            return new ServiceTo(in);
+        }
+
+        @Override
+        public ServiceTo[] newArray(int size) {
+            return new ServiceTo[size];
+        }
+    };
 
     @Override
     public boolean equals(Object other) {
@@ -37,4 +58,15 @@ public class ServiceTo implements Serializable {
         return HashCodeBuilder.reflectionHashCode(this);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(category);
+        dest.writeInt(port);
+    }
 }
