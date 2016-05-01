@@ -28,11 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
-
-    private final VerifyKey identity;
-    private final ServiceDescriptionTo service;
-    private final List<ServiceDescriptionTo.Parameter> parameters;
+public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
     public static class Session {
         public final int sessionId;
@@ -41,6 +37,24 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
             this.sessionId = sessionId;
         }
     }
+
+    public static class Result {
+        public final Throwable throwable;
+        public final Session session;
+
+        public Result(Throwable throwable) {
+            this.session = null;
+            this.throwable = throwable;
+        }
+        public Result(Session session) {
+            this.session = session;
+            this.throwable = null;
+        }
+    }
+
+    private final VerifyKey identity;
+    private final ServiceDescriptionTo service;
+    private final List<ServiceDescriptionTo.Parameter> parameters;
 
     private Channel channel;
 
@@ -52,11 +66,15 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
     }
 
     @Override
-    protected Session doInBackground(Void... params) {
-        return requestSession();
+    protected Result doInBackground(Void... params) {
+        try {
+            return new Result(requestSession());
+        } catch (IOException | VerifyKey.SignatureException e) {
+            return new Result(e);
+        }
     }
 
-    public Session requestSession() {
+    public Session requestSession() throws IOException, VerifyKey.SignatureException {
         List<Connect.Parameter> connectParams = new ArrayList<>();
         for (ServiceDescriptionTo.Parameter parameter : parameters) {
             Connect.Parameter serviceParam = new Connect.Parameter();
@@ -89,8 +107,17 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Session> {
 
             return new Session(sessionMessage.sessionid);
         } catch (IOException | VerifyKey.SignatureException e) {
-            e.printStackTrace();
-            return null;
+            throw e;
+        } finally {
+            if (channel != null) {
+                try {
+                    channel.close();
+                } catch (IOException e) {
+                    // ignore
+                } finally {
+                    channel = null;
+                }
+            }
         }
     }
 

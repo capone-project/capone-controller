@@ -23,9 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import im.pks.sd.controller.R;
-import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.invoke.ServiceParametersDialog;
+import im.pks.sd.entities.ServiceDescriptionTo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +93,17 @@ public class InvokePluginFragment extends PluginFragment {
     }
 
     private void onInvokeClicked() {
-        new InvokePluginTask(invoker, service, getParameters()).execute();
+        InvokePluginTask task = new InvokePluginTask(invoker, service, getParameters()) {
+            @Override
+            protected void onPostExecute(Throwable throwable) {
+                if (throwable != null) {
+                    Toast.makeText(InvokePluginFragment.this.getActivity(),
+                                   throwable.getLocalizedMessage(),
+                                   Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        task.execute();
 
         Toast.makeText(getActivity(), R.string.service_was_invoked, Toast.LENGTH_SHORT).show();
     }
@@ -125,7 +135,7 @@ public class InvokePluginFragment extends PluginFragment {
                                                           service.server.address));
         parameters.add(new ServiceDescriptionTo.Parameter("service-port",
                                                           String.valueOf(
-                                                          service.service.port)));
+                                                                  service.service.port)));
         parameters.add(new ServiceDescriptionTo.Parameter("service-type",
                                                           service.type));
 

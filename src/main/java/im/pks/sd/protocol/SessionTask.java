@@ -22,9 +22,10 @@ import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.persistence.Identity;
 import org.abstractj.kalium.keys.VerifyKey;
 
+import java.io.IOException;
 import java.util.List;
 
-public class SessionTask extends AsyncTask<Void, Void, Void> {
+public class SessionTask extends AsyncTask<Void, Void, Throwable> {
 
     private final ServiceDescriptionTo service;
     private final List<ServiceDescriptionTo.Parameter> parameters;
@@ -41,18 +42,24 @@ public class SessionTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Throwable doInBackground(Void... params) {
+        try {
+            startSession();
+            return null;
+        } catch (IOException | VerifyKey.SignatureException e) {
+            return e;
+        }
+    }
+
+    public void startSession() throws IOException, VerifyKey.SignatureException {
         VerifyKey identity = Identity.getSigningKey().getVerifyKey();
 
         request = new RequestTask(identity, service, parameters);
         RequestTask.Session session = request.requestSession();
-        request = null;
 
         connect = new ConnectTask(session.sessionId, service);
         connect.setHandler(handler);
         connect.connect();
-
-        return null;
     }
 
     public void cancel() {

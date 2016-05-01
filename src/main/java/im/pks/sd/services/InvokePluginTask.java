@@ -24,11 +24,12 @@ import im.pks.sd.protocol.SessionTask;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
+public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
     private final List<ServiceDescriptionTo.Parameter> parameters;
     private final ServiceDescriptionTo invoker;
@@ -43,34 +44,35 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-        sendServiceRequest();
-        return null;
+    protected Throwable doInBackground(Void... params) {
+        try {
+            RequestTask.Session session = sendSessionRequest();
+            sendInvokeRequest(session);
+            return null;
+        } catch (IOException | VerifyKey.SignatureException e) {
+            return e;
+        }
     }
 
-    private void sendServiceRequest() {
+    private RequestTask.Session sendSessionRequest()
+            throws IOException, VerifyKey.SignatureException {
         /* TODO: fill parameters with parameters for the specific invoker */
         List<ServiceDescriptionTo.Parameter> parameters = Collections.emptyList();
         VerifyKey identity = new VerifyKey(invoker.server.publicKey, Encoder.HEX);
 
-        RequestTask request = new RequestTask(identity, service, parameters) {
-            @Override
-            public void onPostExecute(Session session) {
-                sendInvokeRequest(session);
-            }
-        };
+        RequestTask request = new RequestTask(identity, service, parameters);
 
-        request.execute();
+        return request.requestSession();
     }
 
-    private void sendInvokeRequest(RequestTask.Session session) {
+    private void sendInvokeRequest(RequestTask.Session session) throws IOException, VerifyKey.SignatureException {
         List<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
         parameters.add(new ServiceDescriptionTo.Parameter("sessionid",
                                                           Integer.toString(session.sessionId)));
 
         SessionTask sessionTask = new SessionTask(invoker, parameters, null);
-        sessionTask.execute();
+        sessionTask.startSession();
     }
 
 }
