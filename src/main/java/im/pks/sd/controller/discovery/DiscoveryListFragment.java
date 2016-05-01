@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.services.ServiceListActivity;
 import im.pks.sd.entities.ServerTo;
@@ -162,6 +163,15 @@ public class DiscoveryListFragment extends Fragment
                     if (adapter.getPosition(server[0]) == -1) {
                         adapter.add(server[0]);
                     }
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Throwable throwable) {
+                if (throwable != null) {
+                    Toast.makeText(DiscoveryListFragment.this.getContext(),
+                                   throwable.getLocalizedMessage(),
+                                   Toast.LENGTH_SHORT).show();
                 }
             }
         };

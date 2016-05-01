@@ -27,7 +27,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
-public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
+public class DiscoveryTask extends AsyncTask<Void, ServerTo, Throwable> {
 
     public static final int LOCAL_DISCOVERY_PORT = 6668;
     public static final int REMOTE_DISCOVERY_PORT = 6667;
@@ -37,7 +37,7 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
     private DatagramSocket announceSocket;
 
     @Override
-    protected Void doInBackground(Void... ignored) {
+    protected Throwable doInBackground(Void... ignored) {
         Discovery.DiscoverMessage discoverMessage = new Discovery.DiscoverMessage();
         discoverMessage.version = "0.0.1";
         discoverMessage.port = LOCAL_DISCOVERY_PORT;
@@ -79,14 +79,13 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            return e;
         } finally {
             if (broadcastSocket != null)
                 broadcastSocket.close();
             if (announceSocket != null)
                 announceSocket.close();
         }
-        return null;
     }
 
     public void cancel() {
@@ -96,7 +95,5 @@ public abstract class DiscoveryTask extends AsyncTask<Void, ServerTo, Void> {
             announceSocket.close();
         super.cancel(true);
     }
-
-    public abstract void onProgressUpdate(ServerTo... server);
 
 }

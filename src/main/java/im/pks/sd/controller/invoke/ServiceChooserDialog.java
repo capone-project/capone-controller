@@ -25,6 +25,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.DiscoveryTask;
@@ -79,6 +80,15 @@ public abstract class ServiceChooserDialog extends DialogFragment {
             @Override
             public void onProgressUpdate(ServerTo... server) {
                 serverAdapter.add(server[0]);
+            }
+
+            @Override
+            protected void onPostExecute(Throwable throwable) {
+                if (throwable != null) {
+                    Toast.makeText(ServiceChooserDialog.this.getActivity(),
+                                   throwable.getLocalizedMessage(),
+                                   Toast.LENGTH_SHORT).show();
+                }
             }
         };
         discovery.execute();
