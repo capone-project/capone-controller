@@ -48,8 +48,8 @@ public class InvokeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_service);
 
         Intent intent = getIntent();
-        ServerTo server = (ServerTo) intent.getSerializableExtra(EXTRA_SERVER);
-        ServiceTo service = (ServiceTo) intent.getSerializableExtra(EXTRA_SERVICE);
+        ServerTo server = intent.getParcelableExtra(EXTRA_SERVER);
+        ServiceTo service = intent.getParcelableExtra(EXTRA_SERVICE);
 
         final QueryTask queryTask = new QueryTask() {
             @Override

@@ -38,7 +38,7 @@ public class ServiceListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_list);
 
-        server = (ServerTo) getIntent().getSerializableExtra(EXTRA_SERVER);
+        server = getIntent().getParcelableExtra(EXTRA_SERVER);
 
         final ServiceListAdapter adapter = new ServiceListAdapter(this);
         adapter.addAll(server.services);
