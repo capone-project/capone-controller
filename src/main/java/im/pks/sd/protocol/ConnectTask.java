@@ -26,7 +26,7 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
-public class ConnectTask extends AsyncTask<Void, Void, Void> {
+public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
 
     public interface Handler {
         void handleConnection(Channel channel);
@@ -44,12 +44,16 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-        connect();
-        return null;
+    protected Throwable doInBackground(Void... params) {
+        try {
+            connect();
+            return null;
+        } catch (IOException | VerifyKey.SignatureException e) {
+            return e;
+        }
     }
 
-    public void connect() {
+    public void connect() throws IOException, VerifyKey.SignatureException {
         Connect.ConnectionInitiationMessage connectionInitiation = new Connect.ConnectionInitiationMessage();
         connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
         Connect.SessionInitiationMessage sessionInitiation = new Connect.SessionInitiationMessage();
@@ -69,13 +73,15 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
 
             channel.close();
         } catch (VerifyKey.SignatureException | IOException e) {
-            e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if (channel != null)
                     channel.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                // ignore
+            } finally {
+                channel = null;
             }
         }
     }
@@ -89,6 +95,9 @@ public class ConnectTask extends AsyncTask<Void, Void, Void> {
             try {
                 channel.close();
             } catch (IOException e) {
+                // ignore
+            } finally {
+                channel = null;
             }
         }
     }
