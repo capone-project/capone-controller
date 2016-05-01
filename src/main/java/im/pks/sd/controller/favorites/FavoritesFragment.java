@@ -96,7 +96,7 @@ public class FavoritesFragment extends Fragment
 
     private void addServer(String name, String address, String publicKey) {
         try {
-            VerifyKey key = new VerifyKey(publicKey, Encoder.HEX);
+            new VerifyKey(publicKey, Encoder.HEX);
         } catch (Exception e) {
             Toast.makeText(getActivity(), R.string.invalid_key, Toast.LENGTH_LONG).show();
             return;
