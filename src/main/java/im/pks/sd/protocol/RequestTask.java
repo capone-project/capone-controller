@@ -89,7 +89,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
         Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
         requestMessage.parameters = connectParams.toArray(
                 new Connect.Parameter[connectParams.size()]);
-        requestMessage.identity = identity.toBytes();
+        requestMessage.invoker = identity.toBytes();
 
         Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
 
