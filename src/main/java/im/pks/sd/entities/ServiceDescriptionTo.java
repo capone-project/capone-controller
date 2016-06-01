@@ -1,11 +1,4 @@
 /*
-2 hours ago
-submitgit commented on pull request git/git#219
-@submitgit
-
-    @pranitbauva1997 sent this commit (7e4ba36...a2fa85d) as a patch to the mailing list with submitGit - here on Gmane, MARC
-
-2 hours ago
  * Copyright (C) 2016 Patrick Steinhardt
  *
  * This program is free software: you can redistribute it and/or modify
