@@ -18,6 +18,7 @@
 package im.pks.sd.entities;
 
 import nano.Capabilities;
+import nano.Connect;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class CapabilityRequestTo {
         serviceIdentity = new VerifyKey(request.serviceIdentity);
 
         parameters = new ArrayList<>();
-        for (Capabilities.CapabilityRequest.Parameter parameter : request.parameters) {
+        for (Connect.Parameter parameter : request.parameters) {
             parameters.add(new ParameterTo(parameter.key, parameter.value));
         }
 
