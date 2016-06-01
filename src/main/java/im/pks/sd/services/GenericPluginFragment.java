@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
+import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 
 import java.util.ArrayList;
@@ -54,13 +55,13 @@ public class GenericPluginFragment extends PluginFragment {
 
         parameters = new HashMap<>();
 
-        ArrayAdapter<ServiceDescriptionTo.Parameter> parameterAdapter = new ArrayAdapter<ServiceDescriptionTo.Parameter>(container.getContext(),
-                                                                                                                         R.layout.list_item_editable_parameter) {
+        ArrayAdapter<ParameterTo> parameterAdapter = new ArrayAdapter<ParameterTo>(container.getContext(),
+                                                                                   R.layout.list_item_editable_parameter) {
             @Override
             public View getView(final int position, View view, ViewGroup group) {
                 if (view == null) {
                     view = inflate(GenericPluginFragment.this.getActivity(),
-                            R.layout.list_item_editable_parameter, null);
+                                   R.layout.list_item_editable_parameter, null);
                 }
 
                 final String name = getItem(position).name;
@@ -95,12 +96,11 @@ public class GenericPluginFragment extends PluginFragment {
         return view;
     }
 
-    public List<ServiceDescriptionTo.Parameter> getParameters() {
-        List<ServiceDescriptionTo.Parameter> result = new ArrayList<>();
+    public List<ParameterTo> getParameters() {
+        List<ParameterTo> result = new ArrayList<>();
 
         for (Map.Entry<String, String> edit : parameters.entrySet()) {
-            ServiceDescriptionTo.Parameter parameter
-                    = new ServiceDescriptionTo.Parameter(edit.getKey(), edit.getValue());
+            ParameterTo parameter = new ParameterTo(edit.getKey(), edit.getValue());
             result.add(parameter);
         }
 

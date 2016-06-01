@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import im.pks.sd.controller.R;
+import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.services.PluginFragment;
 import nano.Capabilities;
@@ -76,8 +77,8 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
     }
 
     @Override
-    public List<ServiceDescriptionTo.Parameter> getParameters() {
-        return Collections.singletonList(new ServiceDescriptionTo.Parameter("mode", "register"));
+    public List<ParameterTo> getParameters() {
+        return Collections.singletonList(new ParameterTo("mode", "register"));
     }
 
     @Override

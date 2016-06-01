@@ -31,44 +31,6 @@ import java.util.ArrayList;
 
 public class ServiceDescriptionTo implements Parcelable {
 
-    public static class Parameter implements Parcelable {
-        public static final Creator<Parameter> CREATOR = new Creator<Parameter>() {
-            @Override
-            public Parameter createFromParcel(Parcel in) {
-                return new Parameter(in);
-            }
-
-            @Override
-            public Parameter[] newArray(int size) {
-                return new Parameter[size];
-            }
-        };
-
-        public String name;
-        public String value;
-
-        public Parameter(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        private Parameter(Parcel in) {
-            name = in.readString();
-            value = in.readString();
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(name);
-            dest.writeString(value);
-        }
-    }
-
     public static final Creator<ServiceDescriptionTo> CREATOR = new Creator<ServiceDescriptionTo>() {
         @Override
         public ServiceDescriptionTo createFromParcel(Parcel in) {
@@ -86,10 +48,10 @@ public class ServiceDescriptionTo implements Parcelable {
     public final String type;
     public final String location;
     public final String version;
-    public final ArrayList<Parameter> parameters;
+    public final ArrayList<ParameterTo> parameters;
 
     public ServiceDescriptionTo(ServerTo server, ServiceTo service, String type, String location,
-                                String version, ArrayList<Parameter> parameters) {
+                                String version, ArrayList<ParameterTo> parameters) {
         this.server = server;
         this.service = service;
         this.type = type;
@@ -104,7 +66,7 @@ public class ServiceDescriptionTo implements Parcelable {
         type = in.readString();
         location = in.readString();
         version = in.readString();
-        parameters = in.createTypedArrayList(Parameter.CREATOR);
+        parameters = in.createTypedArrayList(ParameterTo.CREATOR);
     }
 
     @Override

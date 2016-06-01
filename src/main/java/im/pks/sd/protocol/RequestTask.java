@@ -18,6 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
+import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
@@ -57,12 +58,12 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     private final String serviceIdentity;
     private final String serviceAddress;
     private final int servicePort;
-    private final List<ServiceDescriptionTo.Parameter> parameters;
+    private final List<ParameterTo> parameters;
 
     private Channel channel;
 
     public RequestTask(VerifyKey invoker, ServiceDescriptionTo service,
-                       List<ServiceDescriptionTo.Parameter> parameters) {
+                       List<ParameterTo> parameters) {
         this.invoker = invoker;
         this.serviceIdentity = service.server.publicKey;
         this.serviceAddress = service.server.address;
@@ -72,7 +73,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
     public RequestTask(VerifyKey invoker, VerifyKey serviceIdentity,
                        String serviceAddress, int servicePort,
-                       List<ServiceDescriptionTo.Parameter> parameters) {
+                       List<ParameterTo> parameters) {
         this.invoker = invoker;
         this.serviceIdentity = serviceIdentity.toString();
         this.serviceAddress = serviceAddress;
@@ -92,7 +93,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     public Session requestSession() throws IOException, VerifyKey.SignatureException {
         List<Connect.Parameter> connectParams = new ArrayList<>();
         if (parameters != null) {
-            for (ServiceDescriptionTo.Parameter parameter : parameters) {
+            for (ParameterTo parameter : parameters) {
                 Connect.Parameter serviceParam = new Connect.Parameter();
                 serviceParam.key = parameter.name;
                 serviceParam.value = parameter.value;

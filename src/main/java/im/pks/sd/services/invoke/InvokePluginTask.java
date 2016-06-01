@@ -18,6 +18,7 @@
 package im.pks.sd.services.invoke;
 
 import android.os.AsyncTask;
+import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.RequestTask;
 import im.pks.sd.protocol.SessionTask;
@@ -31,13 +32,13 @@ import java.util.List;
 
 public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
-    private final List<ServiceDescriptionTo.Parameter> parameters;
+    private final List<ParameterTo> parameters;
     private final ServiceDescriptionTo invoker;
     private final ServiceDescriptionTo service;
 
     public InvokePluginTask(ServiceDescriptionTo invoker,
                             ServiceDescriptionTo service,
-                            List<ServiceDescriptionTo.Parameter> parameters) {
+                            List<ParameterTo> parameters) {
         this.invoker = invoker;
         this.service = service;
         this.parameters = parameters;
@@ -57,7 +58,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
     private RequestTask.Session sendSessionRequest()
             throws IOException, VerifyKey.SignatureException {
         /* TODO: fill parameters with parameters for the specific invoker */
-        List<ServiceDescriptionTo.Parameter> parameters = Collections.emptyList();
+        List<ParameterTo> parameters = Collections.emptyList();
         VerifyKey identity = new VerifyKey(invoker.server.publicKey, Encoder.HEX);
 
         RequestTask request = new RequestTask(identity, service, parameters);
@@ -66,10 +67,9 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
     }
 
     private void sendInvokeRequest(RequestTask.Session session) throws IOException, VerifyKey.SignatureException {
-        List<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
+        List<ParameterTo> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
-        parameters.add(new ServiceDescriptionTo.Parameter("sessionid",
-                                                          Integer.toString(session.sessionId)));
+        parameters.add(new ParameterTo("sessionid", Integer.toString(session.sessionId)));
 
         SessionTask sessionTask = new SessionTask(invoker, parameters, null);
         sessionTask.startSession();

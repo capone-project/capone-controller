@@ -18,6 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
+import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServerTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.entities.ServiceTo;
@@ -85,9 +86,9 @@ public abstract class QueryTask
     }
 
     private ServiceDescriptionTo convertQuery(Parameters params, Connect.ServiceDescription queryResults) {
-        ArrayList<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
+        ArrayList<ParameterTo> parameters = new ArrayList<>();
         for (Connect.Parameter parameter : queryResults.parameters) {
-            parameters.add(new ServiceDescriptionTo.Parameter(parameter.key, parameter.value));
+            parameters.add(new ParameterTo(parameter.key, parameter.value));
         }
 
         return new ServiceDescriptionTo(params.server, params.service, queryResults.type,

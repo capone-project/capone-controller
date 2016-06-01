@@ -18,6 +18,7 @@
 package im.pks.sd.services.capabilities;
 
 import android.os.AsyncTask;
+import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
@@ -36,7 +37,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     private final ServiceDescriptionTo service;
-    private final List<ServiceDescriptionTo.Parameter> parameters;
+    private final List<ParameterTo> parameters;
 
     public static class Result {
         public final Throwable t;
@@ -54,8 +55,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     private RequestListener listener;
     private SessionTask sessionTask;
 
-    public CapabilityRequestsTask(ServiceDescriptionTo service, List<ServiceDescriptionTo.Parameter>
-                                                                parameters) {
+    public CapabilityRequestsTask(ServiceDescriptionTo service, List<ParameterTo> parameters) {
         this.service = service;
         this.parameters = parameters;
     }

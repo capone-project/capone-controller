@@ -25,6 +25,7 @@ import android.widget.*;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.invoke.ServiceParametersDialog;
+import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.services.PluginFragment;
 import im.pks.sd.services.Plugins;
@@ -39,7 +40,7 @@ public class InvokePluginFragment extends PluginFragment {
 
     private ServiceDescriptionTo invoker;
     private ServiceDescriptionTo service;
-    private List<ServiceDescriptionTo.Parameter> serviceParameters;
+    private List<ParameterTo> serviceParameters;
 
     private Button invokeButton;
 
@@ -83,7 +84,7 @@ public class InvokePluginFragment extends PluginFragment {
                 parametersDialog.setOnParametersChosenListener(
                         new ServiceParametersDialog.OnParametersChosenListener() {
                             @Override
-                            public void onParametersChosen(List<ServiceDescriptionTo.Parameter> parameters) {
+                            public void onParametersChosen(List<ParameterTo> parameters) {
                                 setServiceDetails(details, parameters);
                                 invokeButton.setEnabled(true);
                             }
@@ -110,7 +111,7 @@ public class InvokePluginFragment extends PluginFragment {
         Toast.makeText(getActivity(), R.string.service_was_invoked, Toast.LENGTH_SHORT).show();
     }
 
-    private void setServiceDetails(ServiceDescriptionTo results, List<ServiceDescriptionTo.Parameter> parameters) {
+    private void setServiceDetails(ServiceDescriptionTo results, List<ParameterTo> parameters) {
         this.service = results;
         this.serviceParameters = parameters;
 
@@ -129,21 +130,16 @@ public class InvokePluginFragment extends PluginFragment {
         pluginLayout.setVisibility(View.VISIBLE);
     }
 
-    public List<ServiceDescriptionTo.Parameter> getParameters() {
-        List<ServiceDescriptionTo.Parameter> parameters = new ArrayList<>();
-        parameters.add(new ServiceDescriptionTo.Parameter("service-identity",
-                                                          service.server.publicKey));
-        parameters.add(new ServiceDescriptionTo.Parameter("service-address",
-                                                          service.server.address));
-        parameters.add(new ServiceDescriptionTo.Parameter("service-port",
-                                                          String.valueOf(
-                                                                  service.service.port)));
-        parameters.add(new ServiceDescriptionTo.Parameter("service-type",
-                                                          service.type));
+    public List<ParameterTo> getParameters() {
+        List<ParameterTo> parameters = new ArrayList<>();
+        parameters.add(new ParameterTo("service-identity", service.server.publicKey));
+        parameters.add(new ParameterTo("service-address", service.server.address));
+        parameters.add(new ParameterTo("service-port", String.valueOf(service.service.port)));
+        parameters.add(new ParameterTo("service-type", service.type));
 
-        for (ServiceDescriptionTo.Parameter parameter : serviceParameters) {
-            parameters.add(new ServiceDescriptionTo.Parameter("service-args", parameter.name));
-            parameters.add(new ServiceDescriptionTo.Parameter("service-args", parameter.value));
+        for (ParameterTo parameter : serviceParameters) {
+            parameters.add(new ParameterTo("service-args", parameter.name));
+            parameters.add(new ParameterTo("service-args", parameter.value));
         }
 
         return parameters;
