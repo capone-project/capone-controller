@@ -34,6 +34,8 @@ import java.util.List;
 
 public class CapabilityPluginFragment extends PluginFragment implements View.OnClickListener, CapabilityRequestsTask.RequestListener {
 
+    private Button startButton;
+
     private RecyclerView cardsView;
     private CapabilityRequestsAdapter cardsAdapter;
 
@@ -50,6 +52,9 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_plugin_capability, container, false);
 
+        startButton = (Button) view.findViewById(R.id.button_start);
+        startButton.setOnClickListener(this);
+
         cardsView = (RecyclerView) view.findViewById(R.id.request_cards);
         cardsView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -58,9 +63,16 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
         cardsAdapter = new CapabilityRequestsAdapter();
         cardsView.setAdapter(cardsAdapter);
 
-        Button invoke = (Button) view.findViewById(R.id.button_invoke);
-        invoke.setOnClickListener(this);
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        capabilityRequestsTask.cancel();
+        capabilityRequestsTask = null;
+        startButton.setEnabled(true);
     }
 
     @Override
@@ -73,6 +85,7 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
         capabilityRequestsTask = new CapabilityRequestsTask(service, getParameters());
         capabilityRequestsTask.setRequestListener(this);
         capabilityRequestsTask.execute();
+        startButton.setEnabled(false);
     }
 
     @Override
