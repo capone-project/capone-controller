@@ -29,7 +29,7 @@ import java.io.IOException;
 public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
 
     public interface Handler {
-        void handleConnection(Channel channel);
+        void handleConnection(Channel channel) throws IOException, VerifyKey.SignatureException;
     }
 
     private final int sessionId;
