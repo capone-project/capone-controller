@@ -24,8 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import im.pks.sd.controller.R;
-import nano.Capabilities;
-import org.abstractj.kalium.encoders.Hex;
+import im.pks.sd.entities.CapabilityRequestTo;
 
 import java.util.ArrayList;
 
@@ -37,6 +36,7 @@ public class CapabilityRequestsAdapter
         private final TextView invoker;
         private final TextView service;
         private final TextView address;
+        private final TextView received;
         private final Button accept;
         private final Button reject;
 
@@ -46,12 +46,13 @@ public class CapabilityRequestsAdapter
             invoker = (TextView) itemView.findViewById(R.id.text_view_invoker);
             service = (TextView) itemView.findViewById(R.id.text_view_service);
             address = (TextView) itemView.findViewById(R.id.text_view_address);
+            received = (TextView) itemView.findViewById(R.id.text_view_received);
             accept = (Button) itemView.findViewById(R.id.button_accept);
             reject = (Button) itemView.findViewById(R.id.button_reject);
         }
     }
 
-    private final ArrayList<Capabilities.CapabilityRequest> requests = new ArrayList<>();
+    private final ArrayList<CapabilityRequestTo> requests = new ArrayList<>();
     private final ArrayList<Runnable> accepts = new ArrayList<>();
 
     @Override
@@ -63,11 +64,11 @@ public class CapabilityRequestsAdapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Capabilities.CapabilityRequest request = requests.get(position);
+        CapabilityRequestTo request = requests.get(position);
 
-        holder.requester.setText(Hex.HEX.encode(request.requesterIdentity));
-        holder.invoker.setText(Hex.HEX.encode(request.invokerIdentity));
-        holder.service.setText(Hex.HEX.encode(request.serviceIdentity));
+        holder.requester.setText(request.requesterIdentity.toString());
+        holder.invoker.setText(request.invokerIdentity.toString());
+        holder.service.setText(request.serviceIdentity.toString());
         holder.address.setText(String.format("%s:%s", request.serviceAddress, request.servicePort));
 
         holder.accept.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +86,7 @@ public class CapabilityRequestsAdapter
         });
     }
 
-    public void addRequest(Capabilities.CapabilityRequest request, Runnable accept) {
+    public void addRequest(CapabilityRequestTo request, Runnable accept) {
         requests.add(request);
         accepts.add(accept);
         notifyDataSetChanged();

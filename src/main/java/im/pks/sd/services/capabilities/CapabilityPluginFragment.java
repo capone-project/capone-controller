@@ -25,10 +25,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import im.pks.sd.controller.R;
+import im.pks.sd.entities.CapabilityRequestTo;
 import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.services.PluginFragment;
-import nano.Capabilities;
 
 import java.util.Collections;
 import java.util.List;
@@ -90,17 +90,11 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
     }
 
     @Override
-    public void onRequestReceived(final Capabilities.CapabilityRequest request,
-                                  final Runnable accept) {
+    public void onRequestReceived(final CapabilityRequestTo request, final Runnable accept) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                /* FIXME: This is a workaround. We somehow get an initial bogus request without any
-                 * information set. Filter by inspecting the invoker's identity.
-                 */
-                if (request.invokerIdentity.length > 0) {
-                    cardsAdapter.addRequest(request, accept);
-                }
+                cardsAdapter.addRequest(request, accept);
             }
         });
     }

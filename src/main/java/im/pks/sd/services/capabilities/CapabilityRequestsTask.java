@@ -18,6 +18,7 @@
 package im.pks.sd.services.capabilities;
 
 import android.os.AsyncTask;
+import im.pks.sd.entities.CapabilityRequestTo;
 import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.Channel;
@@ -49,7 +50,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     public interface RequestListener {
-        void onRequestReceived(Capabilities.CapabilityRequest request, Runnable accept);
+        void onRequestReceived(CapabilityRequestTo request, Runnable accept);
     }
 
     private RequestListener listener;
@@ -86,13 +87,20 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         final Capabilities.CapabilityRequest request = new Capabilities.CapabilityRequest();
 
         while (channel.readProtobuf(request) != null) {
-            listener.onRequestReceived(request, new Runnable() {
+            final CapabilityRequestTo requestTo;
+            try {
+                requestTo = new CapabilityRequestTo(request);
+            } catch (RuntimeException e) {
+                continue;
+            }
+
+            listener.onRequestReceived(requestTo, new Runnable() {
                 @Override
                 public void run() {
                     executor.submit(new Runnable() {
                         @Override
                         public void run() {
-                            accept(channel, request);
+                            accept(channel, requestTo);
                         }
                     });
                 }
@@ -100,9 +108,9 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         }
     }
 
-    private void accept(Channel channel, Capabilities.CapabilityRequest request) {
-        RequestTask requestTask = new RequestTask(new VerifyKey(request.invokerIdentity),
-                                                  new VerifyKey(request.serviceIdentity),
+    private void accept(Channel channel, CapabilityRequestTo request) {
+        RequestTask requestTask = new RequestTask(request.invokerIdentity,
+                                                  request.serviceIdentity,
                                                   request.serviceAddress,
                                                   Integer.valueOf(request.servicePort), null);
         RequestTask.Session session;
@@ -113,9 +121,9 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         }
 
         Capabilities.Capability capability = new Capabilities.Capability();
-        capability.identity = request.invokerIdentity;
+        capability.identity = request.invokerIdentity.toBytes();
         capability.sessionid = session.sessionId;
-        capability.service = request.serviceIdentity;
+        capability.service = request.serviceIdentity.toBytes();
 
         try {
             channel.writeProtobuf(capability);
