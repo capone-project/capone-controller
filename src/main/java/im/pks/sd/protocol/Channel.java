@@ -46,9 +46,9 @@ public abstract class Channel {
         signBuffer.put(signKeys.getVerifyKey().toBytes());
         signBuffer.put(emphKeys.getPublicKey().toBytes());
 
-        Encryption.SignedKey signedKey = new Encryption.SignedKey();
-        signedKey.signPk = signKeys.getVerifyKey().toBytes();
-        signedKey.encryptPk = emphKeys.getPublicKey().toBytes();
+        Encryption.SignedKeys signedKey = new Encryption.SignedKeys();
+        signedKey.senderPk = signKeys.getVerifyKey().toBytes();
+        signedKey.receiverPk = emphKeys.getPublicKey().toBytes();
         signedKey.signature = signKeys.sign(signBuffer.array());
         writeProtobuf(signedKey);
 
