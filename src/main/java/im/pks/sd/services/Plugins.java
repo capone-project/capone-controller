@@ -28,6 +28,8 @@ public class Plugins {
                 return InvokePluginFragment.createFragment(service);
             case "exec":
                 return ExecPluginFragment.createFragment(service);
+            case "capabilities":
+                return CapabilityPluginFragment.createFragment(service);
             default:
                 return GenericPluginFragment.createFragment(service);
         }

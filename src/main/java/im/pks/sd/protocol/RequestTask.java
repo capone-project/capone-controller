@@ -46,22 +46,37 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
             this.session = null;
             this.throwable = throwable;
         }
+
         public Result(Session session) {
             this.session = session;
             this.throwable = null;
         }
     }
 
-    private final VerifyKey identity;
-    private final ServiceDescriptionTo service;
+    private final VerifyKey invoker;
+    private final String serviceIdentity;
+    private final String serviceAddress;
+    private final int servicePort;
     private final List<ServiceDescriptionTo.Parameter> parameters;
 
     private Channel channel;
 
-    public RequestTask(VerifyKey identity, ServiceDescriptionTo service,
+    public RequestTask(VerifyKey invoker, ServiceDescriptionTo service,
                        List<ServiceDescriptionTo.Parameter> parameters) {
-        this.identity = identity;
-        this.service = service;
+        this.invoker = invoker;
+        this.serviceIdentity = service.server.publicKey;
+        this.serviceAddress = service.server.address;
+        this.servicePort = service.service.port;
+        this.parameters = parameters;
+    }
+
+    public RequestTask(VerifyKey invoker, VerifyKey serviceIdentity,
+                       String serviceAddress, int servicePort,
+                       List<ServiceDescriptionTo.Parameter> parameters) {
+        this.invoker = invoker;
+        this.serviceIdentity = serviceIdentity.toString();
+        this.serviceAddress = serviceAddress;
+        this.servicePort = servicePort;
         this.parameters = parameters;
     }
 
@@ -76,11 +91,13 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
     public Session requestSession() throws IOException, VerifyKey.SignatureException {
         List<Connect.Parameter> connectParams = new ArrayList<>();
-        for (ServiceDescriptionTo.Parameter parameter : parameters) {
-            Connect.Parameter serviceParam = new Connect.Parameter();
-            serviceParam.key = parameter.name;
-            serviceParam.value = parameter.value;
-            connectParams.add(serviceParam);
+        if (parameters != null) {
+            for (ServiceDescriptionTo.Parameter parameter : parameters) {
+                Connect.Parameter serviceParam = new Connect.Parameter();
+                serviceParam.key = parameter.name;
+                serviceParam.value = parameter.value;
+                connectParams.add(serviceParam);
+            }
         }
 
         Connect.ConnectionInitiationMessage initiation = new Connect.ConnectionInitiationMessage();
@@ -89,14 +106,14 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
         Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
         requestMessage.parameters = connectParams.toArray(
                 new Connect.Parameter[connectParams.size()]);
-        requestMessage.invoker = identity.toBytes();
+        requestMessage.invoker = invoker.toBytes();
 
         Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
 
         try {
-            VerifyKey remoteKey = new VerifyKey(service.server.publicKey, Encoder.HEX);
+            VerifyKey remoteKey = new VerifyKey(serviceIdentity, Encoder.HEX);
 
-            channel = new TcpChannel(service.server.address, service.service.port);
+            channel = new TcpChannel(serviceAddress, servicePort);
             channel.connect();
             channel.enableEncryption(Identity.getSigningKey(), remoteKey);
 

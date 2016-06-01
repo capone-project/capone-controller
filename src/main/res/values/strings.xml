@@ -47,4 +47,5 @@
     <string name="environment_value">Environment value</string>
     <string name="environment_variable">Environment variable</string>
     <string name="toast_executable_not_set">Executable is not set</string>
+    <string name="capability_request">Accept request for service %1$s from entity %2$s for invoker %3$s with parameters %4$s?</string>
 </resources>
