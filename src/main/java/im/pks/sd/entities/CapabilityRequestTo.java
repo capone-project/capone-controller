@@ -35,6 +35,8 @@ public class CapabilityRequestTo {
     public final String servicePort;
     public final Date received;
 
+    public final int requestId;
+
     public CapabilityRequestTo(Capabilities.CapabilityRequest request) {
         this(request, null);
     }
@@ -53,6 +55,7 @@ public class CapabilityRequestTo {
         servicePort = request.servicePort;
 
         this.received = received;
+        this.requestId = request.requestid;
     }
 
 }

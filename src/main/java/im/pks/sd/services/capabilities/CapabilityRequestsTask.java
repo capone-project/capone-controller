@@ -122,8 +122,9 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         }
 
         Capabilities.Capability capability = new Capabilities.Capability();
-        capability.identity = request.invokerIdentity.toBytes();
+        capability.requestid = request.requestId;
         capability.sessionid = session.sessionId;
+        capability.identity = request.invokerIdentity.toBytes();
         capability.service = request.serviceIdentity.toBytes();
 
         try {
