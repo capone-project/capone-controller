@@ -48,4 +48,10 @@
     <string name="environment_variable">Environment variable</string>
     <string name="toast_executable_not_set">Executable is not set</string>
     <string name="capability_request">Accept request for service %1$s from entity %2$s for invoker %3$s with parameters %4$s?</string>
+    <string name="button_accept">Accept</string>
+    <string name="button_reject">Reject</string>
+    <string name="label_requester">Requester</string>
+    <string name="label_address">Address</string>
+    <string name="label_invoker">Invoker</string>
+    <string name="label_service">Service</string>
 </resources>

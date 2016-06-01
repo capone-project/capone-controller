@@ -45,6 +45,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:design:23.2.1'
+    compile 'com.android.support:cardview-v7:23.2.1'
+    compile 'com.android.support:recyclerview-v7:23.2.1'
     compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
     compile 'com.github.gerardsoleca:robosodium:1.0.0'
     compile 'commons-lang:commons-lang:2.6'
