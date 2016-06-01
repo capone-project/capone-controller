@@ -29,6 +29,7 @@ import nano.Capabilities;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -89,7 +90,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         while (channel.readProtobuf(request) != null) {
             final CapabilityRequestTo requestTo;
             try {
-                requestTo = new CapabilityRequestTo(request);
+                requestTo = new CapabilityRequestTo(request, new Date());
             } catch (RuntimeException e) {
                 continue;
             }

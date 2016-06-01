@@ -26,6 +26,7 @@ import android.widget.TextView;
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.CapabilityRequestTo;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 public class CapabilityRequestsAdapter
@@ -70,6 +71,13 @@ public class CapabilityRequestsAdapter
         holder.invoker.setText(request.invokerIdentity.toString());
         holder.service.setText(request.serviceIdentity.toString());
         holder.address.setText(String.format("%s:%s", request.serviceAddress, request.servicePort));
+
+        if (request.received != null) {
+            String date = DateFormat.getTimeInstance().format(request.received);
+            holder.received.setText(date);
+        } else {
+            holder.received.setText(null);
+        }
 
         holder.accept.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -21,6 +21,7 @@ import nano.Capabilities;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CapabilityRequestTo {
 
@@ -32,8 +33,13 @@ public class CapabilityRequestTo {
 
     public final String serviceAddress;
     public final String servicePort;
+    public final Date received;
 
     public CapabilityRequestTo(Capabilities.CapabilityRequest request) {
+        this(request, null);
+    }
+
+    public CapabilityRequestTo(Capabilities.CapabilityRequest request, Date received) {
         invokerIdentity = new VerifyKey(request.invokerIdentity);
         requesterIdentity = new VerifyKey(request.requesterIdentity);
         serviceIdentity = new VerifyKey(request.serviceIdentity);
@@ -45,6 +51,8 @@ public class CapabilityRequestTo {
 
         serviceAddress = request.serviceAddress;
         servicePort = request.servicePort;
+
+        this.received = received;
     }
 
 }
