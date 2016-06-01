@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.services;
+package im.pks.sd.services.exec;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -29,6 +29,7 @@ import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.SessionTask;
+import im.pks.sd.services.PluginFragment;
 
 import java.io.IOException;
 import java.util.ArrayList;

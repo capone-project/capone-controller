@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.services;
+package im.pks.sd.services.capabilities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -30,6 +30,7 @@ import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.RequestTask;
 import im.pks.sd.protocol.SessionTask;
+import im.pks.sd.services.PluginFragment;
 import nano.Capabilities;
 import org.abstractj.kalium.encoders.Hex;
 import org.abstractj.kalium.keys.VerifyKey;

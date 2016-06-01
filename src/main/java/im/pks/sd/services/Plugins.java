@@ -19,6 +19,9 @@ package im.pks.sd.services;
 
 import im.pks.sd.controller.R;
 import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.services.capabilities.CapabilityPluginFragment;
+import im.pks.sd.services.exec.ExecPluginFragment;
+import im.pks.sd.services.invoke.InvokePluginFragment;
 
 public class Plugins {
 

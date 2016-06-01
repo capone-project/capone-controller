@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.services;
+package im.pks.sd.services.invoke;
 
 import android.os.AsyncTask;
 import im.pks.sd.entities.ServiceDescriptionTo;

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.services;
+package im.pks.sd.services.invoke;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +26,8 @@ import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.invoke.ServiceParametersDialog;
 import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.services.PluginFragment;
+import im.pks.sd.services.Plugins;
 
 import java.util.ArrayList;
 import java.util.List;
