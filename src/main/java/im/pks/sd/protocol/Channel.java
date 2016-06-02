@@ -184,6 +184,9 @@ public abstract class Channel {
     public <Message extends MessageNano> Message readProtobuf(Message msg)
             throws IOException {
         byte[] bytes = read();
+        if (bytes == null) {
+            throw new IOException("Channel received invalid protobuf");
+        }
         return Message.mergeFrom(msg, bytes);
     }
 
