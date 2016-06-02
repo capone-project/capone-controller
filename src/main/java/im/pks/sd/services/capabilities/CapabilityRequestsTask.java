@@ -89,7 +89,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
             throws IOException, VerifyKey.SignatureException {
         final Capabilities.CapabilityRequest request = new Capabilities.CapabilityRequest();
 
-        while (channel.readProtobuf(request) != null) {
+        while (request.clear() != null && channel.readProtobuf(request) != null) {
             final CapabilityRequestTo requestTo;
             try {
                 requestTo = new CapabilityRequestTo(request, new Date());
