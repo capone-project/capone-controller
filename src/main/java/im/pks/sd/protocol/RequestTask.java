@@ -37,6 +37,14 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
         public Session(int sessionId) {
             this.sessionId = sessionId;
         }
+
+        /* Ints are saved with the sign bit representing the most significant bit as Java has no
+         * notion of unsigned ints. This converts the session ID to the unsigned long
+         * representation.
+         */
+        public long getUnsignedSessionId() {
+            return sessionId & 0xffffffffL;
+        }
     }
 
     public static class Result {

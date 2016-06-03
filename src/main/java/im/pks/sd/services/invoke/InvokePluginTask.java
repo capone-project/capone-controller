@@ -69,7 +69,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
     private void sendInvokeRequest(RequestTask.Session session) throws IOException, VerifyKey.SignatureException {
         List<ParameterTo> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
-        parameters.add(new ParameterTo("sessionid", Integer.toString(session.sessionId)));
+        parameters.add(new ParameterTo("sessionid", Long.toString(session.getUnsignedSessionId())));
 
         SessionTask sessionTask = new SessionTask(invoker, parameters, null);
         sessionTask.startSession();
