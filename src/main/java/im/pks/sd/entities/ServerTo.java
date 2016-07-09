@@ -41,6 +41,7 @@ public class ServerTo implements Parcelable {
         }
     };
 
+    public String name;
     public String publicKey;
     public String address;
     public List<ServiceTo> services;
@@ -49,6 +50,7 @@ public class ServerTo implements Parcelable {
     }
 
     private ServerTo(Parcel in) {
+        name = in.readString();
         publicKey = in.readString();
         address = in.readString();
         services = in.createTypedArrayList(ServiceTo.CREATOR);
@@ -61,6 +63,7 @@ public class ServerTo implements Parcelable {
 
     public static ServerTo fromAnnounce(String address, Discovery.AnnounceMessage announce) {
         ServerTo server = new ServerTo();
+        server.name = announce.name;
         server.publicKey = new PublicKey(announce.signKey).toString();
         server.address = address;
         server.services = new ArrayList<>();
