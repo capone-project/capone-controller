@@ -28,6 +28,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServerTo implements Parcelable {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        @Override
+        public ServerTo createFromParcel(Parcel in) {
+            return new ServerTo(in);
+        }
+
+        @Override
+        public ServerTo[] newArray(int size) {
+            return new ServerTo[size];
+        }
+    };
+
     public String publicKey;
     public String address;
     public List<ServiceTo> services;
@@ -45,18 +58,6 @@ public class ServerTo implements Parcelable {
     public String toString() {
         return publicKey;
     }
-
-    public static final Creator<ServerTo> CREATOR = new Creator<ServerTo>() {
-        @Override
-        public ServerTo createFromParcel(Parcel in) {
-            return new ServerTo(in);
-        }
-
-        @Override
-        public ServerTo[] newArray(int size) {
-            return new ServerTo[size];
-        }
-    };
 
     public static ServerTo fromAnnounce(String address, Discovery.AnnounceMessage announce) {
         ServerTo server = new ServerTo();

@@ -23,6 +23,19 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class ServiceTo implements Parcelable {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        @Override
+        public ServiceTo createFromParcel(Parcel in) {
+            return new ServiceTo(in);
+        }
+
+        @Override
+        public ServiceTo[] newArray(int size) {
+            return new ServiceTo[size];
+        }
+    };
+
     public String name;
     public String category;
     public int port;
@@ -35,18 +48,6 @@ public class ServiceTo implements Parcelable {
         category = in.readString();
         port = in.readInt();
     }
-
-    public static final Creator<ServiceTo> CREATOR = new Creator<ServiceTo>() {
-        @Override
-        public ServiceTo createFromParcel(Parcel in) {
-            return new ServiceTo(in);
-        }
-
-        @Override
-        public ServiceTo[] newArray(int size) {
-            return new ServiceTo[size];
-        }
-    };
 
     @Override
     public boolean equals(Object other) {

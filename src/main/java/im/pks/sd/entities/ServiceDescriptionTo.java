@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class ServiceDescriptionTo implements Parcelable {
 
-    public static final Creator<ServiceDescriptionTo> CREATOR = new Creator<ServiceDescriptionTo>() {
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
         public ServiceDescriptionTo createFromParcel(Parcel in) {
             return new ServiceDescriptionTo(in);

@@ -21,7 +21,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ParameterTo implements Parcelable {
-    public static final Creator<ParameterTo> CREATOR = new Creator<ParameterTo>() {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
         public ParameterTo createFromParcel(Parcel in) {
             return new ParameterTo(in);
