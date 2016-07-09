@@ -21,6 +21,7 @@ import com.google.protobuf.nano.MessageNano;
 import nano.Encryption;
 import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
+import org.abstractj.kalium.crypto.Random;
 import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.keys.KeyPair;
 import org.abstractj.kalium.keys.SigningKey;
@@ -40,54 +41,59 @@ public abstract class Channel {
     public void enableEncryption(SigningKey signKeys, VerifyKey remoteKey)
             throws IOException, VerifyKey.SignatureException {
         final KeyPair emphKeys = new KeyPair();
-        ByteBuffer signBuffer;
 
-        signBuffer = ByteBuffer.allocate(SodiumConstants.PUBLICKEY_BYTES * 2);
+        ByteBuffer sessionBuffer = ByteBuffer.wrap(new Random().randomBytes(4));
+        int sessionid = sessionBuffer.getInt();
+
+        Encryption.InitiatorKey initiatorKey = new Encryption.InitiatorKey();
+        initiatorKey.sessionid =  sessionid;
+        initiatorKey.signPk = signKeys.getVerifyKey().toBytes();
+        initiatorKey.ephmPk = emphKeys.getPublicKey().toBytes();
+        writeProtobuf(initiatorKey);
+
+        Encryption.ResponderKey responderKey = new Encryption.ResponderKey();
+        readProtobuf(responderKey);
+
+        if (responderKey.sessionid != sessionid) {
+            throw new RuntimeException();
+        }
+
+        if (responderKey.signature.length != SodiumConstants.SIGNATURE_BYTES
+                    || responderKey.signPk.length != SodiumConstants.PUBLICKEY_BYTES
+                    || responderKey.ephmPk.length != SodiumConstants.PUBLICKEY_BYTES) {
+            throw new RuntimeException();
+        }
+
+        ByteBuffer signBuffer = ByteBuffer.allocate(SodiumConstants.PUBLICKEY_BYTES * 4 + 4);
+        signBuffer.put(responderKey.signPk);
+        signBuffer.order(ByteOrder.LITTLE_ENDIAN).putInt(sessionid);
+        signBuffer.put(responderKey.ephmPk);
+        signBuffer.put(emphKeys.getPublicKey().toBytes());
         signBuffer.put(signKeys.getVerifyKey().toBytes());
-        signBuffer.put(emphKeys.getPublicKey().toBytes());
-
-        Encryption.SignedKeys signedKey = new Encryption.SignedKeys();
-        signedKey.senderPk = signKeys.getVerifyKey().toBytes();
-        signedKey.receiverPk = emphKeys.getPublicKey().toBytes();
-        signedKey.signature = signKeys.sign(signBuffer.array());
-        writeProtobuf(signedKey);
-
-        Encryption.SignedKeys signedRemoteKeys = new Encryption.SignedKeys();
-        readProtobuf(signedRemoteKeys);
-
-        if (signedRemoteKeys.signature.length != SodiumConstants.SIGNATURE_BYTES
-                    || signedRemoteKeys.senderPk.length != SodiumConstants.PUBLICKEY_BYTES
-                    || signedRemoteKeys.receiverPk.length != SodiumConstants.PUBLICKEY_BYTES) {
-            throw new RuntimeException();
-        }
-
-        if (!Arrays.equals(signedRemoteKeys.receiverPk, emphKeys.getPublicKey().toBytes())) {
-            throw new RuntimeException();
-        }
+        remoteKey.verify(signBuffer.array(), responderKey.signature);
 
         signBuffer.clear();
-        signBuffer.put(signedRemoteKeys.senderPk);
-        signBuffer.put(signedRemoteKeys.receiverPk);
-        remoteKey.verify(signBuffer.array(), signedRemoteKeys.signature);
-
-        signBuffer.clear();
+        signBuffer.put(signKeys.getVerifyKey().toBytes());
+        signBuffer.order(ByteOrder.LITTLE_ENDIAN).putInt(sessionid);
         signBuffer.put(emphKeys.getPublicKey().toBytes());
-        signBuffer.put(signedRemoteKeys.senderPk);
-        Encryption.SignedKeys signedKeys = new Encryption.SignedKeys();
-        signedKeys.senderPk = emphKeys.getPublicKey().toBytes();
-        signedKeys.receiverPk = signedRemoteKeys.senderPk;
-        signedKeys.signature = signKeys.sign(signBuffer.array());
-        writeProtobuf(signedKeys);
+        signBuffer.put(responderKey.ephmPk);
+        signBuffer.put(responderKey.signPk);
+
+        Encryption.AcknowledgeKey acknowledgeKey = new Encryption.AcknowledgeKey();
+        acknowledgeKey.sessionid = sessionid;
+        acknowledgeKey.signPk = signKeys.getVerifyKey().toBytes();
+        acknowledgeKey.signature = signKeys.sign(signBuffer.array());
+        writeProtobuf(acknowledgeKey);
 
         byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
         Sodium.crypto_scalarmult_curve25519(scalarmult, emphKeys.getPrivateKey().toBytes(),
-                                            signedRemoteKeys.senderPk);
+                                            responderKey.ephmPk);
 
         int bufferLength = scalarmult.length + SodiumConstants.PUBLICKEY_BYTES * 2;
         ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
         buffer.put(scalarmult);
         buffer.put(emphKeys.getPublicKey().toBytes());
-        buffer.put(signedRemoteKeys.senderPk);
+        buffer.put(responderKey.ephmPk);
 
         byte[] symmetricKey = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_KEYBYTES];
         Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
