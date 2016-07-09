@@ -58,7 +58,7 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
         request = new RequestTask(identity, service, parameters);
         RequestTask.Session session = request.requestSession();
 
-        connect = new ConnectTask(session.sessionId, service);
+        connect = new ConnectTask(session.capability, service);
         connect.setHandler(handler);
         connect.connect();
     }

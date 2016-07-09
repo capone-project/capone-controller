@@ -18,6 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
+import im.pks.sd.entities.CapabilityTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
@@ -32,14 +33,14 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
         void handleConnection(Channel channel) throws IOException, VerifyKey.SignatureException;
     }
 
-    private final int sessionId;
+    private final CapabilityTo capability;
     private final ServiceDescriptionTo service;
 
     private Channel channel;
     private Handler handler;
 
-    public ConnectTask(int sessionId, ServiceDescriptionTo service) {
-        this.sessionId = sessionId;
+    public ConnectTask(CapabilityTo capability, ServiceDescriptionTo service) {
+        this.capability = capability;
         this.service = service;
     }
 
@@ -57,7 +58,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
         Connect.ConnectionInitiationMessage connectionInitiation = new Connect.ConnectionInitiationMessage();
         connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
         Connect.SessionInitiationMessage sessionInitiation = new Connect.SessionInitiationMessage();
-        sessionInitiation.sessionid = sessionId;
+        sessionInitiation.capability = capability.toMessage();
 
         try {
             channel = new TcpChannel(service.server.address, service.service.port);

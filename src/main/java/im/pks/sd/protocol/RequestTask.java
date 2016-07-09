@@ -18,6 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
+import im.pks.sd.entities.CapabilityTo;
 import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.persistence.Identity;
@@ -32,10 +33,10 @@ import java.util.List;
 public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
     public static class Session {
-        public final int sessionId;
+        public final CapabilityTo capability;
 
-        public Session(int sessionId) {
-            this.sessionId = sessionId;
+        public Session(final CapabilityTo capability) {
+            this.capability = capability;
         }
 
         /* Ints are saved with the sign bit representing the most significant bit as Java has no
@@ -43,7 +44,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
          * representation.
          */
         public long getUnsignedSessionId() {
-            return sessionId & 0xffffffffL;
+            return capability.objectId & 0xffffffffL;
         }
     }
 
@@ -131,7 +132,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
             channel.readProtobuf(sessionMessage);
 
-            return new Session(sessionMessage.sessionid);
+            return new Session(new CapabilityTo(sessionMessage.invokerCap));
         } catch (IOException | VerifyKey.SignatureException e) {
             throw e;
         } finally {
