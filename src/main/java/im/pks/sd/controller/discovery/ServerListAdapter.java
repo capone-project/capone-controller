@@ -59,8 +59,8 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
         TextView name = (TextView) view.findViewById(R.id.server_name);
         TextView address = (TextView) view.findViewById(R.id.server_address);
         if (server == null || server.getName() == null) {
-            name.setText(String.format("%s (%s)", to.name, to.address));
-            address.setText(null);
+            name.setText(to.name);
+            address.setText(to.address);
         } else {
             name.setText(server.getName());
             address.setText(server.getAddress());
