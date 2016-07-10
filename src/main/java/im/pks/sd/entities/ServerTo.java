@@ -95,6 +95,7 @@ public class ServerTo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
         dest.writeString(publicKey);
         dest.writeString(address);
         dest.writeTypedList(services);
