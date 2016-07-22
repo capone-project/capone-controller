@@ -23,7 +23,7 @@ public class CapabilityTo {
 
     public final int objectId;
     public final int rights;
-    public final int secret;
+    public final byte[] secret;
 
     public CapabilityTo(Connect.CapabilityMessage msg) {
         objectId = msg.objectid;
