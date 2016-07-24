@@ -64,8 +64,9 @@ public class CapabilityRequestsAdapter
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
-        CapabilityRequestTo request = requests.get(position);
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        final CapabilityRequestTo request = requests.get(position);
+        final Runnable acceptor = accepts.get(position);
 
         holder.requester.setText(request.requesterIdentity.toString());
         holder.invoker.setText(request.invokerIdentity.toString());
@@ -82,14 +83,14 @@ public class CapabilityRequestsAdapter
         holder.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                accepts.get(position).run();
-                removeRequest(position);
+                acceptor.run();
+                removeRequest(request);
             }
         });
         holder.reject.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeRequest(position);
+                removeRequest(request);
             }
         });
     }
@@ -100,8 +101,9 @@ public class CapabilityRequestsAdapter
         notifyDataSetChanged();
     }
 
-    public void removeRequest(int index) {
-        if (index < requests.size()) {
+    public void removeRequest(CapabilityRequestTo request) {
+        int index = requests.indexOf(request);
+        if (index >= 0) {
             requests.remove(index);
             accepts.remove(index);
             notifyDataSetChanged();
