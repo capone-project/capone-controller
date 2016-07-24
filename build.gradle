@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.1.0'
         classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.6'
     }
 }
@@ -16,13 +16,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.1"
 
     defaultConfig {
         applicationId "im.pks.sd.controller"
         minSdkVersion 17
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 1
         versionName "0.0.1"
     }
@@ -36,11 +36,11 @@ protobuf {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:design:23.2.1'
-    compile 'com.android.support:cardview-v7:23.2.1'
-    compile 'com.android.support:recyclerview-v7:23.2.1'
-    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-5'
+    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:cardview-v7:24.1.1'
+    compile 'com.android.support:recyclerview-v7:24.1.1'
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     compile 'com.github.gerardsoleca:robosodium:1.0.0'
     compile 'commons-lang:commons-lang:2.6'
     compile 'com.github.satyan:sugar:1.5'
