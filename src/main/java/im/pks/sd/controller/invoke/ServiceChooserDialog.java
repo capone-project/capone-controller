@@ -36,12 +36,22 @@ import im.pks.sd.entities.ServiceTo;
 import im.pks.sd.persistence.Identity;
 import im.pks.sd.protocol.QueryTask;
 
-public abstract class ServiceChooserDialog extends DialogFragment {
+public class ServiceChooserDialog extends DialogFragment {
+
+    public interface OnServiceChosenListener {
+        void onServiceChosen(ServiceDescriptionTo service);
+    }
+
+    private OnServiceChosenListener listener;
 
     private ListView list;
 
     private DiscoveryTask discovery;
     private QueryTask query;
+
+    public void setOnServiceChosenListener(OnServiceChosenListener listener) {
+        this.listener = listener;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -129,13 +139,11 @@ public abstract class ServiceChooserDialog extends DialogFragment {
         query = new QueryTask() {
             @Override
             public void onProgressUpdate(ServiceDescriptionTo... description) {
-                onServiceChosen(description[0]);
+                listener.onServiceChosen(description[0]);
                 dismiss();
             }
         };
         query.execute(new QueryTask.Parameters(Identity.getSigningKey(), server, service));
     }
-
-    public abstract void onServiceChosen(ServiceDescriptionTo description);
 
 }

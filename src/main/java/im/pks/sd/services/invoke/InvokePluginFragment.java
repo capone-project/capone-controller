@@ -76,7 +76,8 @@ public class InvokePluginFragment extends PluginFragment {
     }
 
     private void onSelectClicked() {
-        ServiceChooserDialog dialog = new ServiceChooserDialog() {
+        ServiceChooserDialog dialog = new ServiceChooserDialog();
+        dialog.setOnServiceChosenListener(new ServiceChooserDialog.OnServiceChosenListener() {
             @Override
             public void onServiceChosen(final ServiceDescriptionTo details) {
                 ServiceParametersDialog parametersDialog
@@ -91,7 +92,7 @@ public class InvokePluginFragment extends PluginFragment {
                         });
                 parametersDialog.show(getFragmentManager(), "ServiceParametersDialog");
             }
-        };
+        });
         dialog.show(getFragmentManager(), "ServiceChooserDialog");
     }
 
