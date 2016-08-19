@@ -36,7 +36,7 @@ are required:
 Building the project requires the following steps:
 
 ```
-$ git clone https://github.com/capone-project/capone-controller.git
+$ git clone --recursive https://github.com/capone-project/capone-controller.git
 $ cd capone-controller
 $ ./gradlew build
 ```
