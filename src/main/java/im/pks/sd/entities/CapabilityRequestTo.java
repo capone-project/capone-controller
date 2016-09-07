@@ -18,7 +18,6 @@
 package im.pks.sd.entities;
 
 import nano.Capabilities;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,9 +25,9 @@ import java.util.List;
 
 public class CapabilityRequestTo {
 
-    public final VerifyKey invokerIdentity;
-    public final VerifyKey requesterIdentity;
-    public final VerifyKey serviceIdentity;
+    public final SignatureKeyTo invokerIdentity;
+    public final SignatureKeyTo requesterIdentity;
+    public final SignatureKeyTo serviceIdentity;
 
     public final List<String> parameters;
 
@@ -43,9 +42,9 @@ public class CapabilityRequestTo {
     }
 
     public CapabilityRequestTo(Capabilities.CapabilityRequest request, Date received) {
-        invokerIdentity = new VerifyKey(request.invokerIdentity);
-        requesterIdentity = new VerifyKey(request.requesterIdentity);
-        serviceIdentity = new VerifyKey(request.serviceIdentity);
+        invokerIdentity = new SignatureKeyTo(request.invokerIdentity);
+        requesterIdentity = new SignatureKeyTo(request.requesterIdentity);
+        serviceIdentity = new SignatureKeyTo(request.serviceIdentity);
 
         parameters = new ArrayList<>();
         for (String parameter : request.parameters) {

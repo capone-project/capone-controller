@@ -34,9 +34,9 @@ public class CapabilityTo {
 
     public class ChainSegment {
         public int rights;
-        public byte[] entity;
+        public SignatureKeyTo entity;
 
-        public ChainSegment(int rights, byte[] entity) {
+        public ChainSegment(int rights, SignatureKeyTo entity) {
             this.rights = rights;
             this.entity = entity;
         }
@@ -56,7 +56,7 @@ public class CapabilityTo {
         if (msg.chain != null) {
             chain = new ArrayList<>(msg.chain.length);
             for (Connect.CapabilityMessage.Chain segment : msg.chain) {
-                chain.add(new ChainSegment(segment.rights, segment.entity));
+                chain.add(new ChainSegment(segment.rights, new SignatureKeyTo(segment.entity)));
             }
         } else {
             chain = new ArrayList<>();
@@ -73,7 +73,7 @@ public class CapabilityTo {
             for (int i = 0; i < chain.size(); i++) {
                 msg.chain[i] = new Connect.CapabilityMessage.Chain();
                 msg.chain[i].rights = chain.get(i).rights;
-                msg.chain[i].entity = chain.get(i).entity;
+                msg.chain[i].entity = chain.get(i).entity.toMessage();
             }
         } else {
             msg.chain = null;
@@ -82,9 +82,9 @@ public class CapabilityTo {
         return msg;
     }
 
-    public CapabilityTo createReference(int rights, final byte[] identity) {
+    public CapabilityTo createReference(int rights, final SignatureKeyTo entity) {
         ByteBuffer buffer = ByteBuffer.allocate(SodiumConstants.PUBLICKEY_BYTES + 4 + SECRET_LENGTH);
-        buffer.put(identity);
+        buffer.put(entity.key.toBytes());
         buffer.putInt(rights);
         buffer.put(secret);
 
@@ -94,7 +94,7 @@ public class CapabilityTo {
 
         ArrayList<ChainSegment> segments = new ArrayList<>(chain.size() + 1);
         segments.addAll(chain);
-        segments.add(new ChainSegment(rights, identity));
+        segments.add(new ChainSegment(rights, entity));
 
         return new CapabilityTo(secret, segments);
     }

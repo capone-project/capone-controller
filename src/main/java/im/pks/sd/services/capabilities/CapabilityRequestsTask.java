@@ -18,10 +18,7 @@
 package im.pks.sd.services.capabilities;
 
 import android.os.AsyncTask;
-import im.pks.sd.entities.CapabilityRequestTo;
-import im.pks.sd.entities.CapabilityTo;
-import im.pks.sd.entities.ServiceDescriptionTo;
-import im.pks.sd.entities.SessionTo;
+import im.pks.sd.entities.*;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.RequestTask;
@@ -111,7 +108,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     private void accept(Channel channel, CapabilityRequestTo request) {
-        RequestTask requestTask = new RequestTask(request.serviceIdentity,
+        RequestTask requestTask = new RequestTask(request.serviceIdentity.key,
                                                   request.serviceAddress,
                                                   Integer.valueOf(request.servicePort),
                                                   request.parameters);
@@ -125,10 +122,9 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         Capabilities.Capability capability = new Capabilities.Capability();
         capability.requestid = request.requestId;
         capability.capability = session.capability.createReference(CapabilityTo.RIGHT_EXEC,
-                                                                   request.invokerIdentity
-                                                                           .toBytes()).toMessage();
-        capability.identity = request.invokerIdentity.toBytes();
-        capability.service = request.serviceIdentity.toBytes();
+                                                                   request.invokerIdentity).toMessage();
+        capability.identity = request.invokerIdentity.key.toBytes();
+        capability.service = request.serviceIdentity.key.toBytes();
 
         try {
             channel.writeProtobuf(capability);
