@@ -45,7 +45,6 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
         }
     }
 
-    private final VerifyKey invoker;
     private final String serviceIdentity;
     private final String serviceAddress;
     private final int servicePort;
@@ -53,19 +52,15 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
     private Channel channel;
 
-    public RequestTask(VerifyKey invoker, ServiceDescriptionTo service,
-                       List<String> parameters) {
-        this.invoker = invoker;
+    public RequestTask(ServiceDescriptionTo service, List<String> parameters) {
         this.serviceIdentity = service.server.publicKey;
         this.serviceAddress = service.server.address;
         this.servicePort = service.service.port;
         this.parameters = parameters;
     }
 
-    public RequestTask(VerifyKey invoker, VerifyKey serviceIdentity,
-                       String serviceAddress, int servicePort,
+    public RequestTask(VerifyKey serviceIdentity, String serviceAddress, int servicePort,
                        List<String> parameters) {
-        this.invoker = invoker;
         this.serviceIdentity = serviceIdentity.toString();
         this.serviceAddress = serviceAddress;
         this.servicePort = servicePort;
@@ -87,7 +82,6 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
         Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
         requestMessage.parameters = parameters.toArray(new String[parameters.size()]);
-        requestMessage.invoker = invoker.toBytes();
 
         Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
 

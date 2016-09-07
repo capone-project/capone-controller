@@ -55,7 +55,7 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     public void startSession() throws IOException, VerifyKey.SignatureException {
         VerifyKey identity = Identity.getSigningKey().getVerifyKey();
 
-        request = new RequestTask(identity, service, parameters);
+        request = new RequestTask(service, parameters);
         SessionTo session = request.requestSession();
 
         connect = new ConnectTask(session, service);

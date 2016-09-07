@@ -61,7 +61,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         List<String> parameters = Collections.emptyList();
         VerifyKey identity = new VerifyKey(invoker.server.publicKey, Encoder.HEX);
 
-        RequestTask request = new RequestTask(identity, service, parameters);
+        RequestTask request = new RequestTask(service, parameters);
 
         return request.requestSession();
     }
@@ -74,7 +74,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         parameters.add("sessionid");
         parameters.add(Long.toString(session.getUnsignedSessionId()));
         parameters.add("secret");
-        parameters.add(Encoder.HEX.encode(session.invokerCap.secret));
+        parameters.add(Encoder.HEX.encode(session.capability.secret));
 
         SessionTask sessionTask = new SessionTask(invoker, parameters, null);
         sessionTask.startSession();

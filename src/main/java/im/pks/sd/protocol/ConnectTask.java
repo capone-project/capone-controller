@@ -59,7 +59,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
         connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
         Connect.SessionInitiationMessage sessionInitiation = new Connect.SessionInitiationMessage();
 
-        sessionInitiation.capability = session.invokerCap.toMessage();
+        sessionInitiation.capability = session.capability.toMessage();
         sessionInitiation.identifier = session.identifier;
 
         try {

@@ -22,13 +22,11 @@ import nano.Connect;
 public class SessionTo {
 
     public int identifier;
-    public CapabilityTo invokerCap;
-    public CapabilityTo requesterCap;
+    public CapabilityTo capability;
 
     public SessionTo(Connect.SessionMessage msg) {
         identifier = msg.identifier;
-        invokerCap = new CapabilityTo(msg.invokerCap);
-        requesterCap = new CapabilityTo(msg.requesterCap);
+        capability = new CapabilityTo(msg.cap);
     }
 
     public long getUnsignedSessionId() {
