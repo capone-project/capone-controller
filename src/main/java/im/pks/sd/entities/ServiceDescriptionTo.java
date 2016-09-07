@@ -20,8 +20,6 @@ package im.pks.sd.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 public class ServiceDescriptionTo implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -41,16 +39,14 @@ public class ServiceDescriptionTo implements Parcelable {
     public final String type;
     public final String location;
     public final String version;
-    public final ArrayList<ParameterTo> parameters;
 
     public ServiceDescriptionTo(ServerTo server, ServiceTo service, String type, String location,
-                                String version, ArrayList<ParameterTo> parameters) {
+                                String version) {
         this.server = server;
         this.service = service;
         this.type = type;
         this.location = location;
         this.version = version;
-        this.parameters = parameters;
     }
 
     private ServiceDescriptionTo(Parcel in) {
@@ -59,7 +55,6 @@ public class ServiceDescriptionTo implements Parcelable {
         type = in.readString();
         location = in.readString();
         version = in.readString();
-        parameters = in.createTypedArrayList(ParameterTo.CREATOR);
     }
 
     @Override
@@ -74,7 +69,6 @@ public class ServiceDescriptionTo implements Parcelable {
         dest.writeString(type);
         dest.writeString(location);
         dest.writeString(version);
-        dest.writeTypedList(parameters);
     }
 
 }

@@ -26,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import im.pks.sd.controller.R;
-import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.services.PluginFragment;
 import im.pks.sd.services.Plugins;
@@ -41,7 +40,7 @@ public class ServiceParametersDialog extends DialogFragment
     private OnParametersChosenListener listener;
 
     public interface OnParametersChosenListener {
-        void onParametersChosen(List<ParameterTo> parameters);
+        void onParametersChosen(List<String> parameters);
     }
 
     public static ServiceParametersDialog createDialog(ServiceDescriptionTo serviceDescription) {

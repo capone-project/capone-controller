@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import im.pks.sd.controller.R;
-import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
@@ -198,20 +197,20 @@ public class ExecPluginFragment extends PluginFragment {
     }
 
     @Override
-    public List<ParameterTo> getParameters() {
-        List<ParameterTo> parameters = new ArrayList<>();
+    public List<String> getParameters() {
+        List<String> parameters = new ArrayList<>();
 
-        parameters.add(new ParameterTo("command",
-                                       executable.getText().toString().trim()));
+        parameters.add("--command");
+        parameters.add(executable.getText().toString().trim());
 
         for (int i = 0; i < parametersAdapter.getCount(); i++) {
-            String parameter = parametersAdapter.getItem(i);
-            parameters.add(new ParameterTo("arg", parameter));
+            parameters.add("--arg");
+            parameters.add(parametersAdapter.getItem(i));
         }
 
         for (int i = 0; i < environmentAdapter.getCount(); i++) {
-            EnvironmentVariable variable = environmentAdapter.getItem(i);
-            parameters.add(new ParameterTo("env", variable.toString()));
+            parameters.add("--env");
+            parameters.add(environmentAdapter.getItem(i).toString());
         }
 
         return parameters;

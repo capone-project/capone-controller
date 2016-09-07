@@ -19,7 +19,6 @@ package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
 import im.pks.sd.entities.CapabilityTo;
-import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
@@ -27,7 +26,6 @@ import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
@@ -67,12 +65,12 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     private final String serviceIdentity;
     private final String serviceAddress;
     private final int servicePort;
-    private final List<ParameterTo> parameters;
+    private final List<String> parameters;
 
     private Channel channel;
 
     public RequestTask(VerifyKey invoker, ServiceDescriptionTo service,
-                       List<ParameterTo> parameters) {
+                       List<String> parameters) {
         this.invoker = invoker;
         this.serviceIdentity = service.server.publicKey;
         this.serviceAddress = service.server.address;
@@ -82,7 +80,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
     public RequestTask(VerifyKey invoker, VerifyKey serviceIdentity,
                        String serviceAddress, int servicePort,
-                       List<ParameterTo> parameters) {
+                       List<String> parameters) {
         this.invoker = invoker;
         this.serviceIdentity = serviceIdentity.toString();
         this.serviceAddress = serviceAddress;
@@ -100,22 +98,11 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     }
 
     public Session requestSession() throws IOException, VerifyKey.SignatureException {
-        List<Connect.Parameter> connectParams = new ArrayList<>();
-        if (parameters != null) {
-            for (ParameterTo parameter : parameters) {
-                Connect.Parameter serviceParam = new Connect.Parameter();
-                serviceParam.key = parameter.name;
-                serviceParam.value = parameter.value;
-                connectParams.add(serviceParam);
-            }
-        }
-
         Connect.ConnectionInitiationMessage initiation = new Connect.ConnectionInitiationMessage();
         initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
 
         Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
-        requestMessage.parameters = connectParams.toArray(
-                new Connect.Parameter[connectParams.size()]);
+        requestMessage.parameters = parameters.toArray(new String[parameters.size()]);
         requestMessage.invoker = invoker.toBytes();
 
         Connect.SessionMessage sessionMessage = new Connect.SessionMessage();

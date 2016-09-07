@@ -19,7 +19,6 @@ package im.pks.sd.services.capabilities;
 
 import android.os.AsyncTask;
 import im.pks.sd.entities.CapabilityRequestTo;
-import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
@@ -27,10 +26,8 @@ import im.pks.sd.protocol.RequestTask;
 import im.pks.sd.protocol.SessionTask;
 import nano.Capabilities;
 import org.abstractj.kalium.keys.VerifyKey;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -41,7 +38,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     private final ServiceDescriptionTo service;
-    private final List<ParameterTo> parameters;
+    private final List<String> parameters;
 
     public static class Result {
         public final Throwable t;
@@ -59,7 +56,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     private RequestListener listener;
     private SessionTask sessionTask;
 
-    public CapabilityRequestsTask(ServiceDescriptionTo service, List<ParameterTo> parameters) {
+    public CapabilityRequestsTask(ServiceDescriptionTo service, List<String> parameters) {
         this.service = service;
         this.parameters = parameters;
     }
@@ -112,26 +109,11 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     private void accept(Channel channel, CapabilityRequestTo request) {
-        ArrayList<ParameterTo> serviceParameters = new ArrayList<>();
-        for (ParameterTo parameter : request.parameters) {
-            if (!parameter.name.equals("service-parameters")) {
-                continue;
-            }
-
-            String[] keyValue = StringUtils.split(parameter.value, "=", 2);
-            if (keyValue == null)
-                continue;
-            else if (keyValue.length == 1)
-                serviceParameters.add(new ParameterTo(keyValue[0], null));
-            else
-                serviceParameters.add(new ParameterTo(keyValue[0], keyValue[1]));
-        }
-
         RequestTask requestTask = new RequestTask(request.invokerIdentity,
                                                   request.serviceIdentity,
                                                   request.serviceAddress,
                                                   Integer.valueOf(request.servicePort),
-                                                  serviceParameters);
+                                                  request.parameters);
         RequestTask.Session session;
         try {
             session = requestTask.requestSession();

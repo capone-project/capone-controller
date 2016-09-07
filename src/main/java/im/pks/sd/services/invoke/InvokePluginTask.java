@@ -18,7 +18,6 @@
 package im.pks.sd.services.invoke;
 
 import android.os.AsyncTask;
-import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.RequestTask;
 import im.pks.sd.protocol.SessionTask;
@@ -32,13 +31,13 @@ import java.util.List;
 
 public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
-    private final List<ParameterTo> parameters;
+    private final List<String> parameters;
     private final ServiceDescriptionTo invoker;
     private final ServiceDescriptionTo service;
 
     public InvokePluginTask(ServiceDescriptionTo invoker,
                             ServiceDescriptionTo service,
-                            List<ParameterTo> parameters) {
+                            List<String> parameters) {
         this.invoker = invoker;
         this.service = service;
         this.parameters = parameters;
@@ -58,7 +57,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
     private RequestTask.Session sendSessionRequest()
             throws IOException, VerifyKey.SignatureException {
         /* TODO: fill parameters with parameters for the specific invoker */
-        List<ParameterTo> parameters = Collections.emptyList();
+        List<String> parameters = Collections.emptyList();
         VerifyKey identity = new VerifyKey(invoker.server.publicKey, Encoder.HEX);
 
         RequestTask request = new RequestTask(identity, service, parameters);
@@ -67,11 +66,13 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
     }
 
     private void sendInvokeRequest(RequestTask.Session session) throws IOException, VerifyKey.SignatureException {
-        List<ParameterTo> parameters = new ArrayList<>();
+        List<String> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
 
-        parameters.add(new ParameterTo("sessionid", Long.toString(session.getUnsignedSessionId())));
-        parameters.add(new ParameterTo("secret", Encoder.HEX.encode(session.capability.secret)));
+        parameters.add("sessionid");
+        parameters.add(Long.toString(session.getUnsignedSessionId()));
+        parameters.add("secret");
+        parameters.add(Encoder.HEX.encode(session.capability.secret));
 
         SessionTask sessionTask = new SessionTask(invoker, parameters, null);
         sessionTask.startSession();
