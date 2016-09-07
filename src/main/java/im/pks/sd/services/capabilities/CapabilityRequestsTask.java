@@ -122,9 +122,8 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         Capabilities.Capability capability = new Capabilities.Capability();
         capability.requestid = request.requestId;
         capability.capability = session.capability.createReference(CapabilityTo.RIGHT_EXEC,
-                                                                   request.invokerIdentity).toMessage();
-        capability.identity = request.invokerIdentity.key.toBytes();
-        capability.service = request.serviceIdentity.key.toBytes();
+                                                                   request.requesterIdentity).toMessage();
+        capability.serviceIdentity = request.serviceIdentity.toMessage();
 
         try {
             channel.writeProtobuf(capability);

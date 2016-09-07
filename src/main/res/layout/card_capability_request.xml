@@ -44,24 +44,6 @@
                         android:paddingLeft="@dimen/activity_horizontal_margin"
                         android:paddingRight="@dimen/activity_horizontal_margin">
                     <TextView
-                            android:text="@string/label_invoker"
-                            android:textStyle="bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    <Space android:layout_width="@dimen/activity_vertical_margin"/>
-                    <TextView
-                            android:id="@+id/text_view_invoker"
-                            android:typeface="monospace"
-                            android:layout_weight="1"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"/>
-                </TableRow>
-
-                <TableRow
-                        android:paddingTop="@dimen/activity_vertical_margin"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"
-                        android:paddingRight="@dimen/activity_horizontal_margin">
-                    <TextView
                             android:text="@string/label_service"
                             android:textStyle="bold"
                             android:layout_width="wrap_content"

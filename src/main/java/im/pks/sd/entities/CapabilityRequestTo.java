@@ -25,7 +25,6 @@ import java.util.List;
 
 public class CapabilityRequestTo {
 
-    public final SignatureKeyTo invokerIdentity;
     public final SignatureKeyTo requesterIdentity;
     public final SignatureKeyTo serviceIdentity;
 
@@ -42,7 +41,6 @@ public class CapabilityRequestTo {
     }
 
     public CapabilityRequestTo(Capabilities.CapabilityRequest request, Date received) {
-        invokerIdentity = new SignatureKeyTo(request.invokerIdentity);
         requesterIdentity = new SignatureKeyTo(request.requesterIdentity);
         serviceIdentity = new SignatureKeyTo(request.serviceIdentity);
 
