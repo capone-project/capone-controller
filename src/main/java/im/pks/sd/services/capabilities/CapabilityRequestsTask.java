@@ -20,6 +20,7 @@ package im.pks.sd.services.capabilities;
 import android.os.AsyncTask;
 import im.pks.sd.entities.CapabilityRequestTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.entities.SessionTo;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.RequestTask;
@@ -114,7 +115,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
                                                   request.serviceAddress,
                                                   Integer.valueOf(request.servicePort),
                                                   request.parameters);
-        RequestTask.Session session;
+        SessionTo session;
         try {
             session = requestTask.requestSession();
         } catch (IOException | VerifyKey.SignatureException e) {
@@ -123,7 +124,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
 
         Capabilities.Capability capability = new Capabilities.Capability();
         capability.requestid = request.requestId;
-        capability.capability = session.capability.toMessage();
+        capability.capability = session.requesterCap.toMessage();
         capability.identity = request.invokerIdentity.toBytes();
         capability.service = request.serviceIdentity.toBytes();
 

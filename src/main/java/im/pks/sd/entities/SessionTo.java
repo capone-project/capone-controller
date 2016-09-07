@@ -19,21 +19,20 @@ package im.pks.sd.entities;
 
 import nano.Connect;
 
-public class CapabilityTo {
+public class SessionTo {
 
-    public final int rights;
-    public final byte[] secret;
+    public int identifier;
+    public CapabilityTo invokerCap;
+    public CapabilityTo requesterCap;
 
-    public CapabilityTo(Connect.CapabilityMessage msg) {
-        rights = msg.rights;
-        secret = msg.secret;
+    public SessionTo(Connect.SessionMessage msg) {
+        identifier = msg.identifier;
+        invokerCap = new CapabilityTo(msg.invokerCap);
+        requesterCap = new CapabilityTo(msg.requesterCap);
     }
 
-    public Connect.CapabilityMessage toMessage() {
-        Connect.CapabilityMessage msg = new Connect.CapabilityMessage();
-        msg.rights = rights;
-        msg.secret = secret;
-        return msg;
+    public long getUnsignedSessionId() {
+        return identifier & 0xffffffffL;
     }
 
 }

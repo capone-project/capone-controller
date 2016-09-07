@@ -19,6 +19,7 @@ package im.pks.sd.services.invoke;
 
 import android.os.AsyncTask;
 import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.entities.SessionTo;
 import im.pks.sd.protocol.RequestTask;
 import im.pks.sd.protocol.SessionTask;
 import org.abstractj.kalium.encoders.Encoder;
@@ -46,7 +47,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
     @Override
     protected Throwable doInBackground(Void... params) {
         try {
-            RequestTask.Session session = sendSessionRequest();
+            SessionTo session = sendSessionRequest();
             sendInvokeRequest(session);
             return null;
         } catch (IOException | VerifyKey.SignatureException e) {
@@ -54,7 +55,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         }
     }
 
-    private RequestTask.Session sendSessionRequest()
+    private SessionTo sendSessionRequest()
             throws IOException, VerifyKey.SignatureException {
         /* TODO: fill parameters with parameters for the specific invoker */
         List<String> parameters = Collections.emptyList();
@@ -65,14 +66,15 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         return request.requestSession();
     }
 
-    private void sendInvokeRequest(RequestTask.Session session) throws IOException, VerifyKey.SignatureException {
+    private void sendInvokeRequest(SessionTo session) throws IOException, VerifyKey
+                                                                               .SignatureException {
         List<String> parameters = new ArrayList<>();
         parameters.addAll(this.parameters);
 
         parameters.add("sessionid");
         parameters.add(Long.toString(session.getUnsignedSessionId()));
         parameters.add("secret");
-        parameters.add(Encoder.HEX.encode(session.capability.secret));
+        parameters.add(Encoder.HEX.encode(session.invokerCap.secret));
 
         SessionTask sessionTask = new SessionTask(invoker, parameters, null);
         sessionTask.startSession();

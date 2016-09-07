@@ -19,6 +19,7 @@ package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
 import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.entities.SessionTo;
 import im.pks.sd.persistence.Identity;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -55,9 +56,9 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
         VerifyKey identity = Identity.getSigningKey().getVerifyKey();
 
         request = new RequestTask(identity, service, parameters);
-        RequestTask.Session session = request.requestSession();
+        SessionTo session = request.requestSession();
 
-        connect = new ConnectTask(session.capability, service);
+        connect = new ConnectTask(session, service);
         connect.setHandler(handler);
         connect.connect();
     }

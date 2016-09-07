@@ -18,8 +18,8 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
-import im.pks.sd.entities.CapabilityTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.entities.SessionTo;
 import im.pks.sd.persistence.Identity;
 import nano.Connect;
 import org.abstractj.kalium.encoders.Encoder;
@@ -30,32 +30,16 @@ import java.util.List;
 
 public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
-    public static class Session {
-        public final CapabilityTo capability;
-
-        public Session(final CapabilityTo capability) {
-            this.capability = capability;
-        }
-
-        /* Ints are saved with the sign bit representing the most significant bit as Java has no
-         * notion of unsigned ints. This converts the session ID to the unsigned long
-         * representation.
-         */
-        public long getUnsignedSessionId() {
-            return capability.objectId & 0xffffffffL;
-        }
-    }
-
     public static class Result {
         public final Throwable throwable;
-        public final Session session;
+        public final SessionTo session;
 
         public Result(Throwable throwable) {
             this.session = null;
             this.throwable = throwable;
         }
 
-        public Result(Session session) {
+        public Result(SessionTo session) {
             this.session = session;
             this.throwable = null;
         }
@@ -97,7 +81,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
         }
     }
 
-    public Session requestSession() throws IOException, VerifyKey.SignatureException {
+    public SessionTo requestSession() throws IOException, VerifyKey.SignatureException {
         Connect.ConnectionInitiationMessage initiation = new Connect.ConnectionInitiationMessage();
         initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
 
@@ -119,7 +103,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
             channel.readProtobuf(sessionMessage);
 
-            return new Session(new CapabilityTo(sessionMessage.invokerCap));
+            return new SessionTo(sessionMessage);
         } catch (IOException | VerifyKey.SignatureException e) {
             throw e;
         } finally {
