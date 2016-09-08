@@ -22,15 +22,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.controller.R;
 import im.pks.sd.controller.invoke.ServiceChooserDialog;
 import im.pks.sd.controller.invoke.ServiceParametersDialog;
 import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.entities.SignatureKeyTo;
 import im.pks.sd.services.PluginFragment;
 import im.pks.sd.services.Plugins;
-
-import java.util.ArrayList;
-import java.util.List;
+import nano.Invoke;
 
 public class InvokePluginFragment extends PluginFragment {
 
@@ -39,7 +39,7 @@ public class InvokePluginFragment extends PluginFragment {
 
     private ServiceDescriptionTo invoker;
     private ServiceDescriptionTo service;
-    private List<String> serviceParameters;
+    private MessageNano serviceParameters;
 
     private Button invokeButton;
 
@@ -84,7 +84,7 @@ public class InvokePluginFragment extends PluginFragment {
                 parametersDialog.setOnParametersChosenListener(
                         new ServiceParametersDialog.OnParametersChosenListener() {
                             @Override
-                            public void onParametersChosen(List<String> parameters) {
+                            public void onParametersChosen(MessageNano parameters) {
                                 setServiceDetails(details, parameters);
                                 invokeButton.setEnabled(true);
                             }
@@ -96,7 +96,7 @@ public class InvokePluginFragment extends PluginFragment {
     }
 
     private void onInvokeClicked() {
-        InvokePluginTask task = new InvokePluginTask(invoker, service, getParameters()) {
+        InvokePluginTask task = new InvokePluginTask(invoker, service, getParameters(), serviceParameters) {
             @Override
             protected void onPostExecute(Throwable throwable) {
                 if (throwable != null) {
@@ -111,7 +111,7 @@ public class InvokePluginFragment extends PluginFragment {
         Toast.makeText(getActivity(), R.string.service_was_invoked, Toast.LENGTH_SHORT).show();
     }
 
-    private void setServiceDetails(ServiceDescriptionTo results, List<String> parameters) {
+    private void setServiceDetails(ServiceDescriptionTo results, MessageNano parameters) {
         this.service = results;
         this.serviceParameters = parameters;
 
@@ -130,24 +130,15 @@ public class InvokePluginFragment extends PluginFragment {
         pluginLayout.setVisibility(View.VISIBLE);
     }
 
-    public List<String> getParameters() {
-        List<String> parameters = new ArrayList<>();
+    public Invoke.InvokeParams getParameters() {
+        Invoke.InvokeParams params = new Invoke.InvokeParams();
+        params.serviceAddress = service.server.address;
+        params.servicePort = Integer.toString(service.service.port);
+        params.serviceIdentity = new SignatureKeyTo(service.server.publicKey).toMessage();
+        params.serviceType = service.type;
+        params.serviceParameters = null;
 
-        parameters.add("--service-identity");
-        parameters.add(service.server.publicKey);
-        parameters.add("service-address");
-        parameters.add(service.server.address);
-        parameters.add("service-port");
-        parameters.add(String.valueOf(service.service.port));
-        parameters.add("service-type");
-        parameters.add(service.type);
-
-        for (String parameter : serviceParameters) {
-            parameters.add("service-args");
-            parameters.add(parameter);
-        }
-
-        return parameters;
+        return params;
     }
 
 }

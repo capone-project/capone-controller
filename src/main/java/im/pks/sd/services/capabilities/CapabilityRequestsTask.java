@@ -18,7 +18,11 @@
 package im.pks.sd.services.capabilities;
 
 import android.os.AsyncTask;
-import im.pks.sd.entities.*;
+import com.google.protobuf.nano.MessageNano;
+import im.pks.sd.entities.CapabilityRequestTo;
+import im.pks.sd.entities.CapabilityTo;
+import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.entities.SessionTo;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.RequestTask;
@@ -28,7 +32,6 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,7 +40,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     private final ServiceDescriptionTo service;
-    private final List<String> parameters;
+    private final MessageNano parameters;
 
     public static class Result {
         public final Throwable t;
@@ -55,7 +58,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     private RequestListener listener;
     private SessionTask sessionTask;
 
-    public CapabilityRequestsTask(ServiceDescriptionTo service, List<String> parameters) {
+    public CapabilityRequestsTask(ServiceDescriptionTo service, MessageNano parameters) {
         this.service = service;
         this.parameters = parameters;
     }
@@ -83,7 +86,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     @Override
     public void handleConnection(final Channel channel)
             throws IOException, VerifyKey.SignatureException {
-        final Capabilities.CapabilityRequest request = new Capabilities.CapabilityRequest();
+        final Capabilities.CapabilitiesRequest request = new Capabilities.CapabilitiesRequest();
 
         while (request.clear() != null && channel.readProtobuf(request) != null) {
             final CapabilityRequestTo requestTo;

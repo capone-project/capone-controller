@@ -18,24 +18,23 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
+import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.entities.SessionTo;
-import im.pks.sd.persistence.Identity;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
-import java.util.List;
 
 public class SessionTask extends AsyncTask<Void, Void, Throwable> {
 
     private final ServiceDescriptionTo service;
-    private final List<String> parameters;
+    private final MessageNano parameters;
     private final ConnectTask.Handler handler;
 
     private RequestTask request;
     private ConnectTask connect;
 
-    public SessionTask(ServiceDescriptionTo service, List<String> parameters,
+    public SessionTask(ServiceDescriptionTo service, MessageNano parameters,
                        ConnectTask.Handler handler) {
         this.service = service;
         this.parameters = parameters;
@@ -53,8 +52,6 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     }
 
     public void startSession() throws IOException, VerifyKey.SignatureException {
-        VerifyKey identity = Identity.getSigningKey().getVerifyKey();
-
         request = new RequestTask(service, parameters);
         SessionTo session = request.requestSession();
 

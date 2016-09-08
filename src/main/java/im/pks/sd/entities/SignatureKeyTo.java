@@ -18,6 +18,7 @@
 package im.pks.sd.entities;
 
 import nano.Connect;
+import org.abstractj.kalium.encoders.Hex;
 import org.abstractj.kalium.keys.VerifyKey;
 
 public class SignatureKeyTo {
@@ -26,6 +27,10 @@ public class SignatureKeyTo {
 
     public SignatureKeyTo(Connect.SignatureKey key) {
         this.key = new VerifyKey(key.data);
+    }
+
+    public SignatureKeyTo(String data) {
+        this.key = new VerifyKey(Hex.HEX.decode(data));
     }
 
     public Connect.SignatureKey toMessage() {

@@ -18,6 +18,7 @@
 package im.pks.sd.protocol;
 
 import android.os.AsyncTask;
+import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.entities.SessionTo;
 import im.pks.sd.persistence.Identity;
@@ -26,7 +27,6 @@ import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
-import java.util.List;
 
 public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
@@ -48,19 +48,19 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     private final String serviceIdentity;
     private final String serviceAddress;
     private final int servicePort;
-    private final List<String> parameters;
+    private final byte[] parameters;
 
     private Channel channel;
 
-    public RequestTask(ServiceDescriptionTo service, List<String> parameters) {
+    public RequestTask(ServiceDescriptionTo service, MessageNano parameters) {
         this.serviceIdentity = service.server.publicKey;
         this.serviceAddress = service.server.address;
         this.servicePort = service.service.port;
-        this.parameters = parameters;
+        this.parameters = MessageNano.toByteArray(parameters);
     }
 
     public RequestTask(VerifyKey serviceIdentity, String serviceAddress, int servicePort,
-                       List<String> parameters) {
+                       byte[] parameters) {
         this.serviceIdentity = serviceIdentity.toString();
         this.serviceAddress = serviceAddress;
         this.servicePort = servicePort;
@@ -81,7 +81,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
         initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
 
         Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
-        requestMessage.parameters = parameters.toArray(new String[parameters.size()]);
+        requestMessage.parameters = parameters;
 
         Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
 

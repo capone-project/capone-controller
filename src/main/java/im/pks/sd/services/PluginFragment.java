@@ -18,11 +18,10 @@
 package im.pks.sd.services;
 
 import android.app.Fragment;
-
-import java.util.List;
+import com.google.protobuf.nano.MessageNano;
 
 public abstract class PluginFragment extends Fragment {
 
-    public abstract List<String> getParameters();
+    public abstract MessageNano getParameters();
 
 }

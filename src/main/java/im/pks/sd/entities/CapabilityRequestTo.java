@@ -19,38 +19,33 @@ package im.pks.sd.entities;
 
 import nano.Capabilities;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class CapabilityRequestTo {
 
     public final SignatureKeyTo requesterIdentity;
     public final SignatureKeyTo serviceIdentity;
 
-    public final List<String> parameters;
+    public final byte[] parameters;
 
     public final String serviceAddress;
     public final String servicePort;
+    public final String serviceType;
     public final Date received;
 
     public final int requestId;
 
-    public CapabilityRequestTo(Capabilities.CapabilityRequest request) {
+    public CapabilityRequestTo(Capabilities.CapabilitiesRequest request) {
         this(request, null);
     }
 
-    public CapabilityRequestTo(Capabilities.CapabilityRequest request, Date received) {
+    public CapabilityRequestTo(Capabilities.CapabilitiesRequest request, Date received) {
         requesterIdentity = new SignatureKeyTo(request.requesterIdentity);
         serviceIdentity = new SignatureKeyTo(request.serviceIdentity);
-
-        parameters = new ArrayList<>();
-        for (String parameter : request.parameters) {
-            parameters.add(parameter);
-        }
-
+        parameters = request.parameters;
         serviceAddress = request.serviceAddress;
         servicePort = request.servicePort;
+        serviceType = request.serviceType;
 
         this.received = received;
         this.requestId = request.requestid;
