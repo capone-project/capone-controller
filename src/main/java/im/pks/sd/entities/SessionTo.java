@@ -1,4 +1,4 @@
-/*GenericPluginFragment
+/*
  * Copyright (C) 2016 Patrick Steinhardt
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,13 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.services;
+package im.pks.sd.entities;
 
-import android.app.Fragment;
-import com.google.protobuf.nano.MessageNano;
+import nano.Connect;
 
-public abstract class PluginFragment extends Fragment {
+public class SessionTo {
 
-    public abstract MessageNano getParameters();
+    public int identifier;
+    public CapabilityTo capability;
+
+    public SessionTo(Connect.SessionMessage msg) {
+        identifier = msg.identifier;
+        capability = new CapabilityTo(msg.cap);
+    }
+
+    public long getUnsignedSessionId() {
+        return identifier & 0xffffffffL;
+    }
 
 }

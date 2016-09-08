@@ -18,25 +18,85 @@
 package im.pks.sd.entities;
 
 import nano.Connect;
+import org.abstractj.kalium.Sodium;
+import org.abstractj.kalium.SodiumConstants;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CapabilityTo {
 
-    public final int objectId;
-    public final int rights;
+    public static final int RIGHT_EXEC = 1;
+    public static final int RIGHT_TERMINATE = 2;
+
+    public static final int SECRET_LENGTH = 32;
+
+    public class ChainSegment {
+        public int rights;
+        public SignatureKeyTo entity;
+
+        public ChainSegment(int rights, SignatureKeyTo entity) {
+            this.rights = rights;
+            this.entity = entity;
+        }
+    }
+
     public final byte[] secret;
+    public final List<ChainSegment> chain;
+
+    private CapabilityTo(byte[] secret, final List<ChainSegment> chain) {
+        this.secret = secret;
+        this.chain = chain;
+    }
 
     public CapabilityTo(Connect.CapabilityMessage msg) {
-        objectId = msg.objectid;
-        rights = msg.rights;
         secret = msg.secret;
+
+        if (msg.chain != null) {
+            chain = new ArrayList<>(msg.chain.length);
+            for (Connect.CapabilityMessage.Chain segment : msg.chain) {
+                chain.add(new ChainSegment(segment.rights, new SignatureKeyTo(segment.entity)));
+            }
+        } else {
+            chain = new ArrayList<>();
+        }
     }
 
     public Connect.CapabilityMessage toMessage() {
         Connect.CapabilityMessage msg = new Connect.CapabilityMessage();
-        msg.objectid = objectId;
-        msg.rights = rights;
+
         msg.secret = secret;
+
+        if (chain.size() > 0) {
+            msg.chain = new Connect.CapabilityMessage.Chain[chain.size()];
+            for (int i = 0; i < chain.size(); i++) {
+                msg.chain[i] = new Connect.CapabilityMessage.Chain();
+                msg.chain[i].rights = chain.get(i).rights;
+                msg.chain[i].entity = chain.get(i).entity.toMessage();
+            }
+        } else {
+            msg.chain = null;
+        }
+
         return msg;
+    }
+
+    public CapabilityTo createReference(int rights, final SignatureKeyTo entity) {
+        ByteBuffer buffer = ByteBuffer.allocate(SodiumConstants.PUBLICKEY_BYTES + 4 + SECRET_LENGTH);
+        buffer.put(entity.key.toBytes());
+        buffer.putInt(rights);
+        buffer.put(secret);
+
+        byte[] secret = new byte[SECRET_LENGTH];
+        Sodium.crypto_generichash_blake2b(secret, secret.length, buffer.array(),
+                                          buffer.array().length, new byte[0], 0);
+
+        ArrayList<ChainSegment> segments = new ArrayList<>(chain.size() + 1);
+        segments.addAll(chain);
+        segments.add(new ChainSegment(rights, entity));
+
+        return new CapabilityTo(secret, segments);
     }
 
 }

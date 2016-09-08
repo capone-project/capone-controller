@@ -1,4 +1,4 @@
-/*GenericPluginFragment
+/*
  * Copyright (C) 2016 Patrick Steinhardt
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,13 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package im.pks.sd.services;
+package im.pks.sd.entities;
 
-import android.app.Fragment;
-import com.google.protobuf.nano.MessageNano;
+import nano.Connect;
+import org.abstractj.kalium.encoders.Hex;
+import org.abstractj.kalium.keys.VerifyKey;
 
-public abstract class PluginFragment extends Fragment {
+public class SignatureKeyTo {
 
-    public abstract MessageNano getParameters();
+    public final VerifyKey key;
+
+    public SignatureKeyTo(Connect.SignatureKey key) {
+        this.key = new VerifyKey(key.data);
+    }
+
+    public SignatureKeyTo(String data) {
+        this.key = new VerifyKey(Hex.HEX.decode(data));
+    }
+
+    public Connect.SignatureKey toMessage() {
+        Connect.SignatureKey msg = new Connect.SignatureKey();
+        msg.data = key.toBytes();
+        return msg;
+    }
 
 }

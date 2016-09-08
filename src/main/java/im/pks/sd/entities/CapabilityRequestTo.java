@@ -18,42 +18,34 @@
 package im.pks.sd.entities;
 
 import nano.Capabilities;
-import nano.Connect;
-import org.abstractj.kalium.keys.VerifyKey;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class CapabilityRequestTo {
 
-    public final VerifyKey invokerIdentity;
-    public final VerifyKey requesterIdentity;
-    public final VerifyKey serviceIdentity;
+    public final SignatureKeyTo requesterIdentity;
+    public final SignatureKeyTo serviceIdentity;
 
-    public final ArrayList<ParameterTo> parameters;
+    public final byte[] parameters;
 
     public final String serviceAddress;
     public final String servicePort;
+    public final String serviceType;
     public final Date received;
 
     public final int requestId;
 
-    public CapabilityRequestTo(Capabilities.CapabilityRequest request) {
+    public CapabilityRequestTo(Capabilities.CapabilitiesRequest request) {
         this(request, null);
     }
 
-    public CapabilityRequestTo(Capabilities.CapabilityRequest request, Date received) {
-        invokerIdentity = new VerifyKey(request.invokerIdentity);
-        requesterIdentity = new VerifyKey(request.requesterIdentity);
-        serviceIdentity = new VerifyKey(request.serviceIdentity);
-
-        parameters = new ArrayList<>();
-        for (Connect.Parameter parameter : request.parameters) {
-            parameters.add(new ParameterTo(parameter.key, parameter.value));
-        }
-
+    public CapabilityRequestTo(Capabilities.CapabilitiesRequest request, Date received) {
+        requesterIdentity = new SignatureKeyTo(request.requesterIdentity);
+        serviceIdentity = new SignatureKeyTo(request.serviceIdentity);
+        parameters = request.parameters;
         serviceAddress = request.serviceAddress;
         servicePort = request.servicePort;
+        serviceType = request.serviceType;
 
         this.received = received;
         this.requestId = request.requestid;

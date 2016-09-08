@@ -24,17 +24,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.controller.R;
-import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.protocol.Channel;
 import im.pks.sd.protocol.ConnectTask;
 import im.pks.sd.protocol.SessionTask;
 import im.pks.sd.services.PluginFragment;
+import nano.Exec;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ExecPluginFragment extends PluginFragment {
 
@@ -198,23 +197,17 @@ public class ExecPluginFragment extends PluginFragment {
     }
 
     @Override
-    public List<ParameterTo> getParameters() {
-        List<ParameterTo> parameters = new ArrayList<>();
+    public MessageNano getParameters() {
+        Exec.ExecParams params = new Exec.ExecParams();
 
-        parameters.add(new ParameterTo("command",
-                                       executable.getText().toString().trim()));
+        params.command = executable.getText().toString().trim();
 
+        params.arguments = new String[parametersAdapter.getCount()];
         for (int i = 0; i < parametersAdapter.getCount(); i++) {
-            String parameter = parametersAdapter.getItem(i);
-            parameters.add(new ParameterTo("arg", parameter));
+            params.arguments[i] = parametersAdapter.getItem(i);
         }
 
-        for (int i = 0; i < environmentAdapter.getCount(); i++) {
-            EnvironmentVariable variable = environmentAdapter.getItem(i);
-            parameters.add(new ParameterTo("env", variable.toString()));
-        }
-
-        return parameters;
+        return params;
     }
 
 }

@@ -90,6 +90,14 @@ public class InvokeActivity extends AppCompatActivity {
     private void setServiceDescription(ServiceDescriptionTo results) {
         PluginFragment plugin = Plugins.getPlugin(results);
 
+        if (plugin == null) {
+            Toast.makeText(InvokeActivity.this,
+                           String.format(getString(R.string.no_plugin_for_type), results.type),
+                           Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+            return;
+        }
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.add(R.id.plugin_view, plugin);

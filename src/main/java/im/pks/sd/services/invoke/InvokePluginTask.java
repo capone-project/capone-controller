@@ -18,63 +18,57 @@
 package im.pks.sd.services.invoke;
 
 import android.os.AsyncTask;
-import im.pks.sd.entities.ParameterTo;
+import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.entities.ServiceDescriptionTo;
+import im.pks.sd.entities.SessionTo;
 import im.pks.sd.protocol.RequestTask;
 import im.pks.sd.protocol.SessionTask;
+import nano.Invoke;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
-    private final List<ParameterTo> parameters;
+    private final Invoke.InvokeParams parameters;
+    private final MessageNano sessionParameters;
     private final ServiceDescriptionTo invoker;
     private final ServiceDescriptionTo service;
 
     public InvokePluginTask(ServiceDescriptionTo invoker,
                             ServiceDescriptionTo service,
-                            List<ParameterTo> parameters) {
+                            Invoke.InvokeParams parameters,
+                            MessageNano sessionParameters) {
         this.invoker = invoker;
         this.service = service;
         this.parameters = parameters;
+        this.sessionParameters = sessionParameters;
     }
 
     @Override
     protected Throwable doInBackground(Void... params) {
         try {
-            RequestTask.Session session = sendSessionRequest();
-            sendInvokeRequest(session);
+            SessionTo session = sendSessionRequest(sessionParameters);
+            parameters.cap = session.capability.toMessage();
+            parameters.sessionid = session.identifier;
+
+            SessionTask sessionTask = new SessionTask(invoker, parameters, null);
+            sessionTask.startSession();
             return null;
         } catch (IOException | VerifyKey.SignatureException e) {
             return e;
         }
     }
 
-    private RequestTask.Session sendSessionRequest()
+    private SessionTo sendSessionRequest(MessageNano sessionParameters)
             throws IOException, VerifyKey.SignatureException {
         /* TODO: fill parameters with parameters for the specific invoker */
-        List<ParameterTo> parameters = Collections.emptyList();
         VerifyKey identity = new VerifyKey(invoker.server.publicKey, Encoder.HEX);
 
-        RequestTask request = new RequestTask(identity, service, parameters);
+        RequestTask request = new RequestTask(service, null);
 
         return request.requestSession();
-    }
-
-    private void sendInvokeRequest(RequestTask.Session session) throws IOException, VerifyKey.SignatureException {
-        List<ParameterTo> parameters = new ArrayList<>();
-        parameters.addAll(this.parameters);
-
-        parameters.add(new ParameterTo("sessionid", Long.toString(session.getUnsignedSessionId())));
-        parameters.add(new ParameterTo("secret", Encoder.HEX.encode(session.capability.secret)));
-
-        SessionTask sessionTask = new SessionTask(invoker, parameters, null);
-        sessionTask.startSession();
     }
 
 }

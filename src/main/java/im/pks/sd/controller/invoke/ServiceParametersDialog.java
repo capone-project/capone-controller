@@ -25,13 +25,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import com.google.protobuf.nano.MessageNano;
 import im.pks.sd.controller.R;
-import im.pks.sd.entities.ParameterTo;
 import im.pks.sd.entities.ServiceDescriptionTo;
 import im.pks.sd.services.PluginFragment;
 import im.pks.sd.services.Plugins;
-
-import java.util.List;
 
 public class ServiceParametersDialog extends DialogFragment
         implements View.OnClickListener {
@@ -41,7 +39,7 @@ public class ServiceParametersDialog extends DialogFragment
     private OnParametersChosenListener listener;
 
     public interface OnParametersChosenListener {
-        void onParametersChosen(List<ParameterTo> parameters);
+        void onParametersChosen(MessageNano parameters);
     }
 
     public static ServiceParametersDialog createDialog(ServiceDescriptionTo serviceDescription) {

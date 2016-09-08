@@ -34,7 +34,6 @@ public class CapabilityRequestsAdapter
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView requester;
-        private final TextView invoker;
         private final TextView service;
         private final TextView address;
         private final TextView received;
@@ -44,7 +43,6 @@ public class CapabilityRequestsAdapter
         ViewHolder(View itemView) {
             super(itemView);
             requester = (TextView) itemView.findViewById(R.id.text_view_requester);
-            invoker = (TextView) itemView.findViewById(R.id.text_view_invoker);
             service = (TextView) itemView.findViewById(R.id.text_view_service);
             address = (TextView) itemView.findViewById(R.id.text_view_address);
             received = (TextView) itemView.findViewById(R.id.text_view_received);
@@ -69,7 +67,6 @@ public class CapabilityRequestsAdapter
         final Runnable acceptor = accepts.get(position);
 
         holder.requester.setText(request.requesterIdentity.toString());
-        holder.invoker.setText(request.invokerIdentity.toString());
         holder.service.setText(request.serviceIdentity.toString());
         holder.address.setText(String.format("%s:%s", request.serviceAddress, request.servicePort));
 

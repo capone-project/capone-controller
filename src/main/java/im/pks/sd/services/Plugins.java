@@ -34,7 +34,7 @@ public class Plugins {
             case "capabilities":
                 return CapabilityPluginFragment.createFragment(service);
             default:
-                return GenericPluginFragment.createFragment(service);
+                return null;
         }
     }
 
