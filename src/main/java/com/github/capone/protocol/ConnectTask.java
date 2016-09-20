@@ -56,7 +56,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
     public void connect() throws IOException, VerifyKey.SignatureException {
         Connect.ConnectionInitiationMessage connectionInitiation = new Connect.ConnectionInitiationMessage();
         connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
-        Connect.SessionInitiationMessage sessionInitiation = new Connect.SessionInitiationMessage();
+        Connect.SessionConnectMessage sessionInitiation = new Connect.SessionConnectMessage();
 
         sessionInitiation.capability = session.capability.toMessage();
         sessionInitiation.identifier = session.identifier;
@@ -68,7 +68,10 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
             channel.writeProtobuf(connectionInitiation);
             channel.writeProtobuf(sessionInitiation);
 
-            if (handler != null) {
+            Connect.SessionConnectResult result = new Connect.SessionConnectResult();
+            channel.readProtobuf(result);
+
+            if (result.result == 0 && handler != null) {
                 handler.handleConnection(channel);
             }
 
