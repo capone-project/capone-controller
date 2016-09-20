@@ -57,7 +57,7 @@ public abstract class QueryTask
                 channel.enableEncryption(param.localKey, param.server.signatureKey.key);
 
                 Capone.ConnectionInitiationMessage initiation = new Capone
-                                                                             .ConnectionInitiationMessage();
+                                                                            .ConnectionInitiationMessage();
                 initiation.type = Capone.ConnectionInitiationMessage.QUERY;
                 channel.writeProtobuf(initiation);
 
@@ -68,7 +68,9 @@ public abstract class QueryTask
                 Capone.ServiceQueryResult queryResults = new Capone.ServiceQueryResult();
                 channel.readProtobuf(queryResults);
 
-                publishProgress(convertQuery(param, queryResults));
+                if (queryResults.error == null) {
+                    publishProgress(convertQuery(param, queryResults));
+                }
 
                 return null;
             } catch (VerifyKey.SignatureException | IOException e) {

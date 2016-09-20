@@ -72,7 +72,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
             Capone.SessionConnectResult result = new Capone.SessionConnectResult();
             channel.readProtobuf(result);
 
-            if (result.result == 0 && handler != null) {
+            if (result.error != null && handler != null) {
                 handler.handleConnection(channel);
             }
 

@@ -94,7 +94,11 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
             channel.readProtobuf(sessionMessage);
 
-            return new SessionTo(sessionMessage);
+            if (sessionMessage.error == null) {
+                return new SessionTo(sessionMessage);
+            } else {
+                return null;
+            }
         } catch (IOException | VerifyKey.SignatureException e) {
             throw e;
         } finally {
