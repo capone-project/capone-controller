@@ -20,7 +20,6 @@ package com.github.capone.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 import nano.Discovery;
-import org.abstractj.kalium.keys.PublicKey;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -42,8 +41,8 @@ public class ServerTo implements Parcelable {
     };
 
     public String name;
-    public String publicKey;
     public String address;
+    public SignatureKeyTo signatureKey;
     public List<ServiceTo> services;
 
     public ServerTo() {
@@ -51,24 +50,24 @@ public class ServerTo implements Parcelable {
 
     private ServerTo(Parcel in) {
         name = in.readString();
-        publicKey = in.readString();
         address = in.readString();
+        signatureKey = in.readParcelable(SignatureKeyTo.class.getClassLoader());
         services = in.createTypedArrayList(ServiceTo.CREATOR);
     }
 
     @Override
     public String toString() {
-        return publicKey;
+        return signatureKey.toString();
     }
 
-    public static ServerTo fromAnnounce(String address, Discovery.AnnounceMessage announce) {
+    public static ServerTo fromAnnounce(String address, Discovery.DiscoverResult announce) {
         ServerTo server = new ServerTo();
         server.name = announce.name;
-        server.publicKey = new PublicKey(announce.signKey).toString();
         server.address = address;
+        server.signatureKey = new SignatureKeyTo(announce.signKey);
         server.services = new ArrayList<>();
 
-        for (Discovery.AnnounceMessage.Service announcedService : announce.services) {
+        for (Discovery.DiscoverResult.Service announcedService : announce.services) {
             ServiceTo service = new ServiceTo();
             service.name = announcedService.name;
             service.category = announcedService.category;
@@ -96,8 +95,8 @@ public class ServerTo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(publicKey);
         dest.writeString(address);
+        dest.writeParcelable(signatureKey, flags);
         dest.writeTypedList(services);
     }
 

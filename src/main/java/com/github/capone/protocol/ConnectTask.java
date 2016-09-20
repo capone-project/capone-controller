@@ -21,8 +21,7 @@ import android.os.AsyncTask;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
-import nano.Connect;
-import org.abstractj.kalium.encoders.Encoder;
+import nano.Capone;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
@@ -55,9 +54,10 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
     }
 
     public void connect() throws IOException, VerifyKey.SignatureException {
-        Connect.ConnectionInitiationMessage connectionInitiation = new Connect.ConnectionInitiationMessage();
-        connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
-        Connect.SessionInitiationMessage sessionInitiation = new Connect.SessionInitiationMessage();
+        Capone.ConnectionInitiationMessage connectionInitiation = new Capone
+                                                                         .ConnectionInitiationMessage();
+        connectionInitiation.type = Capone.ConnectionInitiationMessage.CONNECT;
+        Capone.SessionConnectMessage sessionInitiation = new Capone.SessionConnectMessage();
 
         sessionInitiation.capability = session.capability.toMessage();
         sessionInitiation.identifier = session.identifier;
@@ -65,12 +65,14 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
         try {
             channel = new TcpChannel(service.server.address, service.service.port);
             channel.connect();
-            channel.enableEncryption(Identity.getSigningKey(),
-                                     new VerifyKey(service.server.publicKey, Encoder.HEX));
+            channel.enableEncryption(Identity.getSigningKey(), service.server.signatureKey.key);
             channel.writeProtobuf(connectionInitiation);
             channel.writeProtobuf(sessionInitiation);
 
-            if (handler != null) {
+            Capone.SessionConnectResult result = new Capone.SessionConnectResult();
+            channel.readProtobuf(result);
+
+            if (result.error != null && handler != null) {
                 handler.handleConnection(channel);
             }
 

@@ -18,12 +18,11 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.google.protobuf.nano.MessageNano;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
-import nano.Connect;
-import org.abstractj.kalium.encoders.Encoder;
+import com.google.protobuf.nano.MessageNano;
+import nano.Capone;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
@@ -45,7 +44,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
         }
     }
 
-    private final String serviceIdentity;
+    private final VerifyKey serviceIdentity;
     private final String serviceAddress;
     private final int servicePort;
     private final byte[] parameters;
@@ -53,7 +52,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     private Channel channel;
 
     public RequestTask(ServiceDescriptionTo service, MessageNano parameters) {
-        this.serviceIdentity = service.server.publicKey;
+        this.serviceIdentity = service.server.signatureKey.key;
         this.serviceAddress = service.server.address;
         this.servicePort = service.service.port;
         this.parameters = MessageNano.toByteArray(parameters);
@@ -61,7 +60,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
 
     public RequestTask(VerifyKey serviceIdentity, String serviceAddress, int servicePort,
                        byte[] parameters) {
-        this.serviceIdentity = serviceIdentity.toString();
+        this.serviceIdentity = serviceIdentity;
         this.serviceAddress = serviceAddress;
         this.servicePort = servicePort;
         this.parameters = parameters;
@@ -77,27 +76,29 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     }
 
     public SessionTo requestSession() throws IOException, VerifyKey.SignatureException {
-        Connect.ConnectionInitiationMessage initiation = new Connect.ConnectionInitiationMessage();
-        initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
+        Capone.ConnectionInitiationMessage initiation = new Capone.ConnectionInitiationMessage();
+        initiation.type = Capone.ConnectionInitiationMessage.REQUEST;
 
-        Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
+        Capone.SessionRequestMessage requestMessage = new Capone.SessionRequestMessage();
         requestMessage.parameters = parameters;
 
-        Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
+        Capone.SessionRequestResult sessionMessage = new Capone.SessionRequestResult();
 
         try {
-            VerifyKey remoteKey = new VerifyKey(serviceIdentity, Encoder.HEX);
-
             channel = new TcpChannel(serviceAddress, servicePort);
             channel.connect();
-            channel.enableEncryption(Identity.getSigningKey(), remoteKey);
+            channel.enableEncryption(Identity.getSigningKey(), serviceIdentity);
 
             channel.writeProtobuf(initiation);
             channel.writeProtobuf(requestMessage);
 
             channel.readProtobuf(sessionMessage);
 
-            return new SessionTo(sessionMessage);
+            if (sessionMessage.error == null) {
+                return new SessionTo(sessionMessage);
+            } else {
+                return null;
+            }
         } catch (IOException | VerifyKey.SignatureException e) {
             throw e;
         } finally {

@@ -17,26 +17,58 @@
 
 package com.github.capone.entities;
 
-import nano.Connect;
-import org.abstractj.kalium.encoders.Hex;
+import android.os.Parcel;
+import android.os.Parcelable;
+import nano.Core;
 import org.abstractj.kalium.keys.VerifyKey;
 
-public class SignatureKeyTo {
+import static org.abstractj.kalium.SodiumConstants.PUBLICKEY_BYTES;
+
+public class SignatureKeyTo implements Parcelable {
+
+    public static final Creator CREATOR = new Parcelable.Creator() {
+        @Override
+        public SignatureKeyTo createFromParcel(Parcel in) {
+            return new SignatureKeyTo(in);
+        }
+
+        @Override
+        public SignatureKeyTo[] newArray(int size) {
+            return new SignatureKeyTo[size];
+        }
+    };
 
     public final VerifyKey key;
 
-    public SignatureKeyTo(Connect.SignatureKey key) {
+    public SignatureKeyTo(Core.SignatureKeyMessage key) {
         this.key = new VerifyKey(key.data);
     }
 
-    public SignatureKeyTo(String data) {
-        this.key = new VerifyKey(Hex.HEX.decode(data));
+    protected SignatureKeyTo(Parcel in) {
+        byte[] bytes = new byte[PUBLICKEY_BYTES];
+
+        in.readByteArray(bytes);
+        this.key = new VerifyKey(bytes);
     }
 
-    public Connect.SignatureKey toMessage() {
-        Connect.SignatureKey msg = new Connect.SignatureKey();
+    public Core.SignatureKeyMessage toMessage() {
+        Core.SignatureKeyMessage msg = new Core.SignatureKeyMessage();
         msg.data = key.toBytes();
         return msg;
+    }
+
+    public String toString() {
+        return key.toString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByteArray(key.toBytes());
     }
 
 }

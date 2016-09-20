@@ -29,34 +29,27 @@ import java.net.SocketTimeoutException;
 
 public class DiscoveryTask extends AsyncTask<Void, ServerTo, Throwable> {
 
-    public static final int LOCAL_DISCOVERY_PORT = 6668;
-    public static final int REMOTE_DISCOVERY_PORT = 6667;
+    public static final int DISCOVERY_PORT = 6667;
     public static final String BROADCAST_ADDRESS = "224.0.0.1";
 
-    private DatagramSocket broadcastSocket;
-    private DatagramSocket announceSocket;
+    private DatagramSocket socket;
 
     @Override
     protected Throwable doInBackground(Void... ignored) {
         Discovery.DiscoverMessage discoverMessage = new Discovery.DiscoverMessage();
-        discoverMessage.version = "0.0.1";
-        discoverMessage.port = LOCAL_DISCOVERY_PORT;
+        discoverMessage.version = 1;
 
         try {
             InetAddress broadcastAddress = InetAddress.getByName(BROADCAST_ADDRESS);
-            broadcastSocket = new DatagramSocket();
-            broadcastSocket.setBroadcast(true);
+            socket = new DatagramSocket();
+            socket.setBroadcast(true);
 
-            UdpChannel broadcastChannel = UdpChannel.createFromSocket(broadcastSocket,
+            UdpChannel channel = UdpChannel.createFromSocket(socket,
                                                                       broadcastAddress,
-                                                                      REMOTE_DISCOVERY_PORT);
-
-            announceSocket = new DatagramSocket(LOCAL_DISCOVERY_PORT);
-            announceSocket.setSoTimeout(10000);
-            UdpChannel announceChannel = UdpChannel.createFromSocket(announceSocket, null, 0);
+                                                                      DISCOVERY_PORT);
 
             while (true) {
-                broadcastChannel.writeProtobuf(discoverMessage);
+                channel.writeProtobuf(discoverMessage);
 
                 while (true) {
                     if (this.isCancelled()) {
@@ -64,9 +57,9 @@ public class DiscoveryTask extends AsyncTask<Void, ServerTo, Throwable> {
                     }
 
                     try {
-                        DatagramPacket announcePacket = announceChannel.peek(512);
-                        Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
-                        announceChannel.readProtobuf(announceMessage);
+                        DatagramPacket announcePacket = channel.peek(512);
+                        Discovery.DiscoverResult announceMessage = new Discovery.DiscoverResult();
+                        channel.readProtobuf(announceMessage);
 
                         ServerTo server = ServerTo.fromAnnounce(
                                 announcePacket.getAddress().getCanonicalHostName(),
@@ -81,18 +74,14 @@ public class DiscoveryTask extends AsyncTask<Void, ServerTo, Throwable> {
         } catch (IOException e) {
             return e;
         } finally {
-            if (broadcastSocket != null)
-                broadcastSocket.close();
-            if (announceSocket != null)
-                announceSocket.close();
+            if (socket != null)
+                socket.close();
         }
     }
 
     public void cancel() {
-        if (broadcastSocket != null)
-            broadcastSocket.close();
-        if (announceSocket != null)
-            announceSocket.close();
+        if (socket != null)
+            socket.close();
         super.cancel(true);
     }
 

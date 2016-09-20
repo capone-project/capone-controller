@@ -21,8 +21,8 @@ import android.os.AsyncTask;
 import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServiceTo;
-import nano.Connect;
-import org.abstractj.kalium.encoders.Encoder;
+import nano.Capone;
+import nano.Discovery;
 import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -51,21 +51,26 @@ public abstract class QueryTask
             try {
                 if (isCancelled())
                     return null;
-                VerifyKey remoteKey = new VerifyKey(param.server.publicKey, Encoder.HEX);
 
                 channel = new TcpChannel(param.server.address, param.service.port);
                 channel.connect();
-                channel.enableEncryption(param.localKey, remoteKey);
+                channel.enableEncryption(param.localKey, param.server.signatureKey.key);
 
-                Connect.ConnectionInitiationMessage initiation = new Connect
-                                                                             .ConnectionInitiationMessage();
-                initiation.type = Connect.ConnectionInitiationMessage.QUERY;
+                Capone.ConnectionInitiationMessage initiation = new Capone
+                                                                            .ConnectionInitiationMessage();
+                initiation.type = Capone.ConnectionInitiationMessage.QUERY;
                 channel.writeProtobuf(initiation);
 
-                Connect.ServiceDescription queryResults = new Connect.ServiceDescription();
+                Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
+                discovery.version = 1;
+                channel.writeProtobuf(discovery);
+
+                Capone.ServiceQueryResult queryResults = new Capone.ServiceQueryResult();
                 channel.readProtobuf(queryResults);
 
-                publishProgress(convertQuery(param, queryResults));
+                if (queryResults.error == null) {
+                    publishProgress(convertQuery(param, queryResults));
+                }
 
                 return null;
             } catch (VerifyKey.SignatureException | IOException e) {
@@ -83,7 +88,7 @@ public abstract class QueryTask
         return null;
     }
 
-    private ServiceDescriptionTo convertQuery(Parameters params, Connect.ServiceDescription queryResults) {
+    private ServiceDescriptionTo convertQuery(Parameters params, Capone.ServiceQueryResult queryResults) {
         return new ServiceDescriptionTo(params.server, params.service, queryResults.type,
                                         queryResults.location, queryResults.version);
     }

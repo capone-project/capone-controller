@@ -17,7 +17,7 @@
 
 package com.github.capone.entities;
 
-import nano.Connect;
+import nano.Core;
 import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
 
@@ -50,12 +50,12 @@ public class CapabilityTo {
         this.chain = chain;
     }
 
-    public CapabilityTo(Connect.CapabilityMessage msg) {
+    public CapabilityTo(Core.CapabilityMessage msg) {
         secret = msg.secret;
 
         if (msg.chain != null) {
             chain = new ArrayList<>(msg.chain.length);
-            for (Connect.CapabilityMessage.Chain segment : msg.chain) {
+            for (Core.CapabilityMessage.Chain segment : msg.chain) {
                 chain.add(new ChainSegment(segment.rights, new SignatureKeyTo(segment.entity)));
             }
         } else {
@@ -63,15 +63,15 @@ public class CapabilityTo {
         }
     }
 
-    public Connect.CapabilityMessage toMessage() {
-        Connect.CapabilityMessage msg = new Connect.CapabilityMessage();
+    public Core.CapabilityMessage toMessage() {
+        Core.CapabilityMessage msg = new Core.CapabilityMessage();
 
         msg.secret = secret;
 
         if (chain.size() > 0) {
-            msg.chain = new Connect.CapabilityMessage.Chain[chain.size()];
+            msg.chain = new Core.CapabilityMessage.Chain[chain.size()];
             for (int i = 0; i < chain.size(); i++) {
-                msg.chain[i] = new Connect.CapabilityMessage.Chain();
+                msg.chain[i] = new Core.CapabilityMessage.Chain();
                 msg.chain[i].rights = chain.get(i).rights;
                 msg.chain[i].entity = chain.get(i).entity.toMessage();
             }
@@ -83,7 +83,8 @@ public class CapabilityTo {
     }
 
     public CapabilityTo createReference(int rights, final SignatureKeyTo entity) {
-        ByteBuffer buffer = ByteBuffer.allocate(SodiumConstants.PUBLICKEY_BYTES + 4 + SECRET_LENGTH);
+        ByteBuffer buffer = ByteBuffer.allocate(
+                SodiumConstants.PUBLICKEY_BYTES + 4 + SECRET_LENGTH);
         buffer.put(entity.key.toBytes());
         buffer.putInt(rights);
         buffer.put(secret);

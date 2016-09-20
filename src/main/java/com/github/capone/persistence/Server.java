@@ -32,7 +32,7 @@ public class Server extends SugarRecord {
     }
 
     public Server(ServerTo server) {
-        this.publicKey = server.publicKey;
+        this.publicKey = server.signatureKey.toString();
         this.address = server.address;
     }
 
@@ -62,7 +62,7 @@ public class Server extends SugarRecord {
 
     public static Server findByTo(ServerTo server) {
         List<Server> favorites = find(Server.class, "public_key = ? and address = ?",
-                                      server.publicKey, server.address);
+                                      server.signatureKey.toString(), server.address);
 
         if (favorites.isEmpty()) {
             return null;

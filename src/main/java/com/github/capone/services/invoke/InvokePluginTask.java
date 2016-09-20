@@ -18,13 +18,12 @@
 package com.github.capone.services.invoke;
 
 import android.os.AsyncTask;
-import com.google.protobuf.nano.MessageNano;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.protocol.RequestTask;
 import com.github.capone.protocol.SessionTask;
+import com.google.protobuf.nano.MessageNano;
 import nano.Invoke;
-import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
@@ -63,9 +62,6 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
     private SessionTo sendSessionRequest(MessageNano sessionParameters)
             throws IOException, VerifyKey.SignatureException {
-        /* TODO: fill parameters with parameters for the specific invoker */
-        VerifyKey identity = new VerifyKey(invoker.server.publicKey, Encoder.HEX);
-
         RequestTask request = new RequestTask(service, null);
 
         return request.requestSession();
