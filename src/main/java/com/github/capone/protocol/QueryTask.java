@@ -62,7 +62,7 @@ public abstract class QueryTask
                 channel.writeProtobuf(initiation);
 
                 Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
-                discovery.version = "0.0.1";
+                discovery.version = 1;
                 channel.writeProtobuf(discovery);
 
                 Capone.ServiceQueryResult queryResults = new Capone.ServiceQueryResult();

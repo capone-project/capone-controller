@@ -37,7 +37,7 @@ public class DiscoveryTask extends AsyncTask<Void, ServerTo, Throwable> {
     @Override
     protected Throwable doInBackground(Void... ignored) {
         Discovery.DiscoverMessage discoverMessage = new Discovery.DiscoverMessage();
-        discoverMessage.version = "0.0.1";
+        discoverMessage.version = 1;
 
         try {
             InetAddress broadcastAddress = InetAddress.getByName(BROADCAST_ADDRESS);
