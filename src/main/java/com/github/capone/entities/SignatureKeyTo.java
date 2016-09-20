@@ -25,7 +25,7 @@ public class SignatureKeyTo {
 
     public final VerifyKey key;
 
-    public SignatureKeyTo(Core.SignatureKey key) {
+    public SignatureKeyTo(Core.SignatureKeyMessage key) {
         this.key = new VerifyKey(key.data);
     }
 
@@ -33,8 +33,8 @@ public class SignatureKeyTo {
         this.key = new VerifyKey(Hex.HEX.decode(data));
     }
 
-    public Core.SignatureKey toMessage() {
-        Core.SignatureKey msg = new Core.SignatureKey();
+    public Core.SignatureKeyMessage toMessage() {
+        Core.SignatureKeyMessage msg = new Core.SignatureKeyMessage();
         msg.data = key.toBytes();
         return msg;
     }
