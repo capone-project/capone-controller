@@ -56,7 +56,7 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
 
     @Override
     protected Result doInBackground(Void... params) {
-        channel = new TcpChannel(server.getAddress(), DiscoveryTask.REMOTE_DISCOVERY_PORT);
+        channel = new TcpChannel(server.getAddress(), DiscoveryTask.DISCOVERY_PORT);
 
         try {
             channel.connect();
@@ -64,7 +64,6 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
 
             Discovery.DiscoverMessage discoverMessage = new Discovery.DiscoverMessage();
             discoverMessage.version = "0.0.1";
-            discoverMessage.port = 0;
             channel.writeProtobuf(discoverMessage);
 
             Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
