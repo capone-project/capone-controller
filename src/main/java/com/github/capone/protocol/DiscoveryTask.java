@@ -58,7 +58,7 @@ public class DiscoveryTask extends AsyncTask<Void, ServerTo, Throwable> {
 
                     try {
                         DatagramPacket announcePacket = channel.peek(512);
-                        Discovery.AnnounceMessage announceMessage = new Discovery.AnnounceMessage();
+                        Discovery.DiscoverResult announceMessage = new Discovery.DiscoverResult();
                         channel.readProtobuf(announceMessage);
 
                         ServerTo server = ServerTo.fromAnnounce(

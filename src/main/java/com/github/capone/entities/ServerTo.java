@@ -60,14 +60,14 @@ public class ServerTo implements Parcelable {
         return signatureKey.toString();
     }
 
-    public static ServerTo fromAnnounce(String address, Discovery.AnnounceMessage announce) {
+    public static ServerTo fromAnnounce(String address, Discovery.DiscoverResult announce) {
         ServerTo server = new ServerTo();
         server.name = announce.name;
         server.address = address;
         server.signatureKey = new SignatureKeyTo(announce.signKey);
         server.services = new ArrayList<>();
 
-        for (Discovery.AnnounceMessage.Service announcedService : announce.services) {
+        for (Discovery.DiscoverResult.Service announcedService : announce.services) {
             ServiceTo service = new ServiceTo();
             service.name = announcedService.name;
             service.category = announcedService.category;
