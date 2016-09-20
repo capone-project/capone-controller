@@ -136,7 +136,6 @@ public class InvokePluginFragment extends PluginFragment {
         params.servicePort = Integer.toString(service.service.port);
         params.serviceIdentity = new SignatureKeyTo(service.server.publicKey).toMessage();
         params.serviceType = service.type;
-        params.serviceParameters = null;
 
         return params;
     }
