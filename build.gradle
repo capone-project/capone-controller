@@ -20,7 +20,7 @@ android {
     buildToolsVersion "24.0.1"
 
     defaultConfig {
-        applicationId "im.pks.sd.controller"
+        applicationId "com.github.capone.controller"
         minSdkVersion 17
         targetSdkVersion 24
         versionCode 1
