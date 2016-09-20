@@ -24,7 +24,7 @@ public class SessionTo {
     public int identifier;
     public CapabilityTo capability;
 
-    public SessionTo(Connect.SessionMessage msg) {
+    public SessionTo(Connect.SessionRequestResult msg) {
         identifier = msg.identifier;
         capability = new CapabilityTo(msg.cap);
     }

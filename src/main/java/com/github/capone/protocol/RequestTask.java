@@ -82,7 +82,7 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
         Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
         requestMessage.parameters = parameters;
 
-        Connect.SessionMessage sessionMessage = new Connect.SessionMessage();
+        Connect.SessionRequestResult sessionMessage = new Connect.SessionRequestResult();
 
         try {
             channel = new TcpChannel(serviceAddress, servicePort);
