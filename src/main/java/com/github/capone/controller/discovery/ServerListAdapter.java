@@ -86,7 +86,7 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
         });
 
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
-        serverKey.setText(to.publicKey);
+        serverKey.setText(to.signatureKey.toString());
 
         return view;
     }

@@ -22,7 +22,6 @@ import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
 import nano.Connect;
-import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
@@ -65,8 +64,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
         try {
             channel = new TcpChannel(service.server.address, service.service.port);
             channel.connect();
-            channel.enableEncryption(Identity.getSigningKey(),
-                                     new VerifyKey(service.server.publicKey, Encoder.HEX));
+            channel.enableEncryption(Identity.getSigningKey(), service.server.signatureKey.key);
             channel.writeProtobuf(connectionInitiation);
             channel.writeProtobuf(sessionInitiation);
 

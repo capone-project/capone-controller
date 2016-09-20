@@ -22,14 +22,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.google.protobuf.nano.MessageNano;
 import com.github.capone.controller.R;
 import com.github.capone.controller.invoke.ServiceChooserDialog;
 import com.github.capone.controller.invoke.ServiceParametersDialog;
 import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.SignatureKeyTo;
 import com.github.capone.services.PluginFragment;
 import com.github.capone.services.Plugins;
+import com.google.protobuf.nano.MessageNano;
 import nano.Invoke;
 
 public class InvokePluginFragment extends PluginFragment {
@@ -121,7 +120,7 @@ public class InvokePluginFragment extends PluginFragment {
         TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
         serverAddress.setText(String.format("%s:%d", service.server.address, service.service.port));
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
-        serverKey.setText(service.server.publicKey);
+        serverKey.setText(service.server.signatureKey.toString());
         TextView serviceName = (TextView) view.findViewById(R.id.service_name);
         serviceName.setText(service.service.name);
         TextView serviceType = (TextView) view.findViewById(R.id.service_type);
@@ -134,7 +133,7 @@ public class InvokePluginFragment extends PluginFragment {
         Invoke.InvokeParams params = new Invoke.InvokeParams();
         params.serviceAddress = service.server.address;
         params.servicePort = Integer.toString(service.service.port);
-        params.serviceIdentity = new SignatureKeyTo(service.server.publicKey).toMessage();
+        params.serviceIdentity = service.server.signatureKey.toMessage();
         params.serviceType = service.type;
 
         return params;
