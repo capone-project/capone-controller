@@ -4,7 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.0'
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.7.6'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.0'
     }
 }
 
@@ -34,18 +34,23 @@ android {
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0-beta-2'
+        artifact = 'com.google.protobuf:protoc:3.0.2'
+    }
+    generateProtoTasks {
+        all()*.builtins {
+            javanano {}
+        }
     }
 }
 
 dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
     compile 'com.android.support:cardview-v7:24.1.1'
+    compile 'com.android.support:design:24.1.1'
     compile 'com.android.support:recyclerview-v7:24.1.1'
-    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     compile 'com.github.gerardsoleca:robosodium:1.0.0'
-    compile 'commons-lang:commons-lang:2.6'
     compile 'com.github.satyan:sugar:1.5'
+    compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+    compile 'commons-lang:commons-lang:2.6'
 }
