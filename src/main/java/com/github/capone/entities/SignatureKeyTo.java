@@ -17,7 +17,7 @@
 
 package com.github.capone.entities;
 
-import nano.Connect;
+import nano.Core;
 import org.abstractj.kalium.encoders.Hex;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -25,7 +25,7 @@ public class SignatureKeyTo {
 
     public final VerifyKey key;
 
-    public SignatureKeyTo(Connect.SignatureKey key) {
+    public SignatureKeyTo(Core.SignatureKey key) {
         this.key = new VerifyKey(key.data);
     }
 
@@ -33,8 +33,8 @@ public class SignatureKeyTo {
         this.key = new VerifyKey(Hex.HEX.decode(data));
     }
 
-    public Connect.SignatureKey toMessage() {
-        Connect.SignatureKey msg = new Connect.SignatureKey();
+    public Core.SignatureKey toMessage() {
+        Core.SignatureKey msg = new Core.SignatureKey();
         msg.data = key.toBytes();
         return msg;
     }
