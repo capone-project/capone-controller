@@ -22,7 +22,7 @@ import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
 import com.google.protobuf.nano.MessageNano;
-import nano.Connect;
+import nano.Capone;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
@@ -76,13 +76,13 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     }
 
     public SessionTo requestSession() throws IOException, VerifyKey.SignatureException {
-        Connect.ConnectionInitiationMessage initiation = new Connect.ConnectionInitiationMessage();
-        initiation.type = Connect.ConnectionInitiationMessage.REQUEST;
+        Capone.ConnectionInitiationMessage initiation = new Capone.ConnectionInitiationMessage();
+        initiation.type = Capone.ConnectionInitiationMessage.REQUEST;
 
-        Connect.SessionRequestMessage requestMessage = new Connect.SessionRequestMessage();
+        Capone.SessionRequestMessage requestMessage = new Capone.SessionRequestMessage();
         requestMessage.parameters = parameters;
 
-        Connect.SessionRequestResult sessionMessage = new Connect.SessionRequestResult();
+        Capone.SessionRequestResult sessionMessage = new Capone.SessionRequestResult();
 
         try {
             channel = new TcpChannel(serviceAddress, servicePort);

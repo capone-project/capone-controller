@@ -21,7 +21,7 @@ import android.os.AsyncTask;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
-import nano.Connect;
+import nano.Capone;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
@@ -54,9 +54,10 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
     }
 
     public void connect() throws IOException, VerifyKey.SignatureException {
-        Connect.ConnectionInitiationMessage connectionInitiation = new Connect.ConnectionInitiationMessage();
-        connectionInitiation.type = Connect.ConnectionInitiationMessage.CONNECT;
-        Connect.SessionConnectMessage sessionInitiation = new Connect.SessionConnectMessage();
+        Capone.ConnectionInitiationMessage connectionInitiation = new Capone
+                                                                         .ConnectionInitiationMessage();
+        connectionInitiation.type = Capone.ConnectionInitiationMessage.CONNECT;
+        Capone.SessionConnectMessage sessionInitiation = new Capone.SessionConnectMessage();
 
         sessionInitiation.capability = session.capability.toMessage();
         sessionInitiation.identifier = session.identifier;
@@ -68,7 +69,7 @@ public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
             channel.writeProtobuf(connectionInitiation);
             channel.writeProtobuf(sessionInitiation);
 
-            Connect.SessionConnectResult result = new Connect.SessionConnectResult();
+            Capone.SessionConnectResult result = new Capone.SessionConnectResult();
             channel.readProtobuf(result);
 
             if (result.result == 0 && handler != null) {

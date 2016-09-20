@@ -21,7 +21,7 @@ import android.os.AsyncTask;
 import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServiceTo;
-import nano.Connect;
+import nano.Capone;
 import nano.Discovery;
 import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
@@ -56,16 +56,16 @@ public abstract class QueryTask
                 channel.connect();
                 channel.enableEncryption(param.localKey, param.server.signatureKey.key);
 
-                Connect.ConnectionInitiationMessage initiation = new Connect
+                Capone.ConnectionInitiationMessage initiation = new Capone
                                                                              .ConnectionInitiationMessage();
-                initiation.type = Connect.ConnectionInitiationMessage.QUERY;
+                initiation.type = Capone.ConnectionInitiationMessage.QUERY;
                 channel.writeProtobuf(initiation);
 
                 Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
                 discovery.version = "0.0.1";
                 channel.writeProtobuf(discovery);
 
-                Connect.ServiceQueryResult queryResults = new Connect.ServiceQueryResult();
+                Capone.ServiceQueryResult queryResults = new Capone.ServiceQueryResult();
                 channel.readProtobuf(queryResults);
 
                 publishProgress(convertQuery(param, queryResults));
@@ -86,7 +86,7 @@ public abstract class QueryTask
         return null;
     }
 
-    private ServiceDescriptionTo convertQuery(Parameters params, Connect.ServiceQueryResult queryResults) {
+    private ServiceDescriptionTo convertQuery(Parameters params, Capone.ServiceQueryResult queryResults) {
         return new ServiceDescriptionTo(params.server, params.service, queryResults.type,
                                         queryResults.location, queryResults.version);
     }

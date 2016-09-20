@@ -17,14 +17,14 @@
 
 package com.github.capone.entities;
 
-import nano.Connect;
+import nano.Capone;
 
 public class SessionTo {
 
     public int identifier;
     public CapabilityTo capability;
 
-    public SessionTo(Connect.SessionRequestResult msg) {
+    public SessionTo(Capone.SessionRequestResult msg) {
         identifier = msg.identifier;
         capability = new CapabilityTo(msg.cap);
     }
