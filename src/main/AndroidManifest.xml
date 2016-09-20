@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="im.pks.sd.controller">
+          package="com.github.capone.controller">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -36,7 +36,7 @@
 
         <meta-data
                 android:name="DATABASE"
-                android:value="sd-controller.db"/>
+                android:value="capone.db"/>
         <meta-data
                 android:name="VERSION"
                 android:value="1"/>
@@ -45,7 +45,7 @@
                 android:value="false"/>
         <meta-data
                 android:name="DOMAIN_PACKAGE_NAME"
-                android:value="im.pks.sd.persistence"/>
+                android:value="com.github.capone.persistence"/>
 
     </application>
 
