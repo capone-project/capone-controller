@@ -22,6 +22,7 @@ import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServiceTo;
 import nano.Connect;
+import nano.Discovery;
 import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -60,7 +61,11 @@ public abstract class QueryTask
                 initiation.type = Connect.ConnectionInitiationMessage.QUERY;
                 channel.writeProtobuf(initiation);
 
-                Connect.ServiceDescription queryResults = new Connect.ServiceDescription();
+                Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
+                discovery.version = "0.0.1";
+                channel.writeProtobuf(discovery);
+
+                Connect.ServiceQueryResult queryResults = new Connect.ServiceQueryResult();
                 channel.readProtobuf(queryResults);
 
                 publishProgress(convertQuery(param, queryResults));
@@ -81,7 +86,7 @@ public abstract class QueryTask
         return null;
     }
 
-    private ServiceDescriptionTo convertQuery(Parameters params, Connect.ServiceDescription queryResults) {
+    private ServiceDescriptionTo convertQuery(Parameters params, Connect.ServiceQueryResult queryResults) {
         return new ServiceDescriptionTo(params.server, params.service, queryResults.type,
                                         queryResults.location, queryResults.version);
     }
