@@ -18,6 +18,7 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
+import com.github.capone.persistence.Identity;
 import com.google.protobuf.nano.MessageNano;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
@@ -29,13 +30,13 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
 
     private final ServiceDescriptionTo service;
     private final MessageNano parameters;
-    private final ConnectTask.Handler handler;
+    private final Client.SessionHandler handler;
 
     private RequestTask request;
-    private ConnectTask connect;
+    private Client client;
 
     public SessionTask(ServiceDescriptionTo service, MessageNano parameters,
-                       ConnectTask.Handler handler) {
+                       Client.SessionHandler handler) {
         this.service = service;
         this.parameters = parameters;
         this.handler = handler;
@@ -55,17 +56,18 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
         request = new RequestTask(service, parameters);
         SessionTo session = request.requestSession();
 
-        connect = new ConnectTask(session, service);
-        connect.setHandler(handler);
-        connect.connect();
+        client = new Client(Identity.getSigningKey(), service.server);
+        client.connect(service.service, session, handler);
     }
 
     public void cancel() {
         if (request != null) {
             request.cancel();
+            request = null;
         }
-        if (connect != null) {
-            connect.cancel();
+        if (client != null) {
+            client.disconnect();
+            client = null;
         }
     }
 

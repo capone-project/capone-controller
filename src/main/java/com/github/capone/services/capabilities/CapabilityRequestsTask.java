@@ -18,15 +18,9 @@
 package com.github.capone.services.capabilities;
 
 import android.os.AsyncTask;
+import com.github.capone.entities.*;
+import com.github.capone.protocol.*;
 import com.google.protobuf.nano.MessageNano;
-import com.github.capone.entities.CapabilityRequestTo;
-import com.github.capone.entities.CapabilityTo;
-import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.SessionTo;
-import com.github.capone.protocol.Channel;
-import com.github.capone.protocol.ConnectTask;
-import com.github.capone.protocol.RequestTask;
-import com.github.capone.protocol.SessionTask;
 import nano.Capabilities;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -35,7 +29,8 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequestsTask.Result> implements ConnectTask.Handler {
+public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequestsTask.Result>
+        implements Client.SessionHandler {
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
@@ -84,30 +79,38 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     @Override
-    public void handleConnection(final Channel channel)
-            throws IOException, VerifyKey.SignatureException {
+    public void onSessionStarted(ServiceTo service, SessionTo session, final Channel channel) {
         final Capabilities.CapabilitiesRequest request = new Capabilities.CapabilitiesRequest();
 
-        while (request.clear() != null && channel.readProtobuf(request) != null) {
-            final CapabilityRequestTo requestTo;
-            try {
-                requestTo = new CapabilityRequestTo(request, new Date());
-            } catch (RuntimeException e) {
-                continue;
-            }
-
-            listener.onRequestReceived(requestTo, new Runnable() {
-                @Override
-                public void run() {
-                    executor.submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            accept(channel, requestTo);
-                        }
-                    });
+        try {
+            while (request.clear() != null && channel.readProtobuf(request) != null) {
+                final CapabilityRequestTo requestTo;
+                try {
+                    requestTo = new CapabilityRequestTo(request, new Date());
+                } catch (RuntimeException e) {
+                    continue;
                 }
-            });
+
+                listener.onRequestReceived(requestTo, new Runnable() {
+                    @Override
+                    public void run() {
+                        executor.submit(new Runnable() {
+                            @Override
+                            public void run() {
+                                accept(channel, requestTo);
+                            }
+                        });
+                    }
+                });
+            }
+        } catch (IOException e) {
+            /* ignore */
         }
+    }
+
+    @Override
+    public void onError() {
+
     }
 
     private void accept(Channel channel, CapabilityRequestTo request) {

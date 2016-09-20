@@ -18,93 +18,37 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.entities.ServerTo;
+import com.github.capone.entities.ServiceTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
-import nano.Capone;
-import org.abstractj.kalium.keys.VerifyKey;
 
-import java.io.IOException;
-
-public class ConnectTask extends AsyncTask<Void, Void, Throwable> {
-
-    public interface Handler {
-        void handleConnection(Channel channel) throws IOException, VerifyKey.SignatureException;
-    }
+public class ConnectTask extends AsyncTask<Void, Void, Void> {
 
     private final SessionTo session;
-    private final ServiceDescriptionTo service;
+    private final ServiceTo service;
 
-    private Channel channel;
-    private Handler handler;
+    private Client client;
+    private Client.SessionHandler handler;
 
-    public ConnectTask(SessionTo session, ServiceDescriptionTo service) {
+    public ConnectTask(ServerTo server, ServiceTo service, SessionTo session) {
         this.session = session;
         this.service = service;
+        this.client = new Client(Identity.getSigningKey(), server);
     }
 
     @Override
-    protected Throwable doInBackground(Void... params) {
-        try {
-            connect();
-            return null;
-        } catch (IOException | VerifyKey.SignatureException e) {
-            return e;
-        }
+    protected Void doInBackground(Void... params) {
+        client.connect(service, session, handler);
+        return null;
     }
 
-    public void connect() throws IOException, VerifyKey.SignatureException {
-        Capone.ConnectionInitiationMessage connectionInitiation = new Capone
-                                                                         .ConnectionInitiationMessage();
-        connectionInitiation.type = Capone.ConnectionInitiationMessage.CONNECT;
-        Capone.SessionConnectMessage sessionInitiation = new Capone.SessionConnectMessage();
-
-        sessionInitiation.capability = session.capability.toMessage();
-        sessionInitiation.identifier = session.identifier;
-
-        try {
-            channel = new TcpChannel(service.server.address, service.service.port);
-            channel.connect();
-            channel.enableEncryption(Identity.getSigningKey(), service.server.signatureKey.key);
-            channel.writeProtobuf(connectionInitiation);
-            channel.writeProtobuf(sessionInitiation);
-
-            Capone.SessionConnectResult result = new Capone.SessionConnectResult();
-            channel.readProtobuf(result);
-
-            if (result.error != null && handler != null) {
-                handler.handleConnection(channel);
-            }
-
-            channel.close();
-        } catch (VerifyKey.SignatureException | IOException e) {
-            throw e;
-        } finally {
-            try {
-                if (channel != null)
-                    channel.close();
-            } catch (IOException e) {
-                // ignore
-            } finally {
-                channel = null;
-            }
-        }
-    }
-
-    public void setHandler(Handler handler) {
+    public void setHandler(Client.SessionHandler handler) {
         this.handler = handler;
     }
 
     public void cancel() {
-        if (channel != null) {
-            try {
-                channel.close();
-            } catch (IOException e) {
-                // ignore
-            } finally {
-                channel = null;
-            }
-        }
+        client.disconnect();
     }
 
 }

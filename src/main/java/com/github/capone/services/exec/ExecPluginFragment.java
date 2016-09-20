@@ -24,13 +24,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.google.protobuf.nano.MessageNano;
 import com.github.capone.controller.R;
 import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.entities.ServiceTo;
+import com.github.capone.entities.SessionTo;
 import com.github.capone.protocol.Channel;
-import com.github.capone.protocol.ConnectTask;
+import com.github.capone.protocol.Client;
 import com.github.capone.protocol.SessionTask;
 import com.github.capone.services.PluginFragment;
+import com.google.protobuf.nano.MessageNano;
 import nano.Exec;
 
 import java.io.IOException;
@@ -117,10 +119,9 @@ public class ExecPluginFragment extends PluginFragment {
                 .setView(consoleView)
                 .show();
 
-        SessionTask task = new SessionTask(service, getParameters(), new ConnectTask.Handler() {
+        SessionTask task = new SessionTask(service, getParameters(), new Client.SessionHandler() {
             @Override
-            public void handleConnection(Channel channel) {
-
+            public void onSessionStarted(ServiceTo service, SessionTo session, Channel channel) {
                 try {
                     while (true) {
                         final byte[] bytes = channel.read();
@@ -138,6 +139,11 @@ public class ExecPluginFragment extends PluginFragment {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public void onError() {
+
             }
         });
         task.execute();
