@@ -122,7 +122,7 @@ public class ExecPluginFragment extends PluginFragment {
                 .show();
 
         SessionTask task = new SessionTask(server, service, getParameters(), new Client
-                                                                                        .SessionHandler() {
+                                                                                         .SessionHandler() {
             @Override
             public void onSessionStarted(ServiceDescriptionTo service, SessionTo session,
                                          Channel channel) {
@@ -143,11 +143,6 @@ public class ExecPluginFragment extends PluginFragment {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-
-            @Override
-            public void onError() {
-
             }
         });
         task.execute();

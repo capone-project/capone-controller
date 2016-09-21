@@ -17,6 +17,7 @@
 
 package com.github.capone.protocol;
 
+import android.net.wifi.WifiConfiguration;
 import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServiceTo;
@@ -33,8 +34,6 @@ public class Client {
 
     public interface SessionHandler {
         void onSessionStarted(ServiceDescriptionTo service, SessionTo session, Channel channel);
-
-        void onError();
     }
 
     private final SigningKey localKeys;
@@ -66,7 +65,8 @@ public class Client {
         channel.writeProtobuf(connectionInitiation);
     }
 
-    public ServiceDescriptionTo query(ServiceTo service) {
+    public ServiceDescriptionTo query(ServiceTo service)
+            throws IOException, ProtocolException {
         Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
         discovery.version = 1;
         Capone.ServiceQueryResult results = new Capone.ServiceQueryResult();
@@ -78,22 +78,25 @@ public class Client {
             channel.readProtobuf(results);
 
             return new ServiceDescriptionTo(results);
-        } catch (IOException | VerifyKey.SignatureException e) {
-            return null;
+        } catch (VerifyKey.SignatureException e) {
+            throw new ProtocolException(e.getMessage());
         } finally {
             disconnect();
         }
     }
 
-    public SessionTo request(ServiceDescriptionTo service, MessageNano parameters) {
+    public SessionTo request(ServiceDescriptionTo service, MessageNano parameters)
+            throws IOException, ProtocolException {
         return request(service, MessageNano.toByteArray(parameters));
     }
 
-    public SessionTo request(ServiceDescriptionTo service, byte[] parameters) {
+    public SessionTo request(ServiceDescriptionTo service, byte[] parameters)
+            throws IOException, ProtocolException {
         return request(service.port, parameters);
     }
 
-    public SessionTo request(int port, byte[] parameters) {
+    public SessionTo request(int port, byte[] parameters)
+            throws IOException, ProtocolException {
         Capone.SessionRequestMessage request = new Capone.SessionRequestMessage();
         request.parameters = parameters;
         Capone.SessionRequestResult sessionMessage = new Capone.SessionRequestResult();
@@ -109,14 +112,15 @@ public class Client {
             }
 
             return new SessionTo(sessionMessage);
-        } catch (IOException | VerifyKey.SignatureException e) {
-            return null;
+        } catch (VerifyKey.SignatureException e) {
+            throw new ProtocolException(e.getMessage());
         } finally {
             disconnect();
         }
     }
 
-    public void connect(ServiceDescriptionTo service, SessionTo session, SessionHandler handler) {
+    public void connect(ServiceDescriptionTo service, SessionTo session, SessionHandler handler)
+            throws IOException, ProtocolException {
         Capone.SessionConnectMessage connect = new Capone.SessionConnectMessage();
         connect.capability = session.capability.toMessage();
         connect.identifier = session.identifier;
@@ -129,12 +133,12 @@ public class Client {
             channel.readProtobuf(result);
 
             if (result.error != null) {
-                handler.onError();
+                throw new ProtocolException("Error connecting to session");
             }
 
             handler.onSessionStarted(service, session, channel);
-        } catch (IOException | VerifyKey.SignatureException e) {
-            handler.onError();
+        } catch (VerifyKey.SignatureException e) {
+            throw new ProtocolException(e.getMessage());
         } finally {
             disconnect();
         }

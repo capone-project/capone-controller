@@ -23,7 +23,6 @@ import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
 import com.google.protobuf.nano.MessageNano;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
@@ -47,17 +46,13 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     @Override
     protected Throwable doInBackground(Void... params) {
         try {
-            startSession();
+            client = new Client(Identity.getSigningKey(), server);
+            SessionTo session = client.request(service, parameters);
+            client.connect(service, session, handler);
             return null;
-        } catch (IOException | VerifyKey.SignatureException e) {
+        } catch (IOException | ProtocolException e) {
             return e;
         }
-    }
-
-    public void startSession() throws IOException, VerifyKey.SignatureException {
-        client = new Client(Identity.getSigningKey(), server);
-        SessionTo session = client.request(service, parameters);
-        client.connect(service, session, handler);
     }
 
     public void cancel() {

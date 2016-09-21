@@ -52,6 +52,8 @@ public abstract class QueryTask
                 publishProgress(client.query(param.service));
 
                 return null;
+            } catch (Exception e) {
+                /* ignore */
             } finally {
                 client = null;
             }

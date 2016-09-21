@@ -20,10 +20,11 @@ package com.github.capone.services.capabilities;
 import android.os.AsyncTask;
 import com.github.capone.entities.*;
 import com.github.capone.persistence.Identity;
-import com.github.capone.protocol.*;
+import com.github.capone.protocol.Channel;
+import com.github.capone.protocol.Client;
+import com.github.capone.protocol.ProtocolException;
 import com.google.protobuf.nano.MessageNano;
 import nano.Capabilities;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.util.Date;
@@ -34,6 +35,8 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         implements Client.SessionHandler {
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
+
+    private Client client;
 
     private final ServerTo server;
     private final ServiceDescriptionTo service;
@@ -53,7 +56,6 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     private RequestListener listener;
-    private SessionTask sessionTask;
 
     public CapabilityRequestsTask(ServerTo server, ServiceDescriptionTo service,
                                   MessageNano parameters) {
@@ -69,17 +71,15 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     @Override
     protected Result doInBackground(Void... params) {
         try {
-            connect();
+            client = new Client(Identity.getSigningKey(), server);
+            SessionTo session = client.request(service, parameters);
+            client.connect(service, session, this);
             return null;
-        } catch (IOException | VerifyKey.SignatureException e) {
+        } catch (IOException | ProtocolException e) {
             return new Result(e);
+        } finally {
+            client = null;
         }
-    }
-
-    public void connect() throws IOException, VerifyKey.SignatureException {
-        sessionTask = new SessionTask(server, service, parameters, this);
-        sessionTask.startSession();
-        sessionTask = null;
     }
 
     @Override
@@ -113,16 +113,15 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         }
     }
 
-    @Override
-    public void onError() {
-
-    }
-
     private void accept(Channel channel, CapabilityRequestTo request) {
         Client client = new Client(Identity.getSigningKey(),
                                    request.serviceAddress, request.serviceIdentity.key);
-        SessionTo session = client.request(request.servicePort,
-                                           MessageNano.toByteArray(parameters));
+        SessionTo session = null;
+        try {
+            session = client.request(request.servicePort, MessageNano.toByteArray(parameters));
+        } catch (Exception e) {
+            /* ignore */
+        }
 
         Capabilities.Capability capability = new Capabilities.Capability();
         capability.requestid = request.requestId;
@@ -138,8 +137,8 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     public void cancel() {
-        if (sessionTask != null) {
-            sessionTask.cancel();
+        if (client != null) {
+            client.disconnect();
         }
         executor.shutdown();
     }

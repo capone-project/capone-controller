@@ -48,7 +48,13 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
     @Override
     protected Throwable doInBackground(Void... params) {
         Client serviceClient = new Client(Identity.getSigningKey(), serviceServer);
-        SessionTo serviceSession = serviceClient.request(invoker, serviceParameters);
+        SessionTo serviceSession;
+
+        try {
+            serviceSession = serviceClient.request(invoker, serviceParameters);
+        } catch (Exception e) {
+            return e;
+        }
 
         CapabilityTo reference = serviceSession.capability.createReference(
                 CapabilityTo.RIGHT_EXEC | CapabilityTo.RIGHT_TERMINATE,
@@ -63,8 +69,12 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         parameters.serviceType = service.type;
 
         Client invokerClient = new Client(Identity.getSigningKey(), invokerServer);
-        SessionTo invokerSession = invokerClient.request(invoker, parameters);
-        invokerClient.connect(invoker, invokerSession, null);
+        try {
+            SessionTo invokerSession = invokerClient.request(invoker, parameters);
+            invokerClient.connect(invoker, invokerSession, null);
+        } catch (Exception e) {
+            return e;
+        }
 
         return null;
     }
