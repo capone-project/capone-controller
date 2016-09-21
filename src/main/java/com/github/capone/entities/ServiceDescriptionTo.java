@@ -43,12 +43,12 @@ public class ServiceDescriptionTo implements Parcelable {
     public final String version;
 
     public ServiceDescriptionTo(Capone.ServiceQueryResult result) {
-        this.name = result.name;
-        this.port = result.port;
-        this.location = result.location;
-        this.category = result.category;
-        this.type = result.type;
-        this.version = result.version;
+        this.name = result.result.name;
+        this.port = result.result.port;
+        this.location = result.result.location;
+        this.category = result.result.category;
+        this.type = result.result.type;
+        this.version = result.result.version;
     }
 
     private ServiceDescriptionTo(Parcel in) {
