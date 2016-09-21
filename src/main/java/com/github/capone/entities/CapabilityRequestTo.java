@@ -29,7 +29,7 @@ public class CapabilityRequestTo {
     public final byte[] parameters;
 
     public final String serviceAddress;
-    public final String servicePort;
+    public final int servicePort;
     public final String serviceType;
     public final Date received;
 
