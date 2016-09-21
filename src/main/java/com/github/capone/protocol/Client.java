@@ -18,10 +18,12 @@
 package com.github.capone.protocol;
 
 import com.github.capone.entities.ServerTo;
+import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServiceTo;
 import com.github.capone.entities.SessionTo;
 import com.google.protobuf.nano.MessageNano;
 import nano.Capone;
+import nano.Discovery;
 import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -30,7 +32,7 @@ import java.io.IOException;
 public class Client {
 
     public interface SessionHandler {
-        void onSessionStarted(ServiceTo service, SessionTo session, Channel channel);
+        void onSessionStarted(ServiceDescriptionTo service, SessionTo session, Channel channel);
 
         void onError();
     }
@@ -64,11 +66,30 @@ public class Client {
         channel.writeProtobuf(connectionInitiation);
     }
 
-    public SessionTo request(ServiceTo service, MessageNano parameters) {
+    public ServiceDescriptionTo query(ServiceTo service) {
+        Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
+        discovery.version = 1;
+        Capone.ServiceQueryResult results = new Capone.ServiceQueryResult();
+
+        try {
+            initiateConnection(service.port, Capone.ConnectionInitiationMessage.QUERY);
+
+            channel.writeProtobuf(discovery);
+            channel.readProtobuf(results);
+
+            return new ServiceDescriptionTo(results);
+        } catch (IOException | VerifyKey.SignatureException e) {
+            return null;
+        } finally {
+            disconnect();
+        }
+    }
+
+    public SessionTo request(ServiceDescriptionTo service, MessageNano parameters) {
         return request(service, MessageNano.toByteArray(parameters));
     }
 
-    public SessionTo request(ServiceTo service, byte[] parameters) {
+    public SessionTo request(ServiceDescriptionTo service, byte[] parameters) {
         return request(service.port, parameters);
     }
 
@@ -95,7 +116,7 @@ public class Client {
         }
     }
 
-    public void connect(ServiceTo service, SessionTo session, SessionHandler handler) {
+    public void connect(ServiceDescriptionTo service, SessionTo session, SessionHandler handler) {
         Capone.SessionConnectMessage connect = new Capone.SessionConnectMessage();
         connect.capability = session.capability.toMessage();
         connect.identifier = session.identifier;

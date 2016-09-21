@@ -18,6 +18,7 @@
 package com.github.capone.services;
 
 import com.github.capone.controller.R;
+import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.services.capabilities.CapabilityPluginFragment;
 import com.github.capone.services.exec.ExecPluginFragment;
@@ -25,14 +26,14 @@ import com.github.capone.services.invoke.InvokePluginFragment;
 
 public class Plugins {
 
-    public static PluginFragment getPlugin(ServiceDescriptionTo service) {
+    public static PluginFragment getPlugin(ServerTo server, ServiceDescriptionTo service) {
         switch (service.type) {
             case "invoke":
-                return InvokePluginFragment.createFragment(service);
+                return InvokePluginFragment.createFragment(server, service);
             case "exec":
-                return ExecPluginFragment.createFragment(service);
+                return ExecPluginFragment.createFragment(server, service);
             case "capabilities":
-                return CapabilityPluginFragment.createFragment(service);
+                return CapabilityPluginFragment.createFragment(server, service);
             default:
                 return null;
         }

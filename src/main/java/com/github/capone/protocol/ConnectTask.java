@@ -19,19 +19,19 @@ package com.github.capone.protocol;
 
 import android.os.AsyncTask;
 import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceTo;
+import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
 
 public class ConnectTask extends AsyncTask<Void, Void, Void> {
 
     private final SessionTo session;
-    private final ServiceTo service;
+    private final ServiceDescriptionTo service;
 
     private Client client;
     private Client.SessionHandler handler;
 
-    public ConnectTask(ServerTo server, ServiceTo service, SessionTo session) {
+    public ConnectTask(ServerTo server, ServiceDescriptionTo service, SessionTo session) {
         this.session = session;
         this.service = service;
         this.client = new Client(Identity.getSigningKey(), server);

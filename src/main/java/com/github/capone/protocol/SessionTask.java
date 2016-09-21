@@ -18,24 +18,27 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.persistence.Identity;
-import com.google.protobuf.nano.MessageNano;
+import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
+import com.github.capone.persistence.Identity;
+import com.google.protobuf.nano.MessageNano;
 import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
 public class SessionTask extends AsyncTask<Void, Void, Throwable> {
 
+    private final ServerTo server;
     private final ServiceDescriptionTo service;
     private final MessageNano parameters;
     private final Client.SessionHandler handler;
 
     private Client client;
 
-    public SessionTask(ServiceDescriptionTo service, MessageNano parameters,
-                       Client.SessionHandler handler) {
+    public SessionTask(ServerTo server, ServiceDescriptionTo service,
+                       MessageNano parameters, Client.SessionHandler handler) {
+        this.server = server;
         this.service = service;
         this.parameters = parameters;
         this.handler = handler;
@@ -52,9 +55,9 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     }
 
     public void startSession() throws IOException, VerifyKey.SignatureException {
-        client = new Client(Identity.getSigningKey(), service.server);
-        SessionTo session = client.request(service.service, parameters);
-        client.connect(service.service, session, handler);
+        client = new Client(Identity.getSigningKey(), server);
+        SessionTo session = client.request(service, parameters);
+        client.connect(service, session, handler);
     }
 
     public void cancel() {

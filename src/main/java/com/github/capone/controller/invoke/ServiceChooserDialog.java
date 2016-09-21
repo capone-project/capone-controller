@@ -39,7 +39,7 @@ import com.github.capone.protocol.QueryTask;
 public class ServiceChooserDialog extends DialogFragment {
 
     public interface OnServiceChosenListener {
-        void onServiceChosen(ServiceDescriptionTo service);
+        void onServiceChosen(ServerTo server, ServiceDescriptionTo service);
     }
 
     private OnServiceChosenListener listener;
@@ -139,7 +139,7 @@ public class ServiceChooserDialog extends DialogFragment {
         query = new QueryTask() {
             @Override
             public void onProgressUpdate(ServiceDescriptionTo... description) {
-                listener.onServiceChosen(description[0]);
+                listener.onServiceChosen(server, description[0]);
                 dismiss();
             }
         };

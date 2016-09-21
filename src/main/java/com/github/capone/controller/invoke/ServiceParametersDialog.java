@@ -25,25 +25,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import com.google.protobuf.nano.MessageNano;
 import com.github.capone.controller.R;
+import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.services.PluginFragment;
 import com.github.capone.services.Plugins;
+import com.google.protobuf.nano.MessageNano;
 
 public class ServiceParametersDialog extends DialogFragment
         implements View.OnClickListener {
 
     private PluginFragment fragment;
+
+    private ServerTo server;
     private ServiceDescriptionTo serviceDescription;
+
     private OnParametersChosenListener listener;
 
     public interface OnParametersChosenListener {
         void onParametersChosen(MessageNano parameters);
     }
 
-    public static ServiceParametersDialog createDialog(ServiceDescriptionTo serviceDescription) {
+    public static ServiceParametersDialog createDialog(ServerTo server,
+                                                       ServiceDescriptionTo serviceDescription) {
         ServiceParametersDialog dialog = new ServiceParametersDialog();
+        dialog.server = server;
         dialog.serviceDescription = serviceDescription;
         return dialog;
     }
@@ -58,7 +64,7 @@ public class ServiceParametersDialog extends DialogFragment
         Button button = (Button) view.findViewById(R.id.button_ok);
         button.setOnClickListener(this);
 
-        fragment = Plugins.getPlugin(serviceDescription);
+        fragment = Plugins.getPlugin(server, serviceDescription);
 
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();

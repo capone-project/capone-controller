@@ -19,6 +19,7 @@ package com.github.capone.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import nano.Capone;
 
 public class ServiceDescriptionTo implements Parcelable {
 
@@ -34,26 +35,28 @@ public class ServiceDescriptionTo implements Parcelable {
         }
     };
 
-    public final ServerTo server;
-    public final ServiceTo service;
-    public final String type;
+    public final String name;
+    public final int port;
     public final String location;
+    public final String category;
+    public final String type;
     public final String version;
 
-    public ServiceDescriptionTo(ServerTo server, ServiceTo service, String type, String location,
-                                String version) {
-        this.server = server;
-        this.service = service;
-        this.type = type;
-        this.location = location;
-        this.version = version;
+    public ServiceDescriptionTo(Capone.ServiceQueryResult result) {
+        this.name = result.name;
+        this.port = result.port;
+        this.location = result.location;
+        this.category = result.category;
+        this.type = result.type;
+        this.version = result.version;
     }
 
     private ServiceDescriptionTo(Parcel in) {
-        server = in.readParcelable(ServerTo.class.getClassLoader());
-        service = in.readParcelable(ServiceTo.class.getClassLoader());
-        type = in.readString();
+        name = in.readString();
+        port = in.readInt();
         location = in.readString();
+        category = in.readString();
+        type = in.readString();
         version = in.readString();
     }
 
@@ -64,10 +67,11 @@ public class ServiceDescriptionTo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(server, flags);
-        dest.writeParcelable(service, flags);
-        dest.writeString(type);
+        dest.writeString(name);
+        dest.writeInt(port);
         dest.writeString(location);
+        dest.writeString(category);
+        dest.writeString(type);
         dest.writeString(version);
     }
 

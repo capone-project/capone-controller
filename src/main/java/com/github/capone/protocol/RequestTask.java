@@ -19,7 +19,7 @@ package com.github.capone.protocol;
 
 import android.os.AsyncTask;
 import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceTo;
+import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
 import com.google.protobuf.nano.MessageNano;
@@ -42,16 +42,16 @@ public class RequestTask extends AsyncTask<Void, Void, RequestTask.Result> {
     }
 
     private final Client client;
-    private final ServiceTo service;
+    private final ServiceDescriptionTo service;
     private final byte[] parameters;
 
-    public RequestTask(ServerTo server, ServiceTo service, MessageNano parameters) {
+    public RequestTask(ServerTo server, ServiceDescriptionTo service, MessageNano parameters) {
         this.client = new Client(Identity.getSigningKey(), server);
         this.service = service;
         this.parameters = MessageNano.toByteArray(parameters);
     }
 
-    public RequestTask(ServerTo server, ServiceTo service, byte[] parameters) {
+    public RequestTask(ServerTo server, ServiceDescriptionTo service, byte[] parameters) {
         this.client = new Client(Identity.getSigningKey(), server);
         this.service = service;
         this.parameters = parameters;

@@ -35,6 +35,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
+    private final ServerTo server;
     private final ServiceDescriptionTo service;
     private final MessageNano parameters;
 
@@ -54,7 +55,9 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     private RequestListener listener;
     private SessionTask sessionTask;
 
-    public CapabilityRequestsTask(ServiceDescriptionTo service, MessageNano parameters) {
+    public CapabilityRequestsTask(ServerTo server, ServiceDescriptionTo service,
+                                  MessageNano parameters) {
+        this.server = server;
         this.service = service;
         this.parameters = parameters;
     }
@@ -74,13 +77,14 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     public void connect() throws IOException, VerifyKey.SignatureException {
-        sessionTask = new SessionTask(service, parameters, this);
+        sessionTask = new SessionTask(server, service, parameters, this);
         sessionTask.startSession();
         sessionTask = null;
     }
 
     @Override
-    public void onSessionStarted(ServiceTo service, SessionTo session, final Channel channel) {
+    public void onSessionStarted(ServiceDescriptionTo service, SessionTo session,
+                                 final Channel channel) {
         final Capabilities.CapabilitiesRequest request = new Capabilities.CapabilitiesRequest();
 
         try {

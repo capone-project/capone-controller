@@ -19,6 +19,7 @@ package com.github.capone.services.invoke;
 
 import android.os.AsyncTask;
 import com.github.capone.entities.CapabilityTo;
+import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
 import com.github.capone.persistence.Identity;
@@ -28,38 +29,42 @@ import nano.Invoke;
 
 public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
+    private final ServerTo invokerServer;
     private final ServiceDescriptionTo invoker;
+    private final ServerTo serviceServer;
     private final ServiceDescriptionTo service;
     private final MessageNano serviceParameters;
 
-    public InvokePluginTask(ServiceDescriptionTo invoker,
-                            ServiceDescriptionTo service,
+    public InvokePluginTask(ServerTo invokerServer, ServiceDescriptionTo invoker,
+                            ServerTo serviceServer, ServiceDescriptionTo service,
                             MessageNano serviceParameters) {
+        this.invokerServer = invokerServer;
         this.invoker = invoker;
+        this.serviceServer = serviceServer;
         this.service = service;
         this.serviceParameters = serviceParameters;
     }
 
     @Override
     protected Throwable doInBackground(Void... params) {
-        Client serviceClient = new Client(Identity.getSigningKey(), service.server);
-        SessionTo serviceSession = serviceClient.request(invoker.service, serviceParameters);
+        Client serviceClient = new Client(Identity.getSigningKey(), serviceServer);
+        SessionTo serviceSession = serviceClient.request(invoker, serviceParameters);
 
         CapabilityTo reference = serviceSession.capability.createReference(
                 CapabilityTo.RIGHT_EXEC | CapabilityTo.RIGHT_TERMINATE,
-                invoker.server.signatureKey);
+                invokerServer.signatureKey);
 
         Invoke.InvokeParams parameters = new Invoke.InvokeParams();
         parameters.sessionid = serviceSession.identifier;
         parameters.cap = reference.toMessage();
-        parameters.serviceIdentity = service.server.signatureKey.toMessage();
-        parameters.serviceAddress = service.server.address;
-        parameters.servicePort = service.service.port;
+        parameters.serviceIdentity = serviceServer.signatureKey.toMessage();
+        parameters.serviceAddress = serviceServer.address;
+        parameters.servicePort = service.port;
         parameters.serviceType = service.type;
 
-        Client invokerClient = new Client(Identity.getSigningKey(), invoker.server);
-        SessionTo invokerSession = invokerClient.request(invoker.service, parameters);
-        invokerClient.connect(invoker.service, invokerSession, null);
+        Client invokerClient = new Client(Identity.getSigningKey(), invokerServer);
+        SessionTo invokerSession = invokerClient.request(invoker, parameters);
+        invokerClient.connect(invoker, invokerSession, null);
 
         return null;
     }
