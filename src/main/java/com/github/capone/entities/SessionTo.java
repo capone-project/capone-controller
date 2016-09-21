@@ -25,8 +25,8 @@ public class SessionTo {
     public CapabilityTo capability;
 
     public SessionTo(Capone.SessionRequestResult msg) {
-        identifier = msg.identifier;
-        capability = new CapabilityTo(msg.cap);
+        identifier = msg.result.identifier;
+        capability = new CapabilityTo(msg.result.cap);
     }
 
     public long getUnsignedSessionId() {
