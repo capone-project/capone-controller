@@ -95,7 +95,7 @@ public class InvokePluginFragment extends PluginFragment {
     }
 
     private void onInvokeClicked() {
-        InvokePluginTask task = new InvokePluginTask(invoker, service, getParameters(), serviceParameters) {
+        InvokePluginTask task = new InvokePluginTask(invoker, service, serviceParameters) {
             @Override
             protected void onPostExecute(Throwable throwable) {
                 if (throwable != null) {

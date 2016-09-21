@@ -19,6 +19,7 @@ package com.github.capone.services.capabilities;
 
 import android.os.AsyncTask;
 import com.github.capone.entities.*;
+import com.github.capone.persistence.Identity;
 import com.github.capone.protocol.*;
 import com.google.protobuf.nano.MessageNano;
 import nano.Capabilities;
@@ -114,16 +115,10 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     private void accept(Channel channel, CapabilityRequestTo request) {
-        RequestTask requestTask = new RequestTask(request.serviceIdentity.key,
-                                                  request.serviceAddress,
-                                                  Integer.valueOf(request.servicePort),
-                                                  request.parameters);
-        SessionTo session;
-        try {
-            session = requestTask.requestSession();
-        } catch (IOException | VerifyKey.SignatureException e) {
-            return;
-        }
+        Client client = new Client(Identity.getSigningKey(),
+                                   request.serviceAddress, request.serviceIdentity.key);
+        SessionTo session = client.request(request.servicePort,
+                                           MessageNano.toByteArray(parameters));
 
         Capabilities.Capability capability = new Capabilities.Capability();
         capability.requestid = request.requestId;

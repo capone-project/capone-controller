@@ -20,6 +20,7 @@ package com.github.capone.protocol;
 import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceTo;
 import com.github.capone.entities.SessionTo;
+import com.google.protobuf.nano.MessageNano;
 import nano.Capone;
 import org.abstractj.kalium.keys.SigningKey;
 import org.abstractj.kalium.keys.VerifyKey;
@@ -35,12 +36,20 @@ public class Client {
     }
 
     private final SigningKey localKeys;
-    private final ServerTo server;
+    private final String serverAddress;
+    private final VerifyKey serverKey;
     private Channel channel;
 
     public Client(SigningKey localKeys, ServerTo server) {
         this.localKeys = localKeys;
-        this.server = server;
+        this.serverAddress = server.address;
+        this.serverKey = server.signatureKey.key;
+    }
+
+    public Client(SigningKey localKeys, String serverAddress, VerifyKey serverKey) {
+        this.localKeys = localKeys;
+        this.serverAddress = serverAddress;
+        this.serverKey = serverKey;
     }
 
     private void initiateConnection(int port, int connectionType) throws
@@ -49,10 +58,41 @@ public class Client {
                 new Capone.ConnectionInitiationMessage();
         connectionInitiation.type = connectionType;
 
-        channel = new TcpChannel(server.address, port);
+        channel = new TcpChannel(serverAddress, port);
         channel.connect();
-        channel.enableEncryption(localKeys, server.signatureKey.key);
+        channel.enableEncryption(localKeys, serverKey);
         channel.writeProtobuf(connectionInitiation);
+    }
+
+    public SessionTo request(ServiceTo service, MessageNano parameters) {
+        return request(service, MessageNano.toByteArray(parameters));
+    }
+
+    public SessionTo request(ServiceTo service, byte[] parameters) {
+        return request(service.port, parameters);
+    }
+
+    public SessionTo request(int port, byte[] parameters) {
+        Capone.SessionRequestMessage request = new Capone.SessionRequestMessage();
+        request.parameters = parameters;
+        Capone.SessionRequestResult sessionMessage = new Capone.SessionRequestResult();
+
+        try {
+            initiateConnection(port, Capone.ConnectionInitiationMessage.REQUEST);
+
+            channel.writeProtobuf(request);
+            channel.readProtobuf(sessionMessage);
+
+            if (sessionMessage.error != null) {
+                return null;
+            }
+
+            return new SessionTo(sessionMessage);
+        } catch (IOException | VerifyKey.SignatureException e) {
+            return null;
+        } finally {
+            disconnect();
+        }
     }
 
     public void connect(ServiceTo service, SessionTo session, SessionHandler handler) {

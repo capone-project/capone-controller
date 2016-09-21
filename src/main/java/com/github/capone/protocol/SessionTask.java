@@ -32,7 +32,6 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     private final MessageNano parameters;
     private final Client.SessionHandler handler;
 
-    private RequestTask request;
     private Client client;
 
     public SessionTask(ServiceDescriptionTo service, MessageNano parameters,
@@ -53,18 +52,12 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     }
 
     public void startSession() throws IOException, VerifyKey.SignatureException {
-        request = new RequestTask(service, parameters);
-        SessionTo session = request.requestSession();
-
         client = new Client(Identity.getSigningKey(), service.server);
+        SessionTo session = client.request(service.service, parameters);
         client.connect(service.service, session, handler);
     }
 
     public void cancel() {
-        if (request != null) {
-            request.cancel();
-            request = null;
-        }
         if (client != null) {
             client.disconnect();
             client = null;
