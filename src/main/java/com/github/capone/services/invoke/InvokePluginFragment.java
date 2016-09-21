@@ -132,7 +132,7 @@ public class InvokePluginFragment extends PluginFragment {
     public Invoke.InvokeParams getParameters() {
         Invoke.InvokeParams params = new Invoke.InvokeParams();
         params.serviceAddress = service.server.address;
-        params.servicePort = Integer.toString(service.service.port);
+        params.servicePort = service.service.port;
         params.serviceIdentity = service.server.signatureKey.toMessage();
         params.serviceType = service.type;
 
