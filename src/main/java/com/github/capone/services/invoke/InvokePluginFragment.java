@@ -25,6 +25,7 @@ import android.widget.*;
 import com.github.capone.controller.R;
 import com.github.capone.controller.invoke.ServiceChooserDialog;
 import com.github.capone.controller.invoke.ServiceParametersDialog;
+import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.services.PluginFragment;
 import com.github.capone.services.Plugins;
@@ -36,14 +37,18 @@ public class InvokePluginFragment extends PluginFragment {
     private View view;
     private LinearLayout pluginLayout;
 
+    private ServerTo invokerServer;
     private ServiceDescriptionTo invoker;
+    private ServerTo serviceServer;
     private ServiceDescriptionTo service;
     private MessageNano serviceParameters;
 
     private Button invokeButton;
 
-    public static InvokePluginFragment createFragment(ServiceDescriptionTo invoker) {
+    public static InvokePluginFragment createFragment(ServerTo invokerServer,
+                                                      ServiceDescriptionTo invoker) {
         InvokePluginFragment fragment = new InvokePluginFragment();
+        fragment.invokerServer = invokerServer;
         fragment.invoker = invoker;
         return fragment;
     }
@@ -77,14 +82,14 @@ public class InvokePluginFragment extends PluginFragment {
         ServiceChooserDialog dialog = new ServiceChooserDialog();
         dialog.setOnServiceChosenListener(new ServiceChooserDialog.OnServiceChosenListener() {
             @Override
-            public void onServiceChosen(final ServiceDescriptionTo details) {
+            public void onServiceChosen(final ServerTo server, final ServiceDescriptionTo details) {
                 ServiceParametersDialog parametersDialog
-                        = ServiceParametersDialog.createDialog(details);
+                        = ServiceParametersDialog.createDialog(server, details);
                 parametersDialog.setOnParametersChosenListener(
                         new ServiceParametersDialog.OnParametersChosenListener() {
                             @Override
                             public void onParametersChosen(MessageNano parameters) {
-                                setServiceDetails(details, parameters);
+                                setServiceDetails(server, details, parameters);
                                 invokeButton.setEnabled(true);
                             }
                         });
@@ -95,7 +100,7 @@ public class InvokePluginFragment extends PluginFragment {
     }
 
     private void onInvokeClicked() {
-        InvokePluginTask task = new InvokePluginTask(invoker, service, getParameters(), serviceParameters) {
+        InvokePluginTask task = new InvokePluginTask(invokerServer, invoker, serviceServer, service, serviceParameters) {
             @Override
             protected void onPostExecute(Throwable throwable) {
                 if (throwable != null) {
@@ -110,30 +115,32 @@ public class InvokePluginFragment extends PluginFragment {
         Toast.makeText(getActivity(), R.string.service_was_invoked, Toast.LENGTH_SHORT).show();
     }
 
-    private void setServiceDetails(ServiceDescriptionTo results, MessageNano parameters) {
+    private void setServiceDetails(ServerTo server,
+                                   ServiceDescriptionTo results, MessageNano parameters) {
+        this.serviceServer = server;
         this.service = results;
         this.serviceParameters = parameters;
 
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
-        serviceImage.setImageResource(Plugins.getCategoryImageId(service.service.category));
+        serviceImage.setImageResource(Plugins.getCategoryImageId(service.category));
 
         TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
-        serverAddress.setText(String.format("%s:%d", service.server.address, service.service.port));
+        serverAddress.setText(String.format("%s:%d", server.address, service.port));
         TextView serverKey = (TextView) view.findViewById(R.id.server_key);
-        serverKey.setText(service.server.signatureKey.toString());
+        serverKey.setText(server.signatureKey.toString());
         TextView serviceName = (TextView) view.findViewById(R.id.service_name);
-        serviceName.setText(service.service.name);
+        serviceName.setText(service.name);
         TextView serviceType = (TextView) view.findViewById(R.id.service_type);
-        serviceType.setText(service.service.category);
+        serviceType.setText(service.category);
 
         pluginLayout.setVisibility(View.VISIBLE);
     }
 
     public Invoke.InvokeParams getParameters() {
         Invoke.InvokeParams params = new Invoke.InvokeParams();
-        params.serviceAddress = service.server.address;
-        params.servicePort = service.service.port;
-        params.serviceIdentity = service.server.signatureKey.toMessage();
+        params.serviceAddress = serviceServer.address;
+        params.servicePort = service.port;
+        params.serviceIdentity = serviceServer.signatureKey.toMessage();
         params.serviceType = service.type;
 
         return params;

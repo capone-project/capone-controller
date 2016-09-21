@@ -18,53 +18,64 @@
 package com.github.capone.services.invoke;
 
 import android.os.AsyncTask;
+import com.github.capone.entities.CapabilityTo;
+import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.SessionTo;
-import com.github.capone.protocol.RequestTask;
-import com.github.capone.protocol.SessionTask;
+import com.github.capone.persistence.Identity;
+import com.github.capone.protocol.Client;
 import com.google.protobuf.nano.MessageNano;
 import nano.Invoke;
-import org.abstractj.kalium.keys.VerifyKey;
-
-import java.io.IOException;
 
 public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
-    private final Invoke.InvokeParams parameters;
-    private final MessageNano sessionParameters;
+    private final ServerTo invokerServer;
     private final ServiceDescriptionTo invoker;
+    private final ServerTo serviceServer;
     private final ServiceDescriptionTo service;
+    private final MessageNano serviceParameters;
 
-    public InvokePluginTask(ServiceDescriptionTo invoker,
-                            ServiceDescriptionTo service,
-                            Invoke.InvokeParams parameters,
-                            MessageNano sessionParameters) {
+    public InvokePluginTask(ServerTo invokerServer, ServiceDescriptionTo invoker,
+                            ServerTo serviceServer, ServiceDescriptionTo service,
+                            MessageNano serviceParameters) {
+        this.invokerServer = invokerServer;
         this.invoker = invoker;
+        this.serviceServer = serviceServer;
         this.service = service;
-        this.parameters = parameters;
-        this.sessionParameters = sessionParameters;
+        this.serviceParameters = serviceParameters;
     }
 
     @Override
     protected Throwable doInBackground(Void... params) {
-        try {
-            SessionTo session = sendSessionRequest(sessionParameters);
-            parameters.cap = session.capability.toMessage();
-            parameters.sessionid = session.identifier;
+        Client serviceClient = new Client(Identity.getSigningKey(), serviceServer);
+        SessionTo serviceSession;
 
-            SessionTask sessionTask = new SessionTask(invoker, parameters, null);
-            sessionTask.startSession();
-            return null;
-        } catch (IOException | VerifyKey.SignatureException e) {
+        try {
+            serviceSession = serviceClient.request(invoker, serviceParameters);
+        } catch (Exception e) {
             return e;
         }
+
+        CapabilityTo reference = serviceSession.capability.createReference(
+                CapabilityTo.RIGHT_EXEC | CapabilityTo.RIGHT_TERMINATE,
+                invokerServer.signatureKey);
+
+        Invoke.InvokeParams parameters = new Invoke.InvokeParams();
+        parameters.sessionid = serviceSession.identifier;
+        parameters.cap = reference.toMessage();
+        parameters.serviceIdentity = serviceServer.signatureKey.toMessage();
+        parameters.serviceAddress = serviceServer.address;
+        parameters.servicePort = service.port;
+        parameters.serviceType = service.type;
+
+        Client invokerClient = new Client(Identity.getSigningKey(), invokerServer);
+        try {
+            SessionTo invokerSession = invokerClient.request(invoker, parameters);
+            invokerClient.connect(invoker, invokerSession, null);
+        } catch (Exception e) {
+            return e;
+        }
+
+        return null;
     }
-
-    private SessionTo sendSessionRequest(MessageNano sessionParameters)
-            throws IOException, VerifyKey.SignatureException {
-        RequestTask request = new RequestTask(service, null);
-
-        return request.requestSession();
-    }
-
 }

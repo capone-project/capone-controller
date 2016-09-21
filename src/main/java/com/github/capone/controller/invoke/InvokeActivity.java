@@ -49,13 +49,13 @@ public class InvokeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_service);
 
         Intent intent = getIntent();
-        ServerTo server = intent.getParcelableExtra(EXTRA_SERVER);
+        final ServerTo server = intent.getParcelableExtra(EXTRA_SERVER);
         ServiceTo service = intent.getParcelableExtra(EXTRA_SERVICE);
 
         final QueryTask queryTask = new QueryTask() {
             @Override
             public void onProgressUpdate(ServiceDescriptionTo... description) {
-                setServiceDescription(description[0]);
+                setServiceDescription(server, description[0]);
             }
 
             @Override
@@ -87,8 +87,8 @@ public class InvokeActivity extends AppCompatActivity {
         });
     }
 
-    private void setServiceDescription(ServiceDescriptionTo results) {
-        PluginFragment plugin = Plugins.getPlugin(results);
+    private void setServiceDescription(ServerTo server, ServiceDescriptionTo results) {
+        PluginFragment plugin = Plugins.getPlugin(server, results);
 
         if (plugin == null) {
             Toast.makeText(InvokeActivity.this,

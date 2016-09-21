@@ -24,19 +24,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import com.google.protobuf.nano.MessageNano;
 import com.github.capone.controller.R;
+import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.entities.SessionTo;
 import com.github.capone.protocol.Channel;
-import com.github.capone.protocol.ConnectTask;
+import com.github.capone.protocol.Client;
 import com.github.capone.protocol.SessionTask;
 import com.github.capone.services.PluginFragment;
+import com.google.protobuf.nano.MessageNano;
 import nano.Exec;
 
 import java.io.IOException;
 
 public class ExecPluginFragment extends PluginFragment {
 
+    private ServerTo server;
     private ServiceDescriptionTo service;
 
     private EditText executable;
@@ -59,8 +62,9 @@ public class ExecPluginFragment extends PluginFragment {
         }
     }
 
-    public static ExecPluginFragment createFragment(ServiceDescriptionTo service) {
+    public static ExecPluginFragment createFragment(ServerTo server, ServiceDescriptionTo service) {
         ExecPluginFragment fragment = new ExecPluginFragment();
+        fragment.server = server;
         fragment.service = service;
         return fragment;
     }
@@ -117,10 +121,11 @@ public class ExecPluginFragment extends PluginFragment {
                 .setView(consoleView)
                 .show();
 
-        SessionTask task = new SessionTask(service, getParameters(), new ConnectTask.Handler() {
+        SessionTask task = new SessionTask(server, service, getParameters(), new Client
+                                                                                         .SessionHandler() {
             @Override
-            public void handleConnection(Channel channel) {
-
+            public void onSessionStarted(ServiceDescriptionTo service, SessionTo session,
+                                         Channel channel) {
                 try {
                     while (true) {
                         final byte[] bytes = channel.read();

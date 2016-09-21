@@ -68,12 +68,9 @@ public class ServerTo implements Parcelable {
         server.services = new ArrayList<>();
 
         for (Discovery.DiscoverResult.Service announcedService : announce.services) {
-            ServiceTo service = new ServiceTo();
-            service.name = announcedService.name;
-            service.category = announcedService.category;
-            service.port = Integer.valueOf(announcedService.port);
-            server.services.add(service);
+            server.services.add(new ServiceTo(announcedService));
         }
+
         return server;
     }
 

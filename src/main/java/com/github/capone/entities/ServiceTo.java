@@ -19,6 +19,7 @@ package com.github.capone.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import nano.Discovery;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -36,11 +37,20 @@ public class ServiceTo implements Parcelable {
         }
     };
 
-    public String name;
-    public String category;
-    public int port;
+    public final String name;
+    public final String category;
+    public final int port;
 
     public ServiceTo() {
+        name = null;
+        category = null;
+        port = 0;
+    }
+
+    public ServiceTo(Discovery.DiscoverResult.Service service) {
+        this.name = service.name;
+        this.category = service.category;
+        this.port = service.port;
     }
 
     private ServiceTo(Parcel in) {

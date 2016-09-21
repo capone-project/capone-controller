@@ -21,12 +21,8 @@ import android.os.AsyncTask;
 import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServiceTo;
-import nano.Capone;
-import nano.Discovery;
+import com.github.capone.persistence.Identity;
 import org.abstractj.kalium.keys.SigningKey;
-import org.abstractj.kalium.keys.VerifyKey;
-
-import java.io.IOException;
 
 public abstract class QueryTask
         extends AsyncTask<QueryTask.Parameters, ServiceDescriptionTo, Throwable> {
@@ -43,7 +39,7 @@ public abstract class QueryTask
         }
     }
 
-    private Channel channel = null;
+    private Client client;
 
     @Override
     protected Throwable doInBackground(Parameters... params) {
@@ -52,53 +48,23 @@ public abstract class QueryTask
                 if (isCancelled())
                     return null;
 
-                channel = new TcpChannel(param.server.address, param.service.port);
-                channel.connect();
-                channel.enableEncryption(param.localKey, param.server.signatureKey.key);
-
-                Capone.ConnectionInitiationMessage initiation = new Capone
-                                                                            .ConnectionInitiationMessage();
-                initiation.type = Capone.ConnectionInitiationMessage.QUERY;
-                channel.writeProtobuf(initiation);
-
-                Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
-                discovery.version = 1;
-                channel.writeProtobuf(discovery);
-
-                Capone.ServiceQueryResult queryResults = new Capone.ServiceQueryResult();
-                channel.readProtobuf(queryResults);
-
-                if (queryResults.error == null) {
-                    publishProgress(convertQuery(param, queryResults));
-                }
+                client = new Client(Identity.getSigningKey(), param.server);
+                publishProgress(client.query(param.service));
 
                 return null;
-            } catch (VerifyKey.SignatureException | IOException e) {
-                return e;
+            } catch (Exception e) {
+                /* ignore */
             } finally {
-                try {
-                    if (channel != null)
-                        channel.close();
-                } catch (IOException e) {
-                    // do nothing
-                }
+                client = null;
             }
         }
 
         return null;
     }
 
-    private ServiceDescriptionTo convertQuery(Parameters params, Capone.ServiceQueryResult queryResults) {
-        return new ServiceDescriptionTo(params.server, params.service, queryResults.type,
-                                        queryResults.location, queryResults.version);
-    }
-
     public void cancel() {
-        if (channel != null) {
-            try {
-                channel.close();
-            } catch (IOException e) {
-            }
+        if (client != null) {
+            client.disconnect();
         }
     }
 

@@ -18,27 +18,27 @@
 package com.github.capone.services.capabilities;
 
 import android.os.AsyncTask;
-import com.google.protobuf.nano.MessageNano;
-import com.github.capone.entities.CapabilityRequestTo;
-import com.github.capone.entities.CapabilityTo;
-import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.SessionTo;
+import com.github.capone.entities.*;
+import com.github.capone.persistence.Identity;
 import com.github.capone.protocol.Channel;
-import com.github.capone.protocol.ConnectTask;
-import com.github.capone.protocol.RequestTask;
-import com.github.capone.protocol.SessionTask;
+import com.github.capone.protocol.Client;
+import com.github.capone.protocol.ProtocolException;
+import com.google.protobuf.nano.MessageNano;
 import nano.Capabilities;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequestsTask.Result> implements ConnectTask.Handler {
+public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequestsTask.Result>
+        implements Client.SessionHandler {
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
+    private Client client;
+
+    private final ServerTo server;
     private final ServiceDescriptionTo service;
     private final MessageNano parameters;
 
@@ -56,9 +56,10 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     private RequestListener listener;
-    private SessionTask sessionTask;
 
-    public CapabilityRequestsTask(ServiceDescriptionTo service, MessageNano parameters) {
+    public CapabilityRequestsTask(ServerTo server, ServiceDescriptionTo service,
+                                  MessageNano parameters) {
+        this.server = server;
         this.service = service;
         this.parameters = parameters;
     }
@@ -70,56 +71,56 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     @Override
     protected Result doInBackground(Void... params) {
         try {
-            connect();
+            client = new Client(Identity.getSigningKey(), server);
+            SessionTo session = client.request(service, parameters);
+            client.connect(service, session, this);
             return null;
-        } catch (IOException | VerifyKey.SignatureException e) {
+        } catch (IOException | ProtocolException e) {
             return new Result(e);
+        } finally {
+            client = null;
         }
     }
 
-    public void connect() throws IOException, VerifyKey.SignatureException {
-        sessionTask = new SessionTask(service, parameters, this);
-        sessionTask.startSession();
-        sessionTask = null;
-    }
-
     @Override
-    public void handleConnection(final Channel channel)
-            throws IOException, VerifyKey.SignatureException {
+    public void onSessionStarted(ServiceDescriptionTo service, SessionTo session,
+                                 final Channel channel) {
         final Capabilities.CapabilitiesRequest request = new Capabilities.CapabilitiesRequest();
 
-        while (request.clear() != null && channel.readProtobuf(request) != null) {
-            final CapabilityRequestTo requestTo;
-            try {
-                requestTo = new CapabilityRequestTo(request, new Date());
-            } catch (RuntimeException e) {
-                continue;
-            }
-
-            listener.onRequestReceived(requestTo, new Runnable() {
-                @Override
-                public void run() {
-                    executor.submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            accept(channel, requestTo);
-                        }
-                    });
+        try {
+            while (request.clear() != null && channel.readProtobuf(request) != null) {
+                final CapabilityRequestTo requestTo;
+                try {
+                    requestTo = new CapabilityRequestTo(request, new Date());
+                } catch (RuntimeException e) {
+                    continue;
                 }
-            });
+
+                listener.onRequestReceived(requestTo, new Runnable() {
+                    @Override
+                    public void run() {
+                        executor.submit(new Runnable() {
+                            @Override
+                            public void run() {
+                                accept(channel, requestTo);
+                            }
+                        });
+                    }
+                });
+            }
+        } catch (IOException e) {
+            /* ignore */
         }
     }
 
     private void accept(Channel channel, CapabilityRequestTo request) {
-        RequestTask requestTask = new RequestTask(request.serviceIdentity.key,
-                                                  request.serviceAddress,
-                                                  Integer.valueOf(request.servicePort),
-                                                  request.parameters);
-        SessionTo session;
+        Client client = new Client(Identity.getSigningKey(),
+                                   request.serviceAddress, request.serviceIdentity.key);
+        SessionTo session = null;
         try {
-            session = requestTask.requestSession();
-        } catch (IOException | VerifyKey.SignatureException e) {
-            return;
+            session = client.request(request.servicePort, MessageNano.toByteArray(parameters));
+        } catch (Exception e) {
+            /* ignore */
         }
 
         Capabilities.Capability capability = new Capabilities.Capability();
@@ -136,8 +137,8 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     public void cancel() {
-        if (sessionTask != null) {
-            sessionTask.cancel();
+        if (client != null) {
+            client.disconnect();
         }
         executor.shutdown();
     }
