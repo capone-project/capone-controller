@@ -17,7 +17,6 @@
 
 package com.github.capone.protocol;
 
-import android.net.wifi.WifiConfiguration;
 import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServiceTo;
@@ -35,6 +34,8 @@ public class Client {
     public interface SessionHandler {
         void onSessionStarted(ServiceDescriptionTo service, SessionTo session, Channel channel);
     }
+
+    public static final int PROTOCOL_VERSION = 1;
 
     private final SigningKey localKeys;
     private final String serverAddress;
@@ -68,7 +69,7 @@ public class Client {
     public ServiceDescriptionTo query(ServiceTo service)
             throws IOException, ProtocolException {
         Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
-        discovery.version = 1;
+        discovery.version = PROTOCOL_VERSION;
         Capone.ServiceQueryResult results = new Capone.ServiceQueryResult();
 
         try {
@@ -98,6 +99,7 @@ public class Client {
     public SessionTo request(int port, byte[] parameters)
             throws IOException, ProtocolException {
         Capone.SessionRequestMessage request = new Capone.SessionRequestMessage();
+        request.version = PROTOCOL_VERSION;
         request.parameters = parameters;
         Capone.SessionRequestResult sessionMessage = new Capone.SessionRequestResult();
 
@@ -122,6 +124,7 @@ public class Client {
     public void connect(ServiceDescriptionTo service, SessionTo session, SessionHandler handler)
             throws IOException, ProtocolException {
         Capone.SessionConnectMessage connect = new Capone.SessionConnectMessage();
+        connect.version = PROTOCOL_VERSION;
         connect.capability = session.capability.toMessage();
         connect.identifier = session.identifier;
         Capone.SessionConnectResult result = new Capone.SessionConnectResult();
