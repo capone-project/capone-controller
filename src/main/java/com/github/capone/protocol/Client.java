@@ -139,7 +139,9 @@ public class Client {
                 throw new ProtocolException("Error connecting to session");
             }
 
-            handler.onSessionStarted(service, session, channel);
+            if (handler != null) {
+                handler.onSessionStarted(service, session, channel);
+            }
         } catch (VerifyKey.SignatureException e) {
             throw new ProtocolException(e.getMessage());
         } finally {
