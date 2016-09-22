@@ -27,8 +27,8 @@ import java.util.List;
 
 public class CapabilityTo {
 
-    public static final int RIGHT_EXEC = 1;
-    public static final int RIGHT_TERMINATE = 2;
+    public static final int RIGHT_EXEC = 1 << 0;
+    public static final int RIGHT_TERMINATE = 1 << 1;
 
     public static final int SECRET_LENGTH = 32;
 
