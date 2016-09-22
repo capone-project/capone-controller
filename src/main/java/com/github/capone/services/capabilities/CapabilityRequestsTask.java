@@ -121,7 +121,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
                                    request.serviceAddress, request.serviceIdentity.key);
         SessionTo session = null;
         try {
-            session = client.request(request.servicePort, MessageNano.toByteArray(parameters));
+            session = client.request(request.servicePort, request.parameters);
         } catch (Exception e) {
             /* ignore */
         }
