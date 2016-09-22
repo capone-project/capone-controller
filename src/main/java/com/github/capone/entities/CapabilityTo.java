@@ -46,12 +46,16 @@ public class CapabilityTo {
     public final byte[] secret;
     public final List<ChainSegment> chain;
 
-    private CapabilityTo(byte[] secret, final List<ChainSegment> chain) {
+    protected CapabilityTo(byte[] secret, final List<ChainSegment> chain) {
+        if (secret.length != SECRET_LENGTH)
+            throw new RuntimeException("Invalid capability secret length");
         this.secret = secret;
         this.chain = chain;
     }
 
     public CapabilityTo(Core.CapabilityMessage msg) {
+        if (msg.secret.length != SECRET_LENGTH)
+            throw new RuntimeException("Invalid capability secret length");
         secret = msg.secret;
 
         if (msg.chain != null) {
