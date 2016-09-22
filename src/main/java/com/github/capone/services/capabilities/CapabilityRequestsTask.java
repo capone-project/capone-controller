@@ -85,28 +85,31 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     @Override
     public void onSessionStarted(ServiceDescriptionTo service, SessionTo session,
                                  final Channel channel) {
-        final Capabilities.CapabilitiesRequest request = new Capabilities.CapabilitiesRequest();
+        final Capabilities.CapabilitiesCommand command = new Capabilities.CapabilitiesCommand();
 
         try {
-            while (request.clear() != null && channel.readProtobuf(request) != null) {
-                final CapabilityRequestTo requestTo;
-                try {
-                    requestTo = new CapabilityRequestTo(request, new Date());
-                } catch (RuntimeException e) {
-                    continue;
-                }
+            while (command.clear() != null && channel.readProtobuf(command) != null) {
+                switch (command.cmd) {
+                    case Capabilities.CapabilitiesCommand.REQUEST:
+                        final CapabilityRequestTo requestTo =
+                                new CapabilityRequestTo(command.request, new Date());
 
-                listener.onRequestReceived(requestTo, new Runnable() {
-                    @Override
-                    public void run() {
-                        executor.submit(new Runnable() {
+                        listener.onRequestReceived(requestTo, new Runnable() {
                             @Override
                             public void run() {
-                                accept(channel, requestTo);
+                                executor.submit(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        accept(channel, requestTo);
+                                    }
+                                });
                             }
                         });
-                    }
-                });
+                        break;
+                    case Capabilities.CapabilitiesCommand.TERMINATE:
+                        cancel();
+                        return;
+                }
             }
         } catch (IOException e) {
             /* ignore */
