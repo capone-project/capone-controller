@@ -27,12 +27,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.github.capone.controller.R;
-import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServerTo;
+import com.github.capone.entities.ServiceDescriptionTo;
 import com.github.capone.entities.ServiceTo;
 import com.github.capone.persistence.Identity;
 import com.github.capone.protocol.QueryTask;
-import com.github.capone.services.PluginFragment;
+import com.github.capone.services.Plugin;
 import com.github.capone.services.Plugins;
 import org.abstractj.kalium.keys.SigningKey;
 
@@ -88,7 +88,7 @@ public class InvokeActivity extends AppCompatActivity {
     }
 
     private void setServiceDescription(ServerTo server, ServiceDescriptionTo results) {
-        PluginFragment plugin = Plugins.getPlugin(server, results);
+        Plugin plugin = Plugins.getPlugin(results.type);
 
         if (plugin == null) {
             Toast.makeText(InvokeActivity.this,
@@ -100,7 +100,7 @@ public class InvokeActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.plugin_view, plugin);
+        transaction.add(R.id.plugin_view, plugin.getFragment(server, results));
         transaction.commit();
 
         progressDialog.dismiss();

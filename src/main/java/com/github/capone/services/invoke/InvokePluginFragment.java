@@ -27,6 +27,7 @@ import com.github.capone.controller.invoke.ServiceChooserDialog;
 import com.github.capone.controller.invoke.ServiceParametersDialog;
 import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.services.Plugin;
 import com.github.capone.services.PluginFragment;
 import com.github.capone.services.Plugins;
 import com.google.protobuf.nano.MessageNano;
@@ -100,7 +101,8 @@ public class InvokePluginFragment extends PluginFragment {
     }
 
     private void onInvokeClicked() {
-        InvokePluginTask task = new InvokePluginTask(invokerServer, invoker, serviceServer, service, serviceParameters) {
+        InvokePluginTask task = new InvokePluginTask(invokerServer, invoker, serviceServer, service,
+                                                     serviceParameters) {
             @Override
             protected void onPostExecute(Throwable throwable) {
                 if (throwable != null) {
@@ -121,8 +123,17 @@ public class InvokePluginFragment extends PluginFragment {
         this.service = results;
         this.serviceParameters = parameters;
 
+        Plugin plugin = Plugins.getPlugin(results.type);
+
+        if (plugin == null) {
+            Toast.makeText(getActivity(),
+                           String.format(getString(R.string.no_plugin_for_type), results.type),
+                           Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
-        serviceImage.setImageResource(Plugins.getCategoryImageId(service.category));
+        serviceImage.setImageResource(plugin.getCategoryImageId(service.category));
 
         TextView serverAddress = (TextView) view.findViewById(R.id.server_address);
         serverAddress.setText(String.format("%s:%d", server.address, service.port));

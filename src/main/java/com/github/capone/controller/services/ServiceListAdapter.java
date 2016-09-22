@@ -25,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.github.capone.controller.R;
 import com.github.capone.entities.ServiceTo;
-import com.github.capone.services.Plugins;
 
 public class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
 
@@ -42,7 +41,7 @@ public class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
         }
 
         ImageView serviceImage = (ImageView) view.findViewById(R.id.service_image);
-        serviceImage.setImageResource(Plugins.getCategoryImageId(service.category));
+        serviceImage.setImageResource(R.drawable.service_unknown);
 
         TextView serviceName = (TextView) view.findViewById(R.id.service_name);
         serviceName.setText(service.name);

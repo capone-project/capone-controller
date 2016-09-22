@@ -17,29 +17,15 @@
 
 package com.github.capone.services;
 
-import com.github.capone.services.capabilities.CapabilityPlugin;
-import com.github.capone.services.exec.ExecPlugin;
-import com.github.capone.services.invoke.InvokePlugin;
+import com.github.capone.entities.ServerTo;
+import com.github.capone.entities.ServiceDescriptionTo;
 
-import java.util.HashMap;
-import java.util.Map;
+public interface Plugin {
 
-public class Plugins {
+    String getType();
 
-    private static final Map<String, Plugin> plugins = new HashMap<>();
+    PluginFragment getFragment(ServerTo server, ServiceDescriptionTo service);
 
-    static {
-        registerPlugin(new InvokePlugin());
-        registerPlugin(new CapabilityPlugin());
-        registerPlugin(new ExecPlugin());
-    }
-
-    private static void registerPlugin(Plugin plugin) {
-        plugins.put(plugin.getType(), plugin);
-    }
-
-    public static Plugin getPlugin(String type) {
-        return plugins.get(type);
-    }
+    int getCategoryImageId(String category);
 
 }
