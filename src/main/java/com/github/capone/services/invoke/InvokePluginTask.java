@@ -51,7 +51,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         SessionTo serviceSession;
 
         try {
-            serviceSession = serviceClient.request(invoker, serviceParameters);
+            serviceSession = serviceClient.request(service, serviceParameters);
         } catch (Exception e) {
             return e;
         }
