@@ -34,8 +34,8 @@ public class CapabilityTo {
     public static final int SECRET_LENGTH = 32;
 
     public class ChainSegment {
-        public int rights;
-        public SignatureKeyTo entity;
+        public final int rights;
+        public final SignatureKeyTo entity;
 
         public ChainSegment(int rights, SignatureKeyTo entity) {
             this.rights = rights;
