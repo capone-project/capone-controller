@@ -110,7 +110,7 @@ public class Client {
             channel.readProtobuf(sessionMessage);
 
             if (sessionMessage.error != null) {
-                return null;
+                throw new ProtocolException("Received error");
             }
 
             return new SessionTo(sessionMessage);
