@@ -28,6 +28,7 @@ import android.widget.Button;
 import com.github.capone.controller.R;
 import com.github.capone.entities.ServerTo;
 import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.services.Plugin;
 import com.github.capone.services.PluginFragment;
 import com.github.capone.services.Plugins;
 import com.google.protobuf.nano.MessageNano;
@@ -64,7 +65,8 @@ public class ServiceParametersDialog extends DialogFragment
         Button button = (Button) view.findViewById(R.id.button_ok);
         button.setOnClickListener(this);
 
-        fragment = Plugins.getPlugin(server, serviceDescription);
+        Plugin plugin = Plugins.getPlugin(serviceDescription.type);
+        fragment = plugin.getFragment(server, serviceDescription);
 
         FragmentManager fragmentManager = getChildFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
