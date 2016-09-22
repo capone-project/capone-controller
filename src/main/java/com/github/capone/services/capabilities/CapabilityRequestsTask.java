@@ -128,6 +128,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
 
         Capabilities.Capability capability = new Capabilities.Capability();
         capability.requestid = request.requestId;
+        capability.sessionid = session.identifier;
         capability.capability = session.capability.createReference(CapabilityTo.RIGHT_EXEC,
                                                                    request.requesterIdentity).toMessage();
         capability.serviceIdentity = request.serviceIdentity.toMessage();
