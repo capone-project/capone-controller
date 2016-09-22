@@ -22,19 +22,20 @@ import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CapabilityTo {
 
-    public static final int RIGHT_EXEC = 1;
-    public static final int RIGHT_TERMINATE = 2;
+    public static final int RIGHT_EXEC = 1 << 0;
+    public static final int RIGHT_TERMINATE = 1 << 1;
 
     public static final int SECRET_LENGTH = 32;
 
     public class ChainSegment {
-        public int rights;
-        public SignatureKeyTo entity;
+        public final int rights;
+        public final SignatureKeyTo entity;
 
         public ChainSegment(int rights, SignatureKeyTo entity) {
             this.rights = rights;
@@ -45,12 +46,16 @@ public class CapabilityTo {
     public final byte[] secret;
     public final List<ChainSegment> chain;
 
-    private CapabilityTo(byte[] secret, final List<ChainSegment> chain) {
+    protected CapabilityTo(byte[] secret, final List<ChainSegment> chain) {
+        if (secret.length != SECRET_LENGTH)
+            throw new RuntimeException("Invalid capability secret length");
         this.secret = secret;
         this.chain = chain;
     }
 
     public CapabilityTo(Core.CapabilityMessage msg) {
+        if (msg.secret.length != SECRET_LENGTH)
+            throw new RuntimeException("Invalid capability secret length");
         secret = msg.secret;
 
         if (msg.chain != null) {
@@ -86,7 +91,7 @@ public class CapabilityTo {
         ByteBuffer buffer = ByteBuffer.allocate(
                 SodiumConstants.PUBLICKEY_BYTES + 4 + SECRET_LENGTH);
         buffer.put(entity.key.toBytes());
-        buffer.putInt(rights);
+        buffer.order(ByteOrder.LITTLE_ENDIAN).putInt(rights);
         buffer.put(secret);
 
         byte[] secret = new byte[SECRET_LENGTH];
