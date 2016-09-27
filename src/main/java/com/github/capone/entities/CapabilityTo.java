@@ -18,8 +18,7 @@
 package com.github.capone.entities;
 
 import nano.Core;
-import org.abstractj.kalium.Sodium;
-import org.abstractj.kalium.SodiumConstants;
+import org.bouncycastle.jcajce.provider.digest.Blake2b;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -45,6 +44,10 @@ public class CapabilityTo {
 
     public final byte[] secret;
     public final List<ChainSegment> chain;
+
+    protected CapabilityTo(byte[] secret) {
+        this(secret, new ArrayList<ChainSegment>());
+    }
 
     protected CapabilityTo(byte[] secret, final List<ChainSegment> chain) {
         if (secret.length != SECRET_LENGTH)
@@ -88,15 +91,11 @@ public class CapabilityTo {
     }
 
     public CapabilityTo createReference(int rights, final SignatureKeyTo entity) {
-        ByteBuffer buffer = ByteBuffer.allocate(
-                SodiumConstants.PUBLICKEY_BYTES + 4 + SECRET_LENGTH);
-        buffer.put(entity.key.toBytes());
-        buffer.order(ByteOrder.LITTLE_ENDIAN).putInt(rights);
-        buffer.put(secret);
-
-        byte[] secret = new byte[SECRET_LENGTH];
-        Sodium.crypto_generichash_blake2b(secret, secret.length, buffer.array(),
-                                          buffer.array().length, new byte[0], 0);
+        Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
+        blake.update(entity.key.toBytes());
+        blake.update(ByteBuffer.allocate(4).putInt(rights).order(ByteOrder.nativeOrder()).array());
+        blake.update(secret);
+        byte[] secret = blake.digest();
 
         ArrayList<ChainSegment> segments = new ArrayList<>(chain.size() + 1);
         segments.addAll(chain);
