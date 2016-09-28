@@ -40,6 +40,10 @@ public class SignatureKeyTo implements Parcelable {
 
     public final VerifyKey key;
 
+    protected SignatureKeyTo(VerifyKey key) {
+        this.key = key;
+    }
+
     public SignatureKeyTo(Core.SignatureKeyMessage key) {
         this.key = new VerifyKey(key.data);
     }
