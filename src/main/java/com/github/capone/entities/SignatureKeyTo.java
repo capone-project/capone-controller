@@ -44,7 +44,7 @@ public class SignatureKeyTo implements Parcelable {
         this.key = key;
     }
 
-    public SignatureKeyTo(Core.SignatureKeyMessage key) {
+    public SignatureKeyTo(Core.IdentityMessage key) {
         this.key = new VerifyKey(key.data);
     }
 
@@ -55,8 +55,8 @@ public class SignatureKeyTo implements Parcelable {
         this.key = new VerifyKey(bytes);
     }
 
-    public Core.SignatureKeyMessage toMessage() {
-        Core.SignatureKeyMessage msg = new Core.SignatureKeyMessage();
+    public Core.IdentityMessage toMessage() {
+        Core.IdentityMessage msg = new Core.IdentityMessage();
         msg.data = key.toBytes();
         return msg;
     }

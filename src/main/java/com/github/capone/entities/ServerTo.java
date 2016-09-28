@@ -64,7 +64,7 @@ public class ServerTo implements Parcelable {
         ServerTo server = new ServerTo();
         server.name = announce.name;
         server.address = address;
-        server.signatureKey = new SignatureKeyTo(announce.signKey);
+        server.signatureKey = new SignatureKeyTo(announce.identity);
         server.services = new ArrayList<>();
 
         for (Discovery.DiscoverResult.Service announcedService : announce.services) {
