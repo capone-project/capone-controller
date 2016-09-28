@@ -34,9 +34,9 @@ public class CapabilityTo {
 
     public class ChainSegment {
         public final int rights;
-        public final SignatureKeyTo entity;
+        public final IdentityTo entity;
 
-        public ChainSegment(int rights, SignatureKeyTo entity) {
+        public ChainSegment(int rights, IdentityTo entity) {
             this.rights = rights;
             this.entity = entity;
         }
@@ -64,7 +64,7 @@ public class CapabilityTo {
         if (msg.chain != null) {
             chain = new ArrayList<>(msg.chain.length);
             for (Core.CapabilityMessage.Chain segment : msg.chain) {
-                chain.add(new ChainSegment(segment.rights, new SignatureKeyTo(segment.entity)));
+                chain.add(new ChainSegment(segment.rights, new IdentityTo(segment.identity)));
             }
         } else {
             chain = new ArrayList<>();
@@ -81,7 +81,7 @@ public class CapabilityTo {
             for (int i = 0; i < chain.size(); i++) {
                 msg.chain[i] = new Core.CapabilityMessage.Chain();
                 msg.chain[i].rights = chain.get(i).rights;
-                msg.chain[i].entity = chain.get(i).entity.toMessage();
+                msg.chain[i].identity = chain.get(i).entity.toMessage();
             }
         } else {
             msg.chain = null;
@@ -90,7 +90,7 @@ public class CapabilityTo {
         return msg;
     }
 
-    public CapabilityTo createReference(int rights, final SignatureKeyTo entity) {
+    public CapabilityTo createReference(int rights, final IdentityTo entity) {
         Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
         blake.update(entity.key.toBytes());
         blake.update(ByteBuffer.allocate(4).putInt(rights).order(ByteOrder.nativeOrder()).array());

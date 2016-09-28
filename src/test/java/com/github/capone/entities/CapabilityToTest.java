@@ -28,7 +28,7 @@ public class CapabilityToTest {
     @Test
     public void creatingReferenceSucceeds() {
         CapabilityTo root = new CapabilityTo(new byte[CapabilityTo.SECRET_LENGTH]);
-        SignatureKeyTo key = new SignatureKeyTo(new VerifyKey(new byte[SodiumConstants.PUBLICKEY_BYTES]));
+        IdentityTo key = new IdentityTo(new VerifyKey(new byte[SodiumConstants.PUBLICKEY_BYTES]));
         CapabilityTo ref = root.createReference(
                 CapabilityTo.RIGHT_EXEC | CapabilityTo.RIGHT_TERMINATE, key);
 

@@ -24,39 +24,39 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import static org.abstractj.kalium.SodiumConstants.PUBLICKEY_BYTES;
 
-public class SignatureKeyTo implements Parcelable {
+public class IdentityTo implements Parcelable {
 
     public static final Creator CREATOR = new Parcelable.Creator() {
         @Override
-        public SignatureKeyTo createFromParcel(Parcel in) {
-            return new SignatureKeyTo(in);
+        public IdentityTo createFromParcel(Parcel in) {
+            return new IdentityTo(in);
         }
 
         @Override
-        public SignatureKeyTo[] newArray(int size) {
-            return new SignatureKeyTo[size];
+        public IdentityTo[] newArray(int size) {
+            return new IdentityTo[size];
         }
     };
 
     public final VerifyKey key;
 
-    protected SignatureKeyTo(VerifyKey key) {
+    protected IdentityTo(VerifyKey key) {
         this.key = key;
     }
 
-    public SignatureKeyTo(Core.SignatureKeyMessage key) {
+    public IdentityTo(Core.IdentityMessage key) {
         this.key = new VerifyKey(key.data);
     }
 
-    protected SignatureKeyTo(Parcel in) {
+    protected IdentityTo(Parcel in) {
         byte[] bytes = new byte[PUBLICKEY_BYTES];
 
         in.readByteArray(bytes);
         this.key = new VerifyKey(bytes);
     }
 
-    public Core.SignatureKeyMessage toMessage() {
-        Core.SignatureKeyMessage msg = new Core.SignatureKeyMessage();
+    public Core.IdentityMessage toMessage() {
+        Core.IdentityMessage msg = new Core.IdentityMessage();
         msg.data = key.toBytes();
         return msg;
     }

@@ -42,7 +42,7 @@ public class ServerTo implements Parcelable {
 
     public String name;
     public String address;
-    public SignatureKeyTo signatureKey;
+    public IdentityTo signatureKey;
     public List<ServiceTo> services;
 
     public ServerTo() {
@@ -51,7 +51,7 @@ public class ServerTo implements Parcelable {
     private ServerTo(Parcel in) {
         name = in.readString();
         address = in.readString();
-        signatureKey = in.readParcelable(SignatureKeyTo.class.getClassLoader());
+        signatureKey = in.readParcelable(IdentityTo.class.getClassLoader());
         services = in.createTypedArrayList(ServiceTo.CREATOR);
     }
 
@@ -64,7 +64,7 @@ public class ServerTo implements Parcelable {
         ServerTo server = new ServerTo();
         server.name = announce.name;
         server.address = address;
-        server.signatureKey = new SignatureKeyTo(announce.signKey);
+        server.signatureKey = new IdentityTo(announce.identity);
         server.services = new ArrayList<>();
 
         for (Discovery.DiscoverResult.Service announcedService : announce.services) {
