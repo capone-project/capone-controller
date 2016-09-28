@@ -23,8 +23,8 @@ import java.util.Date;
 
 public class CapabilityRequestTo {
 
-    public final SignatureKeyTo requesterIdentity;
-    public final SignatureKeyTo serviceIdentity;
+    public final IdentityTo requesterIdentity;
+    public final IdentityTo serviceIdentity;
 
     public final byte[] parameters;
 
@@ -40,8 +40,8 @@ public class CapabilityRequestTo {
     }
 
     public CapabilityRequestTo(Capabilities.CapabilitiesRequest request, Date received) {
-        requesterIdentity = new SignatureKeyTo(request.requesterIdentity);
-        serviceIdentity = new SignatureKeyTo(request.serviceIdentity);
+        requesterIdentity = new IdentityTo(request.requesterIdentity);
+        serviceIdentity = new IdentityTo(request.serviceIdentity);
         parameters = request.parameters;
         serviceAddress = request.serviceAddress;
         servicePort = request.servicePort;
