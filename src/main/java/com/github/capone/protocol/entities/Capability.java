@@ -25,7 +25,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CapabilityTo {
+public class Capability {
 
     public static final int RIGHT_EXEC = 1 << 0;
     public static final int RIGHT_TERMINATE = 1 << 1;
@@ -34,9 +34,9 @@ public class CapabilityTo {
 
     public class ChainSegment {
         public final int rights;
-        public final IdentityTo entity;
+        public final Identity entity;
 
-        public ChainSegment(int rights, IdentityTo entity) {
+        public ChainSegment(int rights, Identity entity) {
             this.rights = rights;
             this.entity = entity;
         }
@@ -45,18 +45,18 @@ public class CapabilityTo {
     public final byte[] secret;
     public final List<ChainSegment> chain;
 
-    protected CapabilityTo(byte[] secret) {
+    protected Capability(byte[] secret) {
         this(secret, new ArrayList<ChainSegment>());
     }
 
-    protected CapabilityTo(byte[] secret, final List<ChainSegment> chain) {
+    protected Capability(byte[] secret, final List<ChainSegment> chain) {
         if (secret.length != SECRET_LENGTH)
             throw new RuntimeException("Invalid capability secret length");
         this.secret = secret;
         this.chain = chain;
     }
 
-    public CapabilityTo(Core.CapabilityMessage msg) {
+    public Capability(Core.CapabilityMessage msg) {
         if (msg.secret.length != SECRET_LENGTH)
             throw new RuntimeException("Invalid capability secret length");
         secret = msg.secret;
@@ -64,7 +64,7 @@ public class CapabilityTo {
         if (msg.chain != null) {
             chain = new ArrayList<>(msg.chain.length);
             for (Core.CapabilityMessage.Chain segment : msg.chain) {
-                chain.add(new ChainSegment(segment.rights, new IdentityTo(segment.identity)));
+                chain.add(new ChainSegment(segment.rights, new Identity(segment.identity)));
             }
         } else {
             chain = new ArrayList<>();
@@ -90,7 +90,7 @@ public class CapabilityTo {
         return msg;
     }
 
-    public CapabilityTo createReference(int rights, final IdentityTo entity) {
+    public Capability createReference(int rights, final Identity entity) {
         Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
         blake.update(entity.key.toBytes());
         blake.update(ByteBuffer.allocate(4).putInt(rights).order(ByteOrder.nativeOrder()).array());
@@ -101,7 +101,7 @@ public class CapabilityTo {
         segments.addAll(chain);
         segments.add(new ChainSegment(rights, entity));
 
-        return new CapabilityTo(secret, segments);
+        return new Capability(secret, segments);
     }
 
 }

@@ -26,8 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import com.github.capone.controller.R;
-import com.github.capone.protocol.entities.ServerTo;
-import com.github.capone.protocol.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.services.Plugin;
 import com.github.capone.services.PluginFragment;
 import com.github.capone.services.Plugins;
@@ -38,8 +38,8 @@ public class ServiceParametersDialog extends DialogFragment
 
     private PluginFragment fragment;
 
-    private ServerTo server;
-    private ServiceDescriptionTo serviceDescription;
+    private Server server;
+    private ServiceDescription serviceDescription;
 
     private OnParametersChosenListener listener;
 
@@ -47,8 +47,8 @@ public class ServiceParametersDialog extends DialogFragment
         void onParametersChosen(MessageNano parameters);
     }
 
-    public static ServiceParametersDialog createDialog(ServerTo server,
-                                                       ServiceDescriptionTo serviceDescription) {
+    public static ServiceParametersDialog createDialog(Server server,
+                                                       ServiceDescription serviceDescription) {
         ServiceParametersDialog dialog = new ServiceParametersDialog();
         dialog.server = server;
         dialog.serviceDescription = serviceDescription;

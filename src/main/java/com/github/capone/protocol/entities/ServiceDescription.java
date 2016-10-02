@@ -19,54 +19,45 @@ package com.github.capone.protocol.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import nano.Discovery;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import nano.Capone;
 
-public class ServiceTo implements Parcelable {
+public class ServiceDescription implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
-        public ServiceTo createFromParcel(Parcel in) {
-            return new ServiceTo(in);
+        public ServiceDescription createFromParcel(Parcel in) {
+            return new ServiceDescription(in);
         }
 
         @Override
-        public ServiceTo[] newArray(int size) {
-            return new ServiceTo[size];
+        public ServiceDescription[] newArray(int size) {
+            return new ServiceDescription[size];
         }
     };
 
     public final String name;
-    public final String category;
     public final int port;
+    public final String location;
+    public final String category;
+    public final String type;
+    public final String version;
 
-    public ServiceTo() {
-        name = null;
-        category = null;
-        port = 0;
+    public ServiceDescription(Capone.ServiceQueryResult result) {
+        this.name = result.result.name;
+        this.port = result.result.port;
+        this.location = result.result.location;
+        this.category = result.result.category;
+        this.type = result.result.type;
+        this.version = result.result.version;
     }
 
-    public ServiceTo(Discovery.DiscoverResult.Service service) {
-        this.name = service.name;
-        this.category = service.category;
-        this.port = service.port;
-    }
-
-    private ServiceTo(Parcel in) {
+    private ServiceDescription(Parcel in) {
         name = in.readString();
-        category = in.readString();
         port = in.readInt();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        return EqualsBuilder.reflectionEquals(this, other);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
+        location = in.readString();
+        category = in.readString();
+        type = in.readString();
+        version = in.readString();
     }
 
     @Override
@@ -77,7 +68,11 @@ public class ServiceTo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(category);
         dest.writeInt(port);
+        dest.writeString(location);
+        dest.writeString(category);
+        dest.writeString(type);
+        dest.writeString(version);
     }
+
 }

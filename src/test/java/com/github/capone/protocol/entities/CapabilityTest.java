@@ -17,20 +17,23 @@
 
 package com.github.capone.protocol.entities;
 
-import nano.Capone;
+import org.abstractj.kalium.SodiumConstants;
+import org.abstractj.kalium.keys.VerifyKey;
+import org.bouncycastle.util.encoders.Hex;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class SessionTo {
+public class CapabilityTest {
 
-    public int identifier;
-    public CapabilityTo capability;
+    @Test
+    public void creatingReferenceSucceeds() {
+        Capability root = new Capability(new byte[Capability.SECRET_LENGTH]);
+        Identity key = new Identity(new VerifyKey(new byte[SodiumConstants.PUBLICKEY_BYTES]));
+        Capability ref = root.createReference(
+                Capability.RIGHT_EXEC | Capability.RIGHT_TERMINATE, key);
 
-    public SessionTo(Capone.SessionRequestResult msg) {
-        identifier = msg.result.identifier;
-        capability = new CapabilityTo(msg.result.cap);
-    }
-
-    public long getUnsignedSessionId() {
-        return identifier & 0xffffffffL;
+        Assert.assertEquals(Hex.toHexString(ref.secret),
+                            "ef65d681590e6c95d923bb0da71851cc4902491f054ec767b8c3aa697df1c913");
     }
 
 }

@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import com.github.capone.controller.R;
-import com.github.capone.protocol.entities.CapabilityRequestTo;
+import com.github.capone.protocol.entities.CapabilityRequest;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class CapabilityRequestsAdapter
         }
     }
 
-    private final ArrayList<CapabilityRequestTo> requests = new ArrayList<>();
+    private final ArrayList<CapabilityRequest> requests = new ArrayList<>();
     private final ArrayList<Runnable> accepts = new ArrayList<>();
 
     @Override
@@ -63,7 +63,7 @@ public class CapabilityRequestsAdapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final CapabilityRequestTo request = requests.get(position);
+        final CapabilityRequest request = requests.get(position);
         final Runnable acceptor = accepts.get(position);
 
         holder.requester.setText(request.requesterIdentity.toString());
@@ -92,13 +92,13 @@ public class CapabilityRequestsAdapter
         });
     }
 
-    public void addRequest(CapabilityRequestTo request, Runnable accept) {
+    public void addRequest(CapabilityRequest request, Runnable accept) {
         requests.add(request);
         accepts.add(accept);
         notifyDataSetChanged();
     }
 
-    public void removeRequest(CapabilityRequestTo request) {
+    public void removeRequest(CapabilityRequest request) {
         int index = requests.indexOf(request);
         if (index >= 0) {
             requests.remove(index);

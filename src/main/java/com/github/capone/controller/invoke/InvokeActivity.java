@@ -27,9 +27,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.github.capone.controller.R;
-import com.github.capone.protocol.entities.ServerTo;
-import com.github.capone.protocol.entities.ServiceDescriptionTo;
-import com.github.capone.protocol.entities.ServiceTo;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
+import com.github.capone.protocol.entities.Service;
 import com.github.capone.persistence.IdentityRecord;
 import com.github.capone.protocol.QueryTask;
 import com.github.capone.services.Plugin;
@@ -49,12 +49,12 @@ public class InvokeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_service);
 
         Intent intent = getIntent();
-        final ServerTo server = intent.getParcelableExtra(EXTRA_SERVER);
-        ServiceTo service = intent.getParcelableExtra(EXTRA_SERVICE);
+        final Server server = intent.getParcelableExtra(EXTRA_SERVER);
+        Service service = intent.getParcelableExtra(EXTRA_SERVICE);
 
         final QueryTask queryTask = new QueryTask() {
             @Override
-            public void onProgressUpdate(ServiceDescriptionTo... description) {
+            public void onProgressUpdate(ServiceDescription... description) {
                 setServiceDescription(server, description[0]);
             }
 
@@ -87,7 +87,7 @@ public class InvokeActivity extends AppCompatActivity {
         });
     }
 
-    private void setServiceDescription(ServerTo server, ServiceDescriptionTo results) {
+    private void setServiceDescription(Server server, ServiceDescription results) {
         Plugin plugin = Plugins.getPlugin(results.type);
 
         if (plugin == null) {

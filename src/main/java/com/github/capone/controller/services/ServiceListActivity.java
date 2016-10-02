@@ -25,13 +25,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.github.capone.controller.R;
 import com.github.capone.controller.invoke.InvokeActivity;
-import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.Server;
 
 public class ServiceListActivity extends AppCompatActivity {
 
     public static final String EXTRA_SERVER = "server";
 
-    private ServerTo server;
+    private Server server;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

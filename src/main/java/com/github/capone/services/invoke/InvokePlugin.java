@@ -18,8 +18,8 @@
 package com.github.capone.services.invoke;
 
 import com.github.capone.controller.R;
-import com.github.capone.protocol.entities.ServerTo;
-import com.github.capone.protocol.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.services.Plugin;
 import com.github.capone.services.PluginFragment;
 
@@ -31,7 +31,7 @@ public class InvokePlugin implements Plugin {
     }
 
     @Override
-    public PluginFragment getFragment(ServerTo server, ServiceDescriptionTo service) {
+    public PluginFragment getFragment(Server server, ServiceDescription service) {
         return InvokePluginFragment.createFragment(server, service);
     }
 

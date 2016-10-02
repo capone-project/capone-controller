@@ -26,7 +26,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.github.capone.controller.R;
 import com.github.capone.controller.services.ServiceListActivity;
-import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.Server;
 import com.github.capone.persistence.ServerRecord;
 import com.github.capone.protocol.DiscoveryTask;
 
@@ -47,7 +47,7 @@ public class DiscoveryListFragment extends Fragment
         adapter = new ServerListAdapter(getActivity());
         adapter.setOnStarClickedListener(new ServerListAdapter.OnStarClickedListener() {
             @Override
-            public boolean onStarClicked(ServerTo to) {
+            public boolean onStarClicked(Server to) {
                 ServerRecord server = ServerRecord.findByTo(to);
                 if (server == null) {
                     server = new ServerRecord(to);
@@ -61,14 +61,14 @@ public class DiscoveryListFragment extends Fragment
         });
 
         if (savedInstanceState != null) {
-            ArrayList<ServerTo> servers = savedInstanceState.getParcelableArrayList(EXTRA_SERVERS);
+            ArrayList<Server> servers = savedInstanceState.getParcelableArrayList(EXTRA_SERVERS);
             adapter.addAll(servers);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        ArrayList<ServerTo> servers = new ArrayList<>(adapter.getCount());
+        ArrayList<Server> servers = new ArrayList<>(adapter.getCount());
 
         for (int i = 0; i < adapter.getCount(); i++) {
             servers.add(adapter.getItem(i));
@@ -97,7 +97,7 @@ public class DiscoveryListFragment extends Fragment
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        final ServerTo to = adapter.getItem(position);
+        final Server to = adapter.getItem(position);
 
         getActivity().startActionMode(new ActionMode.Callback() {
             @Override
@@ -141,11 +141,11 @@ public class DiscoveryListFragment extends Fragment
         return true;
     }
 
-    private void onAddClicked(ServerTo to) {
+    private void onAddClicked(Server to) {
         new ServerRecord(to).save();
     }
 
-    private void onRemoveClicked(ServerTo server) {
+    private void onRemoveClicked(Server server) {
         ServerRecord.findByTo(server).delete();
     }
 
@@ -158,7 +158,7 @@ public class DiscoveryListFragment extends Fragment
     public void startDiscovery() {
         serviceLoader = new DiscoveryTask() {
             @Override
-            public void onProgressUpdate(ServerTo... server) {
+            public void onProgressUpdate(Server... server) {
                 if (adapter != null) {
                     if (adapter.getPosition(server[0]) == -1) {
                         adapter.add(server[0]);

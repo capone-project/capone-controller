@@ -23,55 +23,40 @@ import nano.Discovery;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ServerTo implements Parcelable {
+public class Service implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
-        public ServerTo createFromParcel(Parcel in) {
-            return new ServerTo(in);
+        public Service createFromParcel(Parcel in) {
+            return new Service(in);
         }
 
         @Override
-        public ServerTo[] newArray(int size) {
-            return new ServerTo[size];
+        public Service[] newArray(int size) {
+            return new Service[size];
         }
     };
 
-    public String name;
-    public String address;
-    public IdentityTo signatureKey;
-    public List<ServiceTo> services;
+    public final String name;
+    public final String category;
+    public final int port;
 
-    public ServerTo() {
+    public Service() {
+        name = null;
+        category = null;
+        port = 0;
     }
 
-    private ServerTo(Parcel in) {
+    public Service(Discovery.DiscoverResult.Service service) {
+        this.name = service.name;
+        this.category = service.category;
+        this.port = service.port;
+    }
+
+    private Service(Parcel in) {
         name = in.readString();
-        address = in.readString();
-        signatureKey = in.readParcelable(IdentityTo.class.getClassLoader());
-        services = in.createTypedArrayList(ServiceTo.CREATOR);
-    }
-
-    @Override
-    public String toString() {
-        return signatureKey.toString();
-    }
-
-    public static ServerTo fromAnnounce(String address, Discovery.DiscoverResult announce) {
-        ServerTo server = new ServerTo();
-        server.name = announce.name;
-        server.address = address;
-        server.signatureKey = new IdentityTo(announce.identity);
-        server.services = new ArrayList<>();
-
-        for (Discovery.DiscoverResult.Service announcedService : announce.services) {
-            server.services.add(new ServiceTo(announcedService));
-        }
-
-        return server;
+        category = in.readString();
+        port = in.readInt();
     }
 
     @Override
@@ -92,9 +77,7 @@ public class ServerTo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(address);
-        dest.writeParcelable(signatureKey, flags);
-        dest.writeTypedList(services);
+        dest.writeString(category);
+        dest.writeInt(port);
     }
-
 }

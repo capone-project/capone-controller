@@ -18,7 +18,7 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.Server;
 import com.github.capone.persistence.ServerRecord;
 import nano.Discovery;
 import org.abstractj.kalium.encoders.Encoder;
@@ -31,9 +31,9 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
 
     public static class Result {
         public final Throwable throwable;
-        public final ServerTo server;
+        public final Server server;
 
-        public Result(ServerTo server) {
+        public Result(Server server) {
             this.server = server;
             this.throwable = null;
         }
@@ -69,7 +69,7 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
             Discovery.DiscoverResult announceMessage = new Discovery.DiscoverResult();
             channel.readProtobuf(announceMessage);
 
-            return new Result(ServerTo.fromAnnounce(server.getAddress(), announceMessage));
+            return new Result(Server.fromAnnounce(server.getAddress(), announceMessage));
         } catch (VerifyKey.SignatureException | IOException e) {
             return new Result(e);
         } finally {

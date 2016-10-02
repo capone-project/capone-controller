@@ -24,31 +24,31 @@ import org.abstractj.kalium.keys.VerifyKey;
 
 import static org.abstractj.kalium.SodiumConstants.PUBLICKEY_BYTES;
 
-public class IdentityTo implements Parcelable {
+public class Identity implements Parcelable {
 
     public static final Creator CREATOR = new Parcelable.Creator() {
         @Override
-        public IdentityTo createFromParcel(Parcel in) {
-            return new IdentityTo(in);
+        public Identity createFromParcel(Parcel in) {
+            return new Identity(in);
         }
 
         @Override
-        public IdentityTo[] newArray(int size) {
-            return new IdentityTo[size];
+        public Identity[] newArray(int size) {
+            return new Identity[size];
         }
     };
 
     public final VerifyKey key;
 
-    protected IdentityTo(VerifyKey key) {
+    protected Identity(VerifyKey key) {
         this.key = key;
     }
 
-    public IdentityTo(Core.IdentityMessage key) {
+    public Identity(Core.IdentityMessage key) {
         this.key = new VerifyKey(key.data);
     }
 
-    protected IdentityTo(Parcel in) {
+    protected Identity(Parcel in) {
         byte[] bytes = new byte[PUBLICKEY_BYTES];
 
         in.readByteArray(bytes);

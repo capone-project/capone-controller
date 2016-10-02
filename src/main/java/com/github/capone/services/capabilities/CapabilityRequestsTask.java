@@ -38,8 +38,8 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
 
     private Client client;
 
-    private final ServerTo server;
-    private final ServiceDescriptionTo service;
+    private final Server server;
+    private final ServiceDescription service;
     private final MessageNano parameters;
 
     public static class Result {
@@ -52,12 +52,12 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     public interface RequestListener {
-        void onRequestReceived(CapabilityRequestTo request, Runnable accept);
+        void onRequestReceived(CapabilityRequest request, Runnable accept);
     }
 
     private RequestListener listener;
 
-    public CapabilityRequestsTask(ServerTo server, ServiceDescriptionTo service,
+    public CapabilityRequestsTask(Server server, ServiceDescription service,
                                   MessageNano parameters) {
         this.server = server;
         this.service = service;
@@ -72,7 +72,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     protected Result doInBackground(Void... params) {
         try {
             client = new Client(IdentityRecord.getSigningKey(), server);
-            SessionTo session = client.request(service, parameters);
+            Session session = client.request(service, parameters);
             client.connect(service, session, this);
             return null;
         } catch (IOException | ProtocolException e) {
@@ -83,7 +83,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     @Override
-    public void onSessionStarted(ServiceDescriptionTo service, SessionTo session,
+    public void onSessionStarted(ServiceDescription service, Session session,
                                  final Channel channel) {
         final Capabilities.CapabilitiesCommand command = new Capabilities.CapabilitiesCommand();
 
@@ -91,8 +91,8 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
             while (command.clear() != null && channel.readProtobuf(command) != null) {
                 switch (command.cmd) {
                     case Capabilities.CapabilitiesCommand.REQUEST:
-                        final CapabilityRequestTo requestTo =
-                                new CapabilityRequestTo(command.request, new Date());
+                        final CapabilityRequest requestTo =
+                                new CapabilityRequest(command.request, new Date());
 
                         listener.onRequestReceived(requestTo, new Runnable() {
                             @Override
@@ -116,10 +116,10 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         }
     }
 
-    private void accept(Channel channel, CapabilityRequestTo request) {
+    private void accept(Channel channel, CapabilityRequest request) {
         Client client = new Client(IdentityRecord.getSigningKey(),
                                    request.serviceAddress, request.serviceIdentity.key);
-        SessionTo session = null;
+        Session session = null;
         try {
             session = client.request(request.servicePort, request.parameters);
         } catch (Exception e) {
@@ -129,7 +129,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
         Capabilities.Capability capability = new Capabilities.Capability();
         capability.requestid = request.requestId;
         capability.sessionid = session.identifier;
-        capability.capability = session.capability.createReference(CapabilityTo.RIGHT_EXEC,
+        capability.capability = session.capability.createReference(Capability.RIGHT_EXEC,
                                                                    request.requesterIdentity).toMessage();
         capability.serviceIdentity = request.serviceIdentity.toMessage();
 

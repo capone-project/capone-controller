@@ -18,21 +18,21 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.protocol.entities.ServerTo;
-import com.github.capone.protocol.entities.ServiceDescriptionTo;
-import com.github.capone.protocol.entities.ServiceTo;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
+import com.github.capone.protocol.entities.Service;
 import com.github.capone.persistence.IdentityRecord;
 import org.abstractj.kalium.keys.SigningKey;
 
 public abstract class QueryTask
-        extends AsyncTask<QueryTask.Parameters, ServiceDescriptionTo, Throwable> {
+        extends AsyncTask<QueryTask.Parameters, ServiceDescription, Throwable> {
 
     public static class Parameters {
         public final SigningKey localKey;
-        public final ServerTo server;
-        public final ServiceTo service;
+        public final Server server;
+        public final Service service;
 
-        public Parameters(SigningKey localKey, ServerTo server, ServiceTo service) {
+        public Parameters(SigningKey localKey, Server server, Service service) {
             this.localKey = localKey;
             this.server = server;
             this.service = service;
@@ -69,6 +69,6 @@ public abstract class QueryTask
     }
 
     @Override
-    public abstract void onProgressUpdate(ServiceDescriptionTo... description);
+    public abstract void onProgressUpdate(ServiceDescription... description);
 
 }

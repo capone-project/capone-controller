@@ -18,7 +18,7 @@
 package com.github.capone.persistence;
 
 import com.orm.SugarRecord;
-import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.Server;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class ServerRecord extends SugarRecord {
     public ServerRecord() {
     }
 
-    public ServerRecord(ServerTo server) {
+    public ServerRecord(Server server) {
         this.publicKey = server.signatureKey.toString();
         this.address = server.address;
     }
@@ -60,7 +60,7 @@ public class ServerRecord extends SugarRecord {
         this.address = address;
     }
 
-    public static ServerRecord findByTo(ServerTo server) {
+    public static ServerRecord findByTo(Server server) {
         List<ServerRecord> favorites = find(ServerRecord.class, "public_key = ? and address = ?",
                                             server.signatureKey.toString(), server.address);
 
