@@ -24,7 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.github.capone.controller.R;
-import com.github.capone.entities.ServerTo;
+import com.github.capone.protocol.entities.ServerTo;
 import com.github.capone.persistence.Server;
 
 import java.util.HashSet;

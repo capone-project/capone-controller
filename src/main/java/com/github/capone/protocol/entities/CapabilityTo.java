@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import nano.Core;
 import org.bouncycastle.jcajce.provider.digest.Blake2b;

@@ -17,10 +17,10 @@
 
 package com.github.capone.protocol;
 
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.ServiceTo;
-import com.github.capone.entities.SessionTo;
+import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.ServiceTo;
+import com.github.capone.protocol.entities.SessionTo;
 import com.google.protobuf.nano.MessageNano;
 import nano.Capone;
 import nano.Discovery;

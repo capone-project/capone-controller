@@ -24,7 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import com.github.capone.controller.R;
-import com.github.capone.entities.CapabilityRequestTo;
+import com.github.capone.protocol.entities.CapabilityRequestTo;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

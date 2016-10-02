@@ -18,7 +18,7 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.entities.ServerTo;
+import com.github.capone.protocol.entities.ServerTo;
 import com.github.capone.persistence.Server;
 import nano.Discovery;
 import org.abstractj.kalium.encoders.Encoder;

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.keys.VerifyKey;

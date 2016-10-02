@@ -17,8 +17,8 @@
 
 package com.github.capone.services;
 
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.ServiceDescriptionTo;
 
 public interface Plugin {
 

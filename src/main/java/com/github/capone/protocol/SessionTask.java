@@ -18,9 +18,9 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.SessionTo;
+import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.SessionTo;
 import com.github.capone.persistence.Identity;
 import com.google.protobuf.nano.MessageNano;
 

@@ -18,7 +18,7 @@
 package com.github.capone.persistence;
 
 import com.orm.SugarRecord;
-import com.github.capone.entities.ServerTo;
+import com.github.capone.protocol.entities.ServerTo;
 
 import java.util.List;
 

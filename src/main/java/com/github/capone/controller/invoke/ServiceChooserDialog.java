@@ -27,12 +27,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.github.capone.controller.R;
-import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.ServiceDescriptionTo;
 import com.github.capone.protocol.DiscoveryTask;
 import com.github.capone.controller.discovery.ServerListAdapter;
 import com.github.capone.controller.services.ServiceListAdapter;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceTo;
+import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.ServiceTo;
 import com.github.capone.persistence.Identity;
 import com.github.capone.protocol.QueryTask;
 

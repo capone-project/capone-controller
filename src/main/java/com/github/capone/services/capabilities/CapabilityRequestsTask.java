@@ -18,7 +18,7 @@
 package com.github.capone.services.capabilities;
 
 import android.os.AsyncTask;
-import com.github.capone.entities.*;
+import com.github.capone.protocol.entities.*;
 import com.github.capone.persistence.Identity;
 import com.github.capone.protocol.Channel;
 import com.github.capone.protocol.Client;

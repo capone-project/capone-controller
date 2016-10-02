@@ -25,7 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import com.github.capone.controller.R;
 import com.github.capone.controller.invoke.InvokeActivity;
-import com.github.capone.entities.ServerTo;
+import com.github.capone.protocol.entities.ServerTo;
 
 public class ServiceListActivity extends AppCompatActivity {
 

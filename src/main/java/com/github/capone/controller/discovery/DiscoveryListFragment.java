@@ -26,7 +26,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.github.capone.controller.R;
 import com.github.capone.controller.services.ServiceListActivity;
-import com.github.capone.entities.ServerTo;
+import com.github.capone.protocol.entities.ServerTo;
 import com.github.capone.persistence.Server;
 import com.github.capone.protocol.DiscoveryTask;
 

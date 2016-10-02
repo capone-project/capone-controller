@@ -15,49 +15,58 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import nano.Capone;
+import nano.Discovery;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class ServiceDescriptionTo implements Parcelable {
+public class ServiceTo implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
-        public ServiceDescriptionTo createFromParcel(Parcel in) {
-            return new ServiceDescriptionTo(in);
+        public ServiceTo createFromParcel(Parcel in) {
+            return new ServiceTo(in);
         }
 
         @Override
-        public ServiceDescriptionTo[] newArray(int size) {
-            return new ServiceDescriptionTo[size];
+        public ServiceTo[] newArray(int size) {
+            return new ServiceTo[size];
         }
     };
 
     public final String name;
-    public final int port;
-    public final String location;
     public final String category;
-    public final String type;
-    public final String version;
+    public final int port;
 
-    public ServiceDescriptionTo(Capone.ServiceQueryResult result) {
-        this.name = result.result.name;
-        this.port = result.result.port;
-        this.location = result.result.location;
-        this.category = result.result.category;
-        this.type = result.result.type;
-        this.version = result.result.version;
+    public ServiceTo() {
+        name = null;
+        category = null;
+        port = 0;
     }
 
-    private ServiceDescriptionTo(Parcel in) {
+    public ServiceTo(Discovery.DiscoverResult.Service service) {
+        this.name = service.name;
+        this.category = service.category;
+        this.port = service.port;
+    }
+
+    private ServiceTo(Parcel in) {
         name = in.readString();
-        port = in.readInt();
-        location = in.readString();
         category = in.readString();
-        type = in.readString();
-        version = in.readString();
+        port = in.readInt();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return EqualsBuilder.reflectionEquals(this, other);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 
     @Override
@@ -68,11 +77,7 @@ public class ServiceDescriptionTo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeInt(port);
-        dest.writeString(location);
         dest.writeString(category);
-        dest.writeString(type);
-        dest.writeString(version);
+        dest.writeInt(port);
     }
-
 }

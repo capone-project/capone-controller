@@ -24,7 +24,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.github.capone.controller.R;
-import com.github.capone.entities.ServiceTo;
+import com.github.capone.protocol.entities.ServiceTo;
 
 public class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
 

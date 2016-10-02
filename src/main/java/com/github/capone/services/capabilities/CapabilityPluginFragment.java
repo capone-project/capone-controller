@@ -25,9 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import com.github.capone.controller.R;
-import com.github.capone.entities.CapabilityRequestTo;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.CapabilityRequestTo;
+import com.github.capone.protocol.entities.ServerTo;
+import com.github.capone.protocol.entities.ServiceDescriptionTo;
 import com.github.capone.services.PluginFragment;
 import nano.Capabilities;
 
