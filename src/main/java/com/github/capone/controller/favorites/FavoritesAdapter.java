@@ -50,7 +50,7 @@ public class FavoritesAdapter extends ArrayAdapter<ServerRecord> {
         }
 
         TextView keyView = (TextView) view.findViewById(R.id.server_key);
-        keyView.setText(server.getPublicKey());
+        keyView.setText(server.getPublicKey().toString());
 
         return view;
     }

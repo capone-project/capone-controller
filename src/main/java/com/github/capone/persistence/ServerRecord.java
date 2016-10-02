@@ -17,6 +17,7 @@
 
 package com.github.capone.persistence;
 
+import com.github.capone.protocol.crypto.VerifyKey;
 import com.orm.SugarRecord;
 import com.github.capone.protocol.entities.Server;
 
@@ -44,12 +45,16 @@ public class ServerRecord extends SugarRecord {
         this.name = name;
     }
 
-    public String getPublicKey() {
-        return publicKey;
+    public VerifyKey getPublicKey() {
+        try {
+            return VerifyKey.fromString(publicKey);
+        } catch (VerifyKey.InvalidKeyException e) {
+            throw new RuntimeException();
+        }
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setPublicKey(VerifyKey publicKey) {
+        this.publicKey = publicKey.toString();
     }
 
     public String getAddress() {

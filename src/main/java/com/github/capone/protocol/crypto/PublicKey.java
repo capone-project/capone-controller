@@ -15,28 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.protocol.entities;
+package com.github.capone.protocol.crypto;
 
-import com.github.capone.protocol.crypto.VerifyKey;
-import nano.Capone;
+import org.abstractj.kalium.SodiumConstants;
 
-public class Session {
+public class PublicKey {
 
-    public final int identifier;
-    public final Capability capability;
+    public static final int BYTES = SodiumConstants.PUBLICKEY_BYTES;
 
-    private Session(int identifier, Capability capability) {
-        this.identifier = identifier;
-        this.capability = capability;
+    public static class InvalidKeyException extends Exception {
     }
 
-    public static Session fromMessage(Capone.SessionRequestResult msg)
-            throws VerifyKey.InvalidKeyException {
-        return new Session(msg.result.identifier, Capability.fromMessage(msg.result.cap));
+    private final org.abstractj.kalium.keys.PublicKey key;
+
+    protected PublicKey(org.abstractj.kalium.keys.PublicKey key) {
+        this.key = key;
     }
 
-    public long getUnsignedSessionId() {
-        return identifier & 0xffffffffL;
+    public static PublicKey fromBytes(byte[] key) throws InvalidKeyException {
+        try {
+            return new PublicKey(new org.abstractj.kalium.keys.PublicKey(key));
+        } catch (Exception e) {
+            throw new InvalidKeyException();
+        }
+    }
+
+    public byte[] toBytes() {
+        return key.toBytes();
     }
 
 }

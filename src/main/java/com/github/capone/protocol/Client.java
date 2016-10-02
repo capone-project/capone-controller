@@ -17,15 +17,16 @@
 
 package com.github.capone.protocol;
 
+import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.SymmetricKey;
+import com.github.capone.protocol.crypto.VerifyKey;
 import com.github.capone.protocol.entities.Server;
-import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.protocol.entities.Service;
+import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.protocol.entities.Session;
 import com.google.protobuf.nano.MessageNano;
 import nano.Capone;
 import nano.Discovery;
-import org.abstractj.kalium.keys.SigningKey;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
@@ -55,7 +56,8 @@ public class Client {
     }
 
     private void initiateConnection(int port, int connectionType) throws
-            IOException, VerifyKey.SignatureException {
+            IOException, VerifyKey.SignatureException,
+                    SymmetricKey.InvalidKeyException, SymmetricKey.EncryptionException {
         Capone.ConnectionInitiationMessage connectionInitiation =
                 new Capone.ConnectionInitiationMessage();
         connectionInitiation.type = connectionType;
@@ -79,7 +81,10 @@ public class Client {
             channel.readProtobuf(results);
 
             return new ServiceDescription(results);
-        } catch (VerifyKey.SignatureException e) {
+        } catch (VerifyKey.SignatureException |
+                         SymmetricKey.EncryptionException |
+                         SymmetricKey.DecryptionException |
+                         SymmetricKey.InvalidKeyException e) {
             throw new ProtocolException(e.getMessage());
         } finally {
             disconnect();
@@ -113,8 +118,12 @@ public class Client {
                 throw new ProtocolException("Received error");
             }
 
-            return new Session(sessionMessage);
-        } catch (VerifyKey.SignatureException e) {
+            return Session.fromMessage(sessionMessage);
+        } catch (VerifyKey.InvalidKeyException |
+                         VerifyKey.SignatureException |
+                         SymmetricKey.EncryptionException |
+                         SymmetricKey.DecryptionException |
+                         SymmetricKey.InvalidKeyException e) {
             throw new ProtocolException(e.getMessage());
         } finally {
             disconnect();
@@ -142,7 +151,10 @@ public class Client {
             if (handler != null) {
                 handler.onSessionStarted(service, session, channel);
             }
-        } catch (VerifyKey.SignatureException e) {
+        } catch (VerifyKey.SignatureException |
+                         SymmetricKey.EncryptionException |
+                         SymmetricKey.DecryptionException |
+                         SymmetricKey.InvalidKeyException e) {
             throw new ProtocolException(e.getMessage());
         } finally {
             disconnect();

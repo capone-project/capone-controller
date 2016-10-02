@@ -18,8 +18,11 @@
 package com.github.capone.services.capabilities;
 
 import android.os.AsyncTask;
+import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.SymmetricKey;
+import com.github.capone.protocol.crypto.VerifyKey;
 import com.github.capone.protocol.entities.*;
-import com.github.capone.persistence.IdentityRecord;
+import com.github.capone.persistence.SigningKeyRecord;
 import com.github.capone.protocol.Channel;
 import com.github.capone.protocol.Client;
 import com.github.capone.protocol.ProtocolException;
@@ -71,7 +74,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     @Override
     protected Result doInBackground(Void... params) {
         try {
-            client = new Client(IdentityRecord.getSigningKey(), server);
+            client = new Client(SigningKeyRecord.getSigningKey(), server);
             Session session = client.request(service, parameters);
             client.connect(service, session, this);
             return null;
@@ -111,14 +114,14 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
                         return;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | VerifyKey.InvalidKeyException | SymmetricKey.DecryptionException e) {
             /* ignore */
         }
     }
 
     private void accept(Channel channel, CapabilityRequest request) {
-        Client client = new Client(IdentityRecord.getSigningKey(),
-                                   request.serviceAddress, request.serviceIdentity.key);
+        SigningKey key = SigningKeyRecord.getSigningKey();
+        Client client = new Client(key, request.serviceAddress, request.serviceIdentity.key);
         Session session = null;
         try {
             session = client.request(request.servicePort, request.parameters);
@@ -135,7 +138,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
 
         try {
             channel.writeProtobuf(capability);
-        } catch (IOException e) {
+        } catch (IOException | SymmetricKey.EncryptionException e) {
             return;
         }
     }

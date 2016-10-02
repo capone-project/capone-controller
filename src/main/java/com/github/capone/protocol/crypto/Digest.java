@@ -15,28 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.protocol.entities;
+package com.github.capone.protocol.crypto;
 
-import com.github.capone.protocol.crypto.VerifyKey;
-import nano.Capone;
+import org.bouncycastle.jcajce.provider.digest.Blake2b;
 
-public class Session {
+public class Digest {
 
-    public final int identifier;
-    public final Capability capability;
+    private final Blake2b.Blake2b256 blake;
 
-    private Session(int identifier, Capability capability) {
-        this.identifier = identifier;
-        this.capability = capability;
+    public Digest() {
+        this.blake = new Blake2b.Blake2b256();
     }
 
-    public static Session fromMessage(Capone.SessionRequestResult msg)
-            throws VerifyKey.InvalidKeyException {
-        return new Session(msg.result.identifier, Capability.fromMessage(msg.result.cap));
+    public Digest update(byte[] data) {
+        blake.update(data);
+        return this;
     }
 
-    public long getUnsignedSessionId() {
-        return identifier & 0xffffffffL;
+    public byte[] digest() {
+        return blake.digest();
     }
 
 }

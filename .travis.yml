@@ -2,11 +2,6 @@ language: android
 
 sudo: false
 
-addons:
-    apt:
-        packages:
-            - oracle-java8-installer
-
 jdk:
    - oraclejdk8
 
@@ -17,8 +12,15 @@ android:
         - android-24
         - build-tools-24.0.2
         - extra-android-m2repository
+        - sys-img-armeabi-v7a-android-24
 
-install:
+before_script:
+  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
+script:
     - ./gradlew build connectedCheck
 
 before_cache:

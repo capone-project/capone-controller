@@ -17,8 +17,9 @@
 
 package com.github.capone.protocol.entities;
 
+import com.github.capone.protocol.crypto.Digest;
+import com.github.capone.protocol.crypto.VerifyKey;
 import nano.Core;
-import org.bouncycastle.jcajce.provider.digest.Blake2b;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -32,7 +33,7 @@ public class Capability {
 
     public static final int SECRET_LENGTH = 32;
 
-    public class ChainSegment {
+    public static class ChainSegment {
         public final int rights;
         public final Identity entity;
 
@@ -56,19 +57,20 @@ public class Capability {
         this.chain = chain;
     }
 
-    public Capability(Core.CapabilityMessage msg) {
+    public static Capability fromMessage(Core.CapabilityMessage msg)
+            throws VerifyKey.InvalidKeyException {
         if (msg.secret.length != SECRET_LENGTH)
             throw new RuntimeException("Invalid capability secret length");
-        secret = msg.secret;
 
+        ArrayList<ChainSegment> chain = new ArrayList<>(msg.chain.length);
         if (msg.chain != null) {
             chain = new ArrayList<>(msg.chain.length);
             for (Core.CapabilityMessage.Chain segment : msg.chain) {
-                chain.add(new ChainSegment(segment.rights, new Identity(segment.identity)));
+                chain.add(new ChainSegment(segment.rights, Identity.fromMessage(segment.identity)));
             }
-        } else {
-            chain = new ArrayList<>();
         }
+
+        return new Capability(msg.secret, chain);
     }
 
     public Core.CapabilityMessage toMessage() {
@@ -91,17 +93,18 @@ public class Capability {
     }
 
     public Capability createReference(int rights, final Identity entity) {
-        Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
-        blake.update(entity.key.toBytes());
-        blake.update(ByteBuffer.allocate(4).putInt(rights).order(ByteOrder.nativeOrder()).array());
-        blake.update(secret);
-        byte[] secret = blake.digest();
+        byte[] digest = new Digest()
+                                .update(entity.key.toBytes())
+                                .update(ByteBuffer.allocate(4).putInt(rights).order(
+                                        ByteOrder.nativeOrder()).array())
+                                .update(secret)
+                                .digest();
 
         ArrayList<ChainSegment> segments = new ArrayList<>(chain.size() + 1);
         segments.addAll(chain);
         segments.add(new ChainSegment(rights, entity));
 
-        return new Capability(secret, segments);
+        return new Capability(digest, segments);
     }
 
 }

@@ -15,24 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.protocol.entities;
+package com.github.capone.protocol.crypto;
 
-import com.github.capone.protocol.crypto.VerifyKey;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
+import junit.framework.Assert;
 import org.bouncycastle.util.encoders.Hex;
-import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class CapabilityTest {
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class PublicKeyTest {
+
+    private PublicKey key;
 
     @Test
-    public void creatingReferenceSucceeds() throws VerifyKey.InvalidKeyException {
-        Capability root = new Capability(new byte[Capability.SECRET_LENGTH]);
-        Identity key = new Identity(VerifyKey.fromBytes(new byte[VerifyKey.BYTES]));
-        Capability ref = root.createReference(
-                Capability.RIGHT_EXEC | Capability.RIGHT_TERMINATE, key);
+    public void keyFromBytesSucceeds() throws PublicKey.InvalidKeyException {
+        key = PublicKey.fromBytes(new byte[PublicKey.BYTES]);
+        Assert.assertEquals(Hex.toHexString(new byte[PublicKey.BYTES]),
+                Hex.toHexString(key.toBytes()));
+    }
 
-        Assert.assertEquals(Hex.toHexString(ref.secret),
-                            "ef65d681590e6c95d923bb0da71851cc4902491f054ec767b8c3aa697df1c913");
+    @Test(expected = PublicKey.InvalidKeyException.class)
+    public void keyFromInvalidByteLengthFails() throws PublicKey.InvalidKeyException {
+        PublicKey.fromBytes(new byte[PublicKey.BYTES + 1]);
     }
 
 }

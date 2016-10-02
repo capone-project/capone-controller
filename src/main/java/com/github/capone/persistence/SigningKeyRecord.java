@@ -17,25 +17,24 @@
 
 package com.github.capone.persistence;
 
+import com.github.capone.protocol.crypto.SigningKey;
 import com.orm.SugarRecord;
-import org.abstractj.kalium.encoders.Encoder;
-import org.abstractj.kalium.keys.SigningKey;
 
 import java.util.List;
 
-public class IdentityRecord extends SugarRecord {
+public class SigningKeyRecord extends SugarRecord {
 
     private String keySeed;
 
-    public IdentityRecord() {
+    public SigningKeyRecord() {
     }
 
-    public IdentityRecord(SigningKey key) {
+    public SigningKeyRecord(SigningKey key) {
         this.keySeed = key.toString();
     }
 
-    public SigningKey getKey() {
-        return new SigningKey(keySeed, Encoder.HEX);
+    public SigningKey getKey() throws SigningKey.InvalidSeedException {
+        return SigningKey.fromSeed(keySeed);
     }
 
     public void setKey(SigningKey key) {
@@ -43,14 +42,18 @@ public class IdentityRecord extends SugarRecord {
     }
 
     public static SigningKey getSigningKey() {
-        List<IdentityRecord> identities = IdentityRecord.listAll(IdentityRecord.class);
-        if (identities.size() == 1) {
-            return identities.get(0).getKey();
-        } else if (identities.size() == 0) {
-            IdentityRecord identity = new IdentityRecord(new SigningKey());
-            identity.save();
-            return identity.getKey();
-        } else {
+        try {
+            List<SigningKeyRecord> identities = SigningKeyRecord.listAll(SigningKeyRecord.class);
+            if (identities.size() == 1) {
+                return identities.get(0).getKey();
+            } else if (identities.size() == 0) {
+                SigningKeyRecord identity = new SigningKeyRecord(SigningKey.fromRandom());
+                identity.save();
+                return identity.getKey();
+            } else {
+                throw new RuntimeException();
+            }
+        } catch (SigningKey.InvalidSeedException e) {
             throw new RuntimeException();
         }
     }

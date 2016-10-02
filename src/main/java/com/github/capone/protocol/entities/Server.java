@@ -19,6 +19,7 @@ package com.github.capone.protocol.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.github.capone.protocol.crypto.VerifyKey;
 import nano.Discovery;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -60,11 +61,12 @@ public class Server implements Parcelable {
         return signatureKey.toString();
     }
 
-    public static Server fromAnnounce(String address, Discovery.DiscoverResult announce) {
+    public static Server fromAnnounce(String address, Discovery.DiscoverResult announce)
+            throws VerifyKey.InvalidKeyException {
         Server server = new Server();
         server.name = announce.name;
         server.address = address;
-        server.signatureKey = new Identity(announce.identity);
+        server.signatureKey = Identity.fromMessage(announce.identity);
         server.services = new ArrayList<>();
 
         for (Discovery.DiscoverResult.Service announcedService : announce.services) {

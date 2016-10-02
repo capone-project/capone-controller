@@ -27,14 +27,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.github.capone.controller.R;
-import com.github.capone.protocol.entities.Server;
-import com.github.capone.protocol.entities.ServiceDescription;
-import com.github.capone.protocol.entities.Service;
-import com.github.capone.persistence.IdentityRecord;
+import com.github.capone.persistence.SigningKeyRecord;
 import com.github.capone.protocol.QueryTask;
+import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.Service;
+import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.services.Plugin;
 import com.github.capone.services.Plugins;
-import org.abstractj.kalium.keys.SigningKey;
 
 public class InvokeActivity extends AppCompatActivity {
 
@@ -69,7 +69,7 @@ public class InvokeActivity extends AppCompatActivity {
             }
         };
 
-        SigningKey key = IdentityRecord.getSigningKey();
+        SigningKey key = SigningKeyRecord.getSigningKey();
         QueryTask.Parameters parameters = new QueryTask.Parameters(key, server, service);
         queryTask.execute(parameters);
 

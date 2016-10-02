@@ -15,28 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.protocol.entities;
+package com.github.capone.protocol.crypto;
 
-import com.github.capone.protocol.crypto.VerifyKey;
-import nano.Capone;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-public class Session {
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class PrivateKeyTest {
 
-    public final int identifier;
-    public final Capability capability;
+    private PrivateKey key;
 
-    private Session(int identifier, Capability capability) {
-        this.identifier = identifier;
-        this.capability = capability;
+    @Test
+    public void creatingRandomKeySucceeds() {
+        key = PrivateKey.fromRandom();
     }
 
-    public static Session fromMessage(Capone.SessionRequestResult msg)
-            throws VerifyKey.InvalidKeyException {
-        return new Session(msg.result.identifier, Capability.fromMessage(msg.result.cap));
+    @Test
+    public void keyToBytesSucceeds() {
+        key = PrivateKey.fromRandom();
+        Assert.assertNotNull(key.toBytes());
     }
 
-    public long getUnsignedSessionId() {
-        return identifier & 0xffffffffL;
+    @Test
+    public void gettingPublicKeySucceeds() {
+        key = PrivateKey.fromRandom();
+        Assert.assertNotNull(key.getPublicKey());
     }
 
 }

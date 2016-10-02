@@ -19,10 +19,8 @@ package com.github.capone.protocol.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.github.capone.protocol.crypto.VerifyKey;
 import nano.Core;
-import org.abstractj.kalium.keys.VerifyKey;
-
-import static org.abstractj.kalium.SodiumConstants.PUBLICKEY_BYTES;
 
 public class Identity implements Parcelable {
 
@@ -44,15 +42,20 @@ public class Identity implements Parcelable {
         this.key = key;
     }
 
-    public Identity(Core.IdentityMessage key) {
-        this.key = new VerifyKey(key.data);
-    }
-
     protected Identity(Parcel in) {
-        byte[] bytes = new byte[PUBLICKEY_BYTES];
+        byte[] bytes = new byte[VerifyKey.BYTES];
 
         in.readByteArray(bytes);
-        this.key = new VerifyKey(bytes);
+        try {
+            this.key = VerifyKey.fromBytes(bytes);
+        } catch (VerifyKey.InvalidKeyException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    public static Identity fromMessage(Core.IdentityMessage message)
+            throws VerifyKey.InvalidKeyException {
+        return new Identity(VerifyKey.fromBytes(message.data));
     }
 
     public Core.IdentityMessage toMessage() {
