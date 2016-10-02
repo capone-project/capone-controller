@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.github.capone.controller.R;
 import com.github.capone.controller.services.ServiceListActivity;
 import com.github.capone.protocol.entities.ServerTo;
-import com.github.capone.persistence.Server;
+import com.github.capone.persistence.ServerRecord;
 import com.github.capone.protocol.DiscoveryTask;
 
 import java.util.ArrayList;
@@ -48,9 +48,9 @@ public class DiscoveryListFragment extends Fragment
         adapter.setOnStarClickedListener(new ServerListAdapter.OnStarClickedListener() {
             @Override
             public boolean onStarClicked(ServerTo to) {
-                Server server = Server.findByTo(to);
+                ServerRecord server = ServerRecord.findByTo(to);
                 if (server == null) {
-                    server = new Server(to);
+                    server = new ServerRecord(to);
                     server.save();
                     return true;
                 } else {
@@ -108,7 +108,7 @@ public class DiscoveryListFragment extends Fragment
 
             @Override
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                Server server = Server.findByTo(to);
+                ServerRecord server = ServerRecord.findByTo(to);
                 if (server == null) {
                     menu.findItem(R.id.remove).setVisible(false);
                 } else {
@@ -142,11 +142,11 @@ public class DiscoveryListFragment extends Fragment
     }
 
     private void onAddClicked(ServerTo to) {
-        new Server(to).save();
+        new ServerRecord(to).save();
     }
 
     private void onRemoveClicked(ServerTo server) {
-        Server.findByTo(server).delete();
+        ServerRecord.findByTo(server).delete();
     }
 
     public void notifyDataSetChanged() {

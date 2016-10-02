@@ -33,7 +33,7 @@ import com.github.capone.controller.discovery.ServerListAdapter;
 import com.github.capone.controller.services.ServiceListAdapter;
 import com.github.capone.protocol.entities.ServerTo;
 import com.github.capone.protocol.entities.ServiceTo;
-import com.github.capone.persistence.Identity;
+import com.github.capone.persistence.IdentityRecord;
 import com.github.capone.protocol.QueryTask;
 
 public class ServiceChooserDialog extends DialogFragment {
@@ -143,7 +143,7 @@ public class ServiceChooserDialog extends DialogFragment {
                 dismiss();
             }
         };
-        query.execute(new QueryTask.Parameters(Identity.getSigningKey(), server, service));
+        query.execute(new QueryTask.Parameters(IdentityRecord.getSigningKey(), server, service));
     }
 
 }

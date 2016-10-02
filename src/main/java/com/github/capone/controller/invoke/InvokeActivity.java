@@ -30,7 +30,7 @@ import com.github.capone.controller.R;
 import com.github.capone.protocol.entities.ServerTo;
 import com.github.capone.protocol.entities.ServiceDescriptionTo;
 import com.github.capone.protocol.entities.ServiceTo;
-import com.github.capone.persistence.Identity;
+import com.github.capone.persistence.IdentityRecord;
 import com.github.capone.protocol.QueryTask;
 import com.github.capone.services.Plugin;
 import com.github.capone.services.Plugins;
@@ -69,7 +69,7 @@ public class InvokeActivity extends AppCompatActivity {
             }
         };
 
-        SigningKey key = Identity.getSigningKey();
+        SigningKey key = IdentityRecord.getSigningKey();
         QueryTask.Parameters parameters = new QueryTask.Parameters(key, server, service);
         queryTask.execute(parameters);
 

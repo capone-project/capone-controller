@@ -25,7 +25,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.github.capone.controller.R;
 import com.github.capone.protocol.entities.ServerTo;
-import com.github.capone.persistence.Server;
+import com.github.capone.persistence.ServerRecord;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,7 +50,7 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
 
     private View getServerView(int position, View view) {
         final ServerTo to = getItem(position);
-        Server server = Server.findByTo(to);
+        ServerRecord server = ServerRecord.findByTo(to);
 
         if (view == null) {
             view = View.inflate(getContext(), R.layout.list_item_server, null);

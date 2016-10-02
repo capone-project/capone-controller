@@ -21,7 +21,7 @@ import android.os.AsyncTask;
 import com.github.capone.protocol.entities.ServerTo;
 import com.github.capone.protocol.entities.ServiceDescriptionTo;
 import com.github.capone.protocol.entities.SessionTo;
-import com.github.capone.persistence.Identity;
+import com.github.capone.persistence.IdentityRecord;
 import com.google.protobuf.nano.MessageNano;
 
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     @Override
     protected Throwable doInBackground(Void... params) {
         try {
-            client = new Client(Identity.getSigningKey(), server);
+            client = new Client(IdentityRecord.getSigningKey(), server);
             SessionTo session = client.request(service, parameters);
             client.connect(service, session, handler);
             return null;

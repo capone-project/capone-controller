@@ -22,16 +22,16 @@ import com.github.capone.protocol.entities.ServerTo;
 
 import java.util.List;
 
-public class Server extends SugarRecord {
+public class ServerRecord extends SugarRecord {
 
     private String name;
     private String publicKey;
     private String address;
 
-    public Server() {
+    public ServerRecord() {
     }
 
-    public Server(ServerTo server) {
+    public ServerRecord(ServerTo server) {
         this.publicKey = server.signatureKey.toString();
         this.address = server.address;
     }
@@ -60,9 +60,9 @@ public class Server extends SugarRecord {
         this.address = address;
     }
 
-    public static Server findByTo(ServerTo server) {
-        List<Server> favorites = find(Server.class, "public_key = ? and address = ?",
-                                      server.signatureKey.toString(), server.address);
+    public static ServerRecord findByTo(ServerTo server) {
+        List<ServerRecord> favorites = find(ServerRecord.class, "public_key = ? and address = ?",
+                                            server.signatureKey.toString(), server.address);
 
         if (favorites.isEmpty()) {
             return null;

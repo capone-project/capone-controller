@@ -19,7 +19,7 @@ package com.github.capone.protocol;
 
 import android.os.AsyncTask;
 import com.github.capone.protocol.entities.ServerTo;
-import com.github.capone.persistence.Server;
+import com.github.capone.persistence.ServerRecord;
 import nano.Discovery;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
@@ -45,11 +45,11 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
     }
 
     private final SigningKey key;
-    private final Server server;
+    private final ServerRecord server;
 
     private TcpChannel channel;
 
-    public DirectedDiscoveryTask(final SigningKey key, final Server server) {
+    public DirectedDiscoveryTask(final SigningKey key, final ServerRecord server) {
         this.key = key;
         this.server = server;
     }

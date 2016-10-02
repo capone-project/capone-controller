@@ -27,8 +27,8 @@ import android.view.*;
 import android.widget.*;
 import com.github.capone.controller.R;
 import com.github.capone.controller.services.ServiceListActivity;
-import com.github.capone.persistence.Identity;
-import com.github.capone.persistence.Server;
+import com.github.capone.persistence.IdentityRecord;
+import com.github.capone.persistence.ServerRecord;
 import com.github.capone.protocol.DirectedDiscoveryTask;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
@@ -49,7 +49,7 @@ public class FavoritesFragment extends Fragment
         button.setOnClickListener(this);
 
         adapter = new FavoritesAdapter(getActivity());
-        List<Server> servers = Server.listAll(Server.class);
+        List<ServerRecord> servers = ServerRecord.listAll(ServerRecord.class);
         adapter.addAll(servers);
 
         ListView list = (ListView) view.findViewById(R.id.favorites_list);
@@ -110,7 +110,7 @@ public class FavoritesFragment extends Fragment
             name = null;
         }
 
-        Server server = new Server();
+        ServerRecord server = new ServerRecord();
         server.setName(name);
         server.setAddress(address);
         server.setPublicKey(publicKey);
@@ -121,14 +121,14 @@ public class FavoritesFragment extends Fragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Server server = adapter.getItem(position);
+        ServerRecord server = adapter.getItem(position);
 
         if (discovery != null) {
             discovery.cancel();
         }
 
         discovery =
-                new DirectedDiscoveryTask(Identity.getSigningKey(), server) {
+                new DirectedDiscoveryTask(IdentityRecord.getSigningKey(), server) {
                     @Override
                     protected void onPostExecute(DirectedDiscoveryTask.Result result) {
                         if (result.server != null) {
@@ -147,7 +147,7 @@ public class FavoritesFragment extends Fragment
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        final Server server = adapter.getItem(position);
+        final ServerRecord server = adapter.getItem(position);
 
         getActivity().startActionMode(new ActionMode.Callback() {
             @Override
@@ -185,12 +185,12 @@ public class FavoritesFragment extends Fragment
         return true;
     }
 
-    private void onRemoveClicked(final Server server) {
+    private void onRemoveClicked(final ServerRecord server) {
         server.delete();
         adapter.remove(server);
     }
 
-    private void onEditClicked(final Server server) {
+    private void onEditClicked(final ServerRecord server) {
         final EditText name = new EditText(getActivity());
 
         new AlertDialog.Builder(getActivity())
@@ -210,7 +210,7 @@ public class FavoritesFragment extends Fragment
 
     public void notifyDataSetChanged() {
         if (adapter != null) {
-            List<Server> servers = Server.listAll(Server.class);
+            List<ServerRecord> servers = ServerRecord.listAll(ServerRecord.class);
             adapter.clear();
             adapter.addAll(servers);
         }

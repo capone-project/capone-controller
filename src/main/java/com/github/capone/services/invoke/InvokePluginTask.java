@@ -22,7 +22,7 @@ import com.github.capone.protocol.entities.CapabilityTo;
 import com.github.capone.protocol.entities.ServerTo;
 import com.github.capone.protocol.entities.ServiceDescriptionTo;
 import com.github.capone.protocol.entities.SessionTo;
-import com.github.capone.persistence.Identity;
+import com.github.capone.persistence.IdentityRecord;
 import com.github.capone.protocol.Client;
 import com.google.protobuf.nano.MessageNano;
 import nano.Invoke;
@@ -47,7 +47,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
     @Override
     protected Throwable doInBackground(Void... params) {
-        Client serviceClient = new Client(Identity.getSigningKey(), serviceServer);
+        Client serviceClient = new Client(IdentityRecord.getSigningKey(), serviceServer);
         SessionTo serviceSession;
 
         try {
@@ -68,7 +68,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         parameters.servicePort = service.port;
         parameters.serviceType = service.type;
 
-        Client invokerClient = new Client(Identity.getSigningKey(), invokerServer);
+        Client invokerClient = new Client(IdentityRecord.getSigningKey(), invokerServer);
         try {
             SessionTo invokerSession = invokerClient.request(invoker, parameters);
             invokerClient.connect(invoker, invokerSession, null);
