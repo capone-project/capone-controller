@@ -17,8 +17,11 @@
 
 package com.github.capone.protocol.crypto;
 
+import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.crypto.SecretBox;
+
+import java.nio.ByteBuffer;
 
 public class SymmetricKey {
 
@@ -65,6 +68,35 @@ public class SymmetricKey {
         } catch (Exception e) {
             throw new InvalidKeyException();
         }
+    }
+
+    public static SymmetricKey fromScalarMultiplication(PrivateKey sk, PublicKey pk)
+            throws InvalidKeyException {
+        return fromScalarMultiplication(sk, pk, true);
+    }
+
+    protected static SymmetricKey fromScalarMultiplication(PrivateKey sk, PublicKey pk,
+                                                        boolean localKeyFirst)
+            throws InvalidKeyException {
+        byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
+        Sodium.crypto_scalarmult_curve25519(scalarmult, sk.toBytes(), pk.toBytes());
+
+        int bufferLength = scalarmult.length + PublicKey.BYTES * 2;
+        ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
+        buffer.put(scalarmult);
+        if (localKeyFirst) {
+            buffer.put(sk.getPublicKey().toBytes());
+            buffer.put(pk.toBytes());
+        } else {
+            buffer.put(pk.toBytes());
+            buffer.put(sk.getPublicKey().toBytes());
+        }
+
+        byte[] symmetricKey = new byte[SymmetricKey.BYTES];
+        Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
+                                          buffer.array().length, new byte[0], 0);
+
+        return SymmetricKey.fromBytes(symmetricKey);
     }
 
     public String toString() {

@@ -20,8 +20,6 @@ package com.github.capone.protocol;
 import com.github.capone.protocol.crypto.*;
 import com.google.protobuf.nano.MessageNano;
 import nano.Encryption;
-import org.abstractj.kalium.Sodium;
-import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.crypto.Random;
 
 import java.io.IOException;
@@ -52,36 +50,40 @@ public abstract class Channel {
             /* no encryption in use yet, ignore */
         }
 
-        Encryption.ResponderKey responderKey = new Encryption.ResponderKey();
+        PublicKey remoteEmphKey;
+        VerifyKey remoteSignKey;
+        byte[] signature;
         try {
-            readProtobuf(responderKey);
+            Encryption.ResponderKey msg = new Encryption.ResponderKey();
+            readProtobuf(msg);
+
+            if (msg.sessionid != sessionid) {
+                throw new RuntimeException();
+            }
+
+            remoteEmphKey = PublicKey.fromBytes(msg.ephmPk);
+            remoteSignKey = VerifyKey.fromBytes(msg.signPk);
+            signature = msg.signature;
         } catch (SymmetricKey.DecryptionException e) {
-            /* no encryption in use yet, ignore */
-        }
-
-        if (responderKey.sessionid != sessionid) {
             throw new RuntimeException();
-        }
-
-        if (responderKey.signPk.length != VerifyKey.BYTES
-                    || responderKey.ephmPk.length != PublicKey.BYTES) {
-            throw new RuntimeException();
+        } catch (PublicKey.InvalidKeyException | VerifyKey.InvalidKeyException e) {
+            throw new SymmetricKey.InvalidKeyException();
         }
 
         ByteBuffer signBuffer = ByteBuffer.allocate(PublicKey.BYTES * 4 + 4);
-        signBuffer.put(responderKey.signPk);
+        signBuffer.put(remoteSignKey.toBytes());
         signBuffer.order(ByteOrder.LITTLE_ENDIAN).putInt(sessionid);
-        signBuffer.put(responderKey.ephmPk);
+        signBuffer.put(remoteEmphKey.toBytes());
         signBuffer.put(emphKeys.getPublicKey().toBytes());
         signBuffer.put(signKeys.getVerifyKey().toBytes());
-        remoteKey.verify(signBuffer.array(), responderKey.signature);
+        remoteKey.verify(signBuffer.array(), signature);
 
         signBuffer.clear();
         signBuffer.put(signKeys.getVerifyKey().toBytes());
         signBuffer.order(ByteOrder.LITTLE_ENDIAN).putInt(sessionid);
         signBuffer.put(emphKeys.getPublicKey().toBytes());
-        signBuffer.put(responderKey.ephmPk);
-        signBuffer.put(responderKey.signPk);
+        signBuffer.put(remoteEmphKey.toBytes());
+        signBuffer.put(remoteSignKey.toBytes());
 
         Encryption.AcknowledgeKey acknowledgeKey = new Encryption.AcknowledgeKey();
         acknowledgeKey.sessionid = sessionid;
@@ -93,21 +95,7 @@ public abstract class Channel {
             /* no encryption in use yet, ignore */
         }
 
-        byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
-        Sodium.crypto_scalarmult_curve25519(scalarmult, emphKeys.toBytes(),
-                                            responderKey.ephmPk);
-
-        int bufferLength = scalarmult.length + PublicKey.BYTES * 2;
-        ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
-        buffer.put(scalarmult);
-        buffer.put(emphKeys.getPublicKey().toBytes());
-        buffer.put(responderKey.ephmPk);
-
-        byte[] symmetricKey = new byte[SymmetricKey.BYTES];
-        Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
-                                          buffer.array().length, new byte[0], 0);
-
-        enableEncryption(SymmetricKey.fromBytes(symmetricKey));
+        enableEncryption(SymmetricKey.fromScalarMultiplication(emphKeys, remoteEmphKey));
     }
 
     public void enableEncryption(SymmetricKey key) {
