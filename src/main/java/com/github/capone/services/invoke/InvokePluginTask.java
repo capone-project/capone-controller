@@ -18,6 +18,7 @@
 package com.github.capone.services.invoke;
 
 import android.os.AsyncTask;
+import com.github.capone.protocol.crypto.SigningKey;
 import com.github.capone.protocol.entities.Capability;
 import com.github.capone.protocol.entities.Server;
 import com.github.capone.protocol.entities.ServiceDescription;
@@ -47,7 +48,8 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
     @Override
     protected Throwable doInBackground(Void... params) {
-        Client serviceClient = new Client(SigningKeyRecord.getSigningKey(), serviceServer);
+        SigningKey key = SigningKeyRecord.getSigningKey();
+        Client serviceClient = new Client(key, serviceServer);
         Session serviceSession;
 
         try {
@@ -68,7 +70,7 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         parameters.servicePort = service.port;
         parameters.serviceType = service.type;
 
-        Client invokerClient = new Client(SigningKeyRecord.getSigningKey(), invokerServer);
+        Client invokerClient = new Client(key, invokerServer);
         try {
             Session invokerSession = invokerClient.request(invoker, parameters);
             invokerClient.connect(invoker, invokerSession, null);

@@ -18,6 +18,7 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
+import com.github.capone.protocol.crypto.VerifyKey;
 import com.github.capone.protocol.entities.Server;
 import nano.Discovery;
 
@@ -66,7 +67,7 @@ public class DiscoveryTask extends AsyncTask<Void, Server, Throwable> {
                                 announceMessage);
 
                         publishProgress(server);
-                    } catch (SocketTimeoutException e) {
+                    } catch (SocketTimeoutException | VerifyKey.InvalidKeyException e) {
                         break;
                     }
                 }

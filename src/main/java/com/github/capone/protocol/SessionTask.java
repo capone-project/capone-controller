@@ -18,10 +18,11 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
+import com.github.capone.persistence.SigningKeyRecord;
+import com.github.capone.protocol.crypto.SigningKey;
 import com.github.capone.protocol.entities.Server;
 import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.protocol.entities.Session;
-import com.github.capone.persistence.SigningKeyRecord;
 import com.google.protobuf.nano.MessageNano;
 
 import java.io.IOException;
@@ -46,7 +47,8 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     @Override
     protected Throwable doInBackground(Void... params) {
         try {
-            client = new Client(SigningKeyRecord.getSigningKey(), server);
+            SigningKey key = SigningKeyRecord.getSigningKey();
+            client = new Client(key, server);
             Session session = client.request(service, parameters);
             client.connect(service, session, handler);
             return null;

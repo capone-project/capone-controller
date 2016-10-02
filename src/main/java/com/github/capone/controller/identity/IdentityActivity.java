@@ -28,15 +28,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.github.capone.controller.R;
 import com.github.capone.persistence.SigningKeyRecord;
-import org.abstractj.kalium.encoders.Encoder;
-import org.abstractj.kalium.keys.SigningKey;
+import com.github.capone.protocol.crypto.SigningKey;
 
 import java.util.Iterator;
 
 public class IdentityActivity extends AppCompatActivity {
 
     private SigningKeyRecord identity;
-    private SigningKey signingKey;
     private TextView publicKey;
     private TextView keySeed;
 
@@ -50,13 +48,17 @@ public class IdentityActivity extends AppCompatActivity {
 
         Iterator<SigningKeyRecord> identities = SigningKeyRecord.findAll(SigningKeyRecord.class);
         if (!identities.hasNext()) {
-            identity = new SigningKeyRecord(new SigningKey());
+            identity = new SigningKeyRecord(SigningKey.fromRandom());
             identity.save();
         } else {
             identity = identities.next();
         }
 
-        setKey(identity.getKey().toString());
+        try {
+            setKey(identity.getKey().toString());
+        } catch (SigningKey.InvalidSeedException e) {
+            Toast.makeText(IdentityActivity.this, R.string.invalid_seed, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onImportClicked(View view) {
@@ -85,7 +87,7 @@ public class IdentityActivity extends AppCompatActivity {
                             alertDialog.dismiss();
                         } catch (Exception e) {
                             Toast.makeText(IdentityActivity.this, R.string.invalid_seed,
-                                    Toast.LENGTH_SHORT).show();
+                                           Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -96,7 +98,7 @@ public class IdentityActivity extends AppCompatActivity {
     }
 
     public void onGenerateClicked(View view) {
-        signingKey = new SigningKey();
+        SigningKey signingKey = SigningKey.fromRandom();
         publicKey.setText(signingKey.getVerifyKey().toString());
         keySeed.setText(signingKey.toString());
 
@@ -104,9 +106,8 @@ public class IdentityActivity extends AppCompatActivity {
         identity.save();
     }
 
-    private void setKey(String input) {
-        byte[] seed = Encoder.HEX.decode(input);
-        SigningKey key = new SigningKey(seed);
+    private void setKey(String input) throws SigningKey.InvalidSeedException {
+        SigningKey key = SigningKey.fromSeed(input);
         identity.setKey(key);
         identity.save();
 

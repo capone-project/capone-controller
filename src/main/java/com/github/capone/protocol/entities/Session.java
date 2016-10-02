@@ -17,16 +17,22 @@
 
 package com.github.capone.protocol.entities;
 
+import com.github.capone.protocol.crypto.VerifyKey;
 import nano.Capone;
 
 public class Session {
 
-    public int identifier;
-    public Capability capability;
+    public final int identifier;
+    public final Capability capability;
 
-    public Session(Capone.SessionRequestResult msg) {
-        identifier = msg.result.identifier;
-        capability = new Capability(msg.result.cap);
+    private Session(int identifier, Capability capability) {
+        this.identifier = identifier;
+        this.capability = capability;
+    }
+
+    public static Session fromMessage(Capone.SessionRequestResult msg)
+            throws VerifyKey.InvalidKeyException {
+        return new Session(msg.result.identifier, Capability.fromMessage(msg.result.cap));
     }
 
     public long getUnsignedSessionId() {

@@ -17,6 +17,8 @@
 
 package com.github.capone.protocol;
 
+import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.VerifyKey;
 import com.google.protobuf.nano.MessageNano;
 import nano.Encryption;
 import org.abstractj.kalium.Sodium;
@@ -24,8 +26,6 @@ import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.crypto.Random;
 import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.keys.KeyPair;
-import org.abstractj.kalium.keys.SigningKey;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -46,7 +46,7 @@ public abstract class Channel {
         int sessionid = sessionBuffer.getInt();
 
         Encryption.InitiatorKey initiatorKey = new Encryption.InitiatorKey();
-        initiatorKey.sessionid =  sessionid;
+        initiatorKey.sessionid = sessionid;
         initiatorKey.signPk = signKeys.getVerifyKey().toBytes();
         initiatorKey.ephmPk = emphKeys.getPublicKey().toBytes();
         writeProtobuf(initiatorKey);
@@ -58,8 +58,7 @@ public abstract class Channel {
             throw new RuntimeException();
         }
 
-        if (responderKey.signature.length != SodiumConstants.SIGNATURE_BYTES
-                    || responderKey.signPk.length != SodiumConstants.PUBLICKEY_BYTES
+        if (responderKey.signPk.length != VerifyKey.BYTES
                     || responderKey.ephmPk.length != SodiumConstants.PUBLICKEY_BYTES) {
             throw new RuntimeException();
         }

@@ -30,6 +30,7 @@ import com.github.capone.controller.services.ServiceListActivity;
 import com.github.capone.persistence.SigningKeyRecord;
 import com.github.capone.persistence.ServerRecord;
 import com.github.capone.protocol.DirectedDiscoveryTask;
+import com.github.capone.protocol.crypto.SigningKey;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.VerifyKey;
 
@@ -127,21 +128,23 @@ public class FavoritesFragment extends Fragment
             discovery.cancel();
         }
 
-        discovery =
-                new DirectedDiscoveryTask(SigningKeyRecord.getSigningKey(), server) {
-                    @Override
-                    protected void onPostExecute(DirectedDiscoveryTask.Result result) {
-                        if (result.server != null) {
-                            Intent intent = new Intent(getActivity(), ServiceListActivity.class);
-                            intent.putExtra(ServiceListActivity.EXTRA_SERVER, result.server);
-                            startActivity(intent);
-                        } else if (result.throwable != null) {
-                            Toast.makeText(FavoritesFragment.this.getActivity(),
-                                           result.throwable.getLocalizedMessage(),
-                                           Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                };
+        SigningKey key = SigningKeyRecord.getSigningKey();
+        discovery = new DirectedDiscoveryTask(key, server) {
+            @Override
+            protected void onPostExecute(DirectedDiscoveryTask.Result result) {
+                if (result.server != null) {
+                    Intent intent = new Intent(getActivity(),
+                                               ServiceListActivity.class);
+                    intent.putExtra(ServiceListActivity.EXTRA_SERVER,
+                                    result.server);
+                    startActivity(intent);
+                } else if (result.throwable != null) {
+                    Toast.makeText(FavoritesFragment.this.getActivity(),
+                                   result.throwable.getLocalizedMessage(),
+                                   Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
         discovery.execute();
     }
 

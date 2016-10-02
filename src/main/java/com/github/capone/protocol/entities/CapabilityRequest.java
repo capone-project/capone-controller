@@ -17,6 +17,7 @@
 
 package com.github.capone.protocol.entities;
 
+import com.github.capone.protocol.crypto.VerifyKey;
 import nano.Capabilities;
 
 import java.util.Date;
@@ -35,13 +36,15 @@ public class CapabilityRequest {
 
     public final int requestId;
 
-    public CapabilityRequest(Capabilities.CapabilitiesRequest request) {
+    public CapabilityRequest(Capabilities.CapabilitiesRequest request)
+            throws VerifyKey.InvalidKeyException {
         this(request, null);
     }
 
-    public CapabilityRequest(Capabilities.CapabilitiesRequest request, Date received) {
-        requesterIdentity = new Identity(request.requesterIdentity);
-        serviceIdentity = new Identity(request.serviceIdentity);
+    public CapabilityRequest(Capabilities.CapabilitiesRequest request, Date received)
+            throws VerifyKey.InvalidKeyException {
+        requesterIdentity = Identity.fromMessage(request.requesterIdentity);
+        serviceIdentity = Identity.fromMessage(request.serviceIdentity);
         parameters = request.parameters;
         serviceAddress = request.serviceAddress;
         servicePort = request.servicePort;

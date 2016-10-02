@@ -18,6 +18,8 @@
 package com.github.capone.services.capabilities;
 
 import android.os.AsyncTask;
+import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.VerifyKey;
 import com.github.capone.protocol.entities.*;
 import com.github.capone.persistence.SigningKeyRecord;
 import com.github.capone.protocol.Channel;
@@ -111,14 +113,14 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
                         return;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | VerifyKey.InvalidKeyException e) {
             /* ignore */
         }
     }
 
     private void accept(Channel channel, CapabilityRequest request) {
-        Client client = new Client(SigningKeyRecord.getSigningKey(),
-                                   request.serviceAddress, request.serviceIdentity.key);
+        SigningKey key = SigningKeyRecord.getSigningKey();
+        Client client = new Client(key, request.serviceAddress, request.serviceIdentity.key);
         Session session = null;
         try {
             session = client.request(request.servicePort, request.parameters);

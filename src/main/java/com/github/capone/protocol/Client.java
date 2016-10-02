@@ -17,15 +17,15 @@
 
 package com.github.capone.protocol;
 
+import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.VerifyKey;
 import com.github.capone.protocol.entities.Server;
-import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.protocol.entities.Service;
+import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.protocol.entities.Session;
 import com.google.protobuf.nano.MessageNano;
 import nano.Capone;
 import nano.Discovery;
-import org.abstractj.kalium.keys.SigningKey;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
@@ -113,8 +113,8 @@ public class Client {
                 throw new ProtocolException("Received error");
             }
 
-            return new Session(sessionMessage);
-        } catch (VerifyKey.SignatureException e) {
+            return Session.fromMessage(sessionMessage);
+        } catch (VerifyKey.SignatureException | VerifyKey.InvalidKeyException e) {
             throw new ProtocolException(e.getMessage());
         } finally {
             disconnect();

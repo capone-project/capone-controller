@@ -18,12 +18,11 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.protocol.entities.Server;
 import com.github.capone.persistence.ServerRecord;
+import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.VerifyKey;
+import com.github.capone.protocol.entities.Server;
 import nano.Discovery;
-import org.abstractj.kalium.encoders.Encoder;
-import org.abstractj.kalium.keys.SigningKey;
-import org.abstractj.kalium.keys.VerifyKey;
 
 import java.io.IOException;
 
@@ -60,7 +59,7 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
 
         try {
             channel.connect();
-            channel.enableEncryption(key, new VerifyKey(server.getPublicKey(), Encoder.HEX));
+            channel.enableEncryption(key, VerifyKey.fromString(server.getPublicKey()));
 
             Discovery.DiscoverMessage discoverMessage = new Discovery.DiscoverMessage();
             discoverMessage.version = Client.PROTOCOL_VERSION;
@@ -70,7 +69,7 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
             channel.readProtobuf(announceMessage);
 
             return new Result(Server.fromAnnounce(server.getAddress(), announceMessage));
-        } catch (VerifyKey.SignatureException | IOException e) {
+        } catch (VerifyKey.SignatureException | VerifyKey.InvalidKeyException | IOException e) {
             return new Result(e);
         } finally {
             try {

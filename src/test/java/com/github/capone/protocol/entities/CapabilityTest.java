@@ -17,8 +17,7 @@
 
 package com.github.capone.protocol.entities;
 
-import org.abstractj.kalium.SodiumConstants;
-import org.abstractj.kalium.keys.VerifyKey;
+import com.github.capone.protocol.crypto.VerifyKey;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,9 +25,9 @@ import org.junit.Test;
 public class CapabilityTest {
 
     @Test
-    public void creatingReferenceSucceeds() {
+    public void creatingReferenceSucceeds() throws VerifyKey.InvalidKeyException {
         Capability root = new Capability(new byte[Capability.SECRET_LENGTH]);
-        Identity key = new Identity(new VerifyKey(new byte[SodiumConstants.PUBLICKEY_BYTES]));
+        Identity key = new Identity(VerifyKey.fromBytes(new byte[VerifyKey.BYTES]));
         Capability ref = root.createReference(
                 Capability.RIGHT_EXEC | Capability.RIGHT_TERMINATE, key);
 

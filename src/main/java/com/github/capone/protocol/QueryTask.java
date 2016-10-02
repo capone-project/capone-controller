@@ -18,11 +18,11 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.protocol.entities.Server;
-import com.github.capone.protocol.entities.ServiceDescription;
-import com.github.capone.protocol.entities.Service;
 import com.github.capone.persistence.SigningKeyRecord;
-import org.abstractj.kalium.keys.SigningKey;
+import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.Service;
+import com.github.capone.protocol.entities.ServiceDescription;
 
 public abstract class QueryTask
         extends AsyncTask<QueryTask.Parameters, ServiceDescription, Throwable> {
