@@ -56,6 +56,7 @@ public class VerifyKey {
         return key.toBytes();
     }
 
+    @Override
     public String toString() {
         return key.toString();
     }

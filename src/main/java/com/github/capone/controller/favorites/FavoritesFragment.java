@@ -27,12 +27,11 @@ import android.view.*;
 import android.widget.*;
 import com.github.capone.controller.R;
 import com.github.capone.controller.services.ServiceListActivity;
-import com.github.capone.persistence.SigningKeyRecord;
 import com.github.capone.persistence.ServerRecord;
+import com.github.capone.persistence.SigningKeyRecord;
 import com.github.capone.protocol.DirectedDiscoveryTask;
 import com.github.capone.protocol.crypto.SigningKey;
-import org.abstractj.kalium.encoders.Encoder;
-import org.abstractj.kalium.keys.VerifyKey;
+import com.github.capone.protocol.crypto.VerifyKey;
 
 import java.util.List;
 
@@ -95,8 +94,9 @@ public class FavoritesFragment extends Fragment
     }
 
     private void addServer(String name, String address, String publicKey) {
+        VerifyKey key;
         try {
-            new VerifyKey(publicKey, Encoder.HEX);
+            key = VerifyKey.fromString(publicKey);
         } catch (Exception e) {
             Toast.makeText(getActivity(), R.string.invalid_key, Toast.LENGTH_LONG).show();
             return;
@@ -114,7 +114,7 @@ public class FavoritesFragment extends Fragment
         ServerRecord server = new ServerRecord();
         server.setName(name);
         server.setAddress(address);
-        server.setPublicKey(publicKey);
+        server.setPublicKey(key);
         server.save();
 
         adapter.add(server);
