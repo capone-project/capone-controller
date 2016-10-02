@@ -27,7 +27,7 @@ import android.view.*;
 import android.widget.*;
 import com.github.capone.controller.R;
 import com.github.capone.controller.services.ServiceListActivity;
-import com.github.capone.persistence.IdentityRecord;
+import com.github.capone.persistence.SigningKeyRecord;
 import com.github.capone.persistence.ServerRecord;
 import com.github.capone.protocol.DirectedDiscoveryTask;
 import org.abstractj.kalium.encoders.Encoder;
@@ -128,7 +128,7 @@ public class FavoritesFragment extends Fragment
         }
 
         discovery =
-                new DirectedDiscoveryTask(IdentityRecord.getSigningKey(), server) {
+                new DirectedDiscoveryTask(SigningKeyRecord.getSigningKey(), server) {
                     @Override
                     protected void onPostExecute(DirectedDiscoveryTask.Result result) {
                         if (result.server != null) {

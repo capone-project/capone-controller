@@ -23,14 +23,14 @@ import org.abstractj.kalium.keys.SigningKey;
 
 import java.util.List;
 
-public class IdentityRecord extends SugarRecord {
+public class SigningKeyRecord extends SugarRecord {
 
     private String keySeed;
 
-    public IdentityRecord() {
+    public SigningKeyRecord() {
     }
 
-    public IdentityRecord(SigningKey key) {
+    public SigningKeyRecord(SigningKey key) {
         this.keySeed = key.toString();
     }
 
@@ -43,11 +43,11 @@ public class IdentityRecord extends SugarRecord {
     }
 
     public static SigningKey getSigningKey() {
-        List<IdentityRecord> identities = IdentityRecord.listAll(IdentityRecord.class);
+        List<SigningKeyRecord> identities = SigningKeyRecord.listAll(SigningKeyRecord.class);
         if (identities.size() == 1) {
             return identities.get(0).getKey();
         } else if (identities.size() == 0) {
-            IdentityRecord identity = new IdentityRecord(new SigningKey());
+            SigningKeyRecord identity = new SigningKeyRecord(new SigningKey());
             identity.save();
             return identity.getKey();
         } else {

@@ -21,7 +21,7 @@ import android.os.AsyncTask;
 import com.github.capone.protocol.entities.Server;
 import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.protocol.entities.Service;
-import com.github.capone.persistence.IdentityRecord;
+import com.github.capone.persistence.SigningKeyRecord;
 import org.abstractj.kalium.keys.SigningKey;
 
 public abstract class QueryTask
@@ -48,7 +48,7 @@ public abstract class QueryTask
                 if (isCancelled())
                     return null;
 
-                client = new Client(IdentityRecord.getSigningKey(), param.server);
+                client = new Client(SigningKeyRecord.getSigningKey(), param.server);
                 publishProgress(client.query(param.service));
 
                 return null;

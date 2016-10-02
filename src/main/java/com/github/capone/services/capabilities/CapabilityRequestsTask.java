@@ -19,7 +19,7 @@ package com.github.capone.services.capabilities;
 
 import android.os.AsyncTask;
 import com.github.capone.protocol.entities.*;
-import com.github.capone.persistence.IdentityRecord;
+import com.github.capone.persistence.SigningKeyRecord;
 import com.github.capone.protocol.Channel;
 import com.github.capone.protocol.Client;
 import com.github.capone.protocol.ProtocolException;
@@ -71,7 +71,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     @Override
     protected Result doInBackground(Void... params) {
         try {
-            client = new Client(IdentityRecord.getSigningKey(), server);
+            client = new Client(SigningKeyRecord.getSigningKey(), server);
             Session session = client.request(service, parameters);
             client.connect(service, session, this);
             return null;
@@ -117,7 +117,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
     }
 
     private void accept(Channel channel, CapabilityRequest request) {
-        Client client = new Client(IdentityRecord.getSigningKey(),
+        Client client = new Client(SigningKeyRecord.getSigningKey(),
                                    request.serviceAddress, request.serviceIdentity.key);
         Session session = null;
         try {
