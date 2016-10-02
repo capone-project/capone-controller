@@ -17,15 +17,12 @@
 
 package com.github.capone.protocol;
 
-import com.github.capone.protocol.crypto.SigningKey;
-import com.github.capone.protocol.crypto.SymmetricKey;
-import com.github.capone.protocol.crypto.VerifyKey;
+import com.github.capone.protocol.crypto.*;
 import com.google.protobuf.nano.MessageNano;
 import nano.Encryption;
 import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.crypto.Random;
-import org.abstractj.kalium.keys.KeyPair;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -40,7 +37,7 @@ public abstract class Channel {
 
     public void enableEncryption(SigningKey signKeys, VerifyKey remoteKey)
             throws IOException, VerifyKey.SignatureException, SymmetricKey.InvalidKeyException {
-        final KeyPair emphKeys = new KeyPair();
+        final PrivateKey emphKeys = PrivateKey.fromRandom();
 
         ByteBuffer sessionBuffer = ByteBuffer.wrap(new Random().randomBytes(4));
         int sessionid = sessionBuffer.getInt();
@@ -67,11 +64,11 @@ public abstract class Channel {
         }
 
         if (responderKey.signPk.length != VerifyKey.BYTES
-                    || responderKey.ephmPk.length != SodiumConstants.PUBLICKEY_BYTES) {
+                    || responderKey.ephmPk.length != PublicKey.BYTES) {
             throw new RuntimeException();
         }
 
-        ByteBuffer signBuffer = ByteBuffer.allocate(SodiumConstants.PUBLICKEY_BYTES * 4 + 4);
+        ByteBuffer signBuffer = ByteBuffer.allocate(PublicKey.BYTES * 4 + 4);
         signBuffer.put(responderKey.signPk);
         signBuffer.order(ByteOrder.LITTLE_ENDIAN).putInt(sessionid);
         signBuffer.put(responderKey.ephmPk);
@@ -97,10 +94,10 @@ public abstract class Channel {
         }
 
         byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
-        Sodium.crypto_scalarmult_curve25519(scalarmult, emphKeys.getPrivateKey().toBytes(),
+        Sodium.crypto_scalarmult_curve25519(scalarmult, emphKeys.toBytes(),
                                             responderKey.ephmPk);
 
-        int bufferLength = scalarmult.length + SodiumConstants.PUBLICKEY_BYTES * 2;
+        int bufferLength = scalarmult.length + PublicKey.BYTES * 2;
         ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
         buffer.put(scalarmult);
         buffer.put(emphKeys.getPublicKey().toBytes());
