@@ -19,12 +19,20 @@ package com.github.capone.protocol.crypto;
 
 import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
-import org.abstractj.kalium.crypto.SecretBox;
+import org.bouncycastle.crypto.Mac;
+import org.bouncycastle.crypto.StreamCipher;
+import org.bouncycastle.crypto.engines.XSalsa20Engine;
+import org.bouncycastle.crypto.macs.Poly1305;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.util.encoders.Hex;
 
 public class SymmetricKey {
 
-    public static final int BYTES = SodiumConstants.XSALSA20_POLY1305_SECRETBOX_KEYBYTES;
-    public static final int MACBYTES = SodiumConstants.BOXZERO_BYTES;
+    public static final int BYTES = 32;
+    public static final int MACBYTES = 16;
+    public static final int NONCEBYTES = 24;
+    public static final int SUBKEYBYTES = 32;
 
     public static class InvalidKeyException extends Exception {
     }
@@ -39,7 +47,7 @@ public class SymmetricKey {
         private final byte[] nonce;
 
         public Nonce() {
-            this.nonce = new byte[SodiumConstants.NONCE_BYTES];
+            this.nonce = new byte[NONCEBYTES];
         }
 
         public void increment() {
@@ -54,18 +62,18 @@ public class SymmetricKey {
 
     }
 
-    private final SecretBox key;
+    private final KeyParameter key;
 
-    private SymmetricKey(SecretBox key) {
-        this.key = key;
+    private SymmetricKey(KeyParameter parameter) {
+        this.key = parameter;
     }
 
     public static SymmetricKey fromBytes(byte[] key) throws InvalidKeyException {
-        try {
-            return new SymmetricKey(new SecretBox(key));
-        } catch (Exception e) {
+        if (key.length != BYTES) {
             throw new InvalidKeyException();
         }
+
+        return new SymmetricKey(new KeyParameter(key));
     }
 
     public static SymmetricKey fromScalarMultiplication(PrivateKey sk, PublicKey pk)
@@ -74,7 +82,7 @@ public class SymmetricKey {
     }
 
     protected static SymmetricKey fromScalarMultiplication(PrivateKey sk, PublicKey pk,
-                                                        boolean localKeyFirst)
+                                                           boolean localKeyFirst)
             throws InvalidKeyException {
         byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
         Sodium.crypto_scalarmult_curve25519(scalarmult, sk.toBytes(), pk.toBytes());
@@ -93,23 +101,59 @@ public class SymmetricKey {
     }
 
     public String toString() {
-        return key.toString();
+        return Hex.toHexString(key.getKey());
     }
 
     public byte[] encrypt(Nonce nonce, byte[] message) throws EncryptionException {
         try {
-            return key.encrypt(nonce.nonce, message);
+            byte[] subkey = new byte[SUBKEYBYTES];
+            byte[] encrypted = new byte[message.length + MACBYTES];
+
+            StreamCipher cipher = new XSalsa20Engine();
+            cipher.init(true, new ParametersWithIV(key, nonce.nonce));
+            cipher.processBytes(subkey, 0, subkey.length, subkey, 0);
+            cipher.processBytes(message, 0, message.length, encrypted, MACBYTES);
+
+            Mac auth = new Poly1305();
+            auth.init(new KeyParameter(subkey));
+            auth.update(encrypted, MACBYTES, message.length);
+            auth.doFinal(encrypted, 0);
+
+            return encrypted;
         } catch (Exception e) {
             throw new EncryptionException();
         }
     }
 
-    public byte[] decrypt(Nonce nonce, byte[] message) throws DecryptionException {
-        try {
-            return key.decrypt(nonce.nonce, message);
-        } catch (Exception e) {
+    public byte[] decrypt(Nonce nonce, byte[] encrypted) throws DecryptionException {
+        byte[] subkey = new byte[SUBKEYBYTES];
+        byte[] mac = new byte[MACBYTES];
+        byte[] plain = new byte[encrypted.length - MACBYTES];
+
+        if (encrypted.length < MACBYTES) {
             throw new DecryptionException();
         }
+
+        StreamCipher cipher = new XSalsa20Engine();
+        cipher.init(true, new ParametersWithIV(key, nonce.nonce));
+        cipher.processBytes(subkey, 0, subkey.length, subkey, 0);
+
+        Mac auth = new Poly1305();
+        auth.init(new KeyParameter(subkey));
+        auth.update(encrypted, MACBYTES, encrypted.length - MACBYTES);
+        auth.doFinal(mac, 0);
+
+        boolean validMac = true;
+        for (int i = 0; i < MACBYTES; i++) {
+            validMac &= mac[i] == encrypted[i];
+        }
+        if (!validMac) {
+            throw new DecryptionException();
+        }
+
+        cipher.processBytes(encrypted, MACBYTES, encrypted.length - MACBYTES, plain, 0);
+
+        return plain;
     }
 
 }
