@@ -18,7 +18,7 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.entities.ServerTo;
+import com.github.capone.protocol.entities.Server;
 import nano.Discovery;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 
-public class DiscoveryTask extends AsyncTask<Void, ServerTo, Throwable> {
+public class DiscoveryTask extends AsyncTask<Void, Server, Throwable> {
 
     public static final int DISCOVERY_PORT = 6667;
     public static final String BROADCAST_ADDRESS = "224.0.0.1";
@@ -61,7 +61,7 @@ public class DiscoveryTask extends AsyncTask<Void, ServerTo, Throwable> {
                         Discovery.DiscoverResult announceMessage = new Discovery.DiscoverResult();
                         channel.readProtobuf(announceMessage);
 
-                        ServerTo server = ServerTo.fromAnnounce(
+                        Server server = Server.fromAnnounce(
                                 announcePacket.getAddress().getCanonicalHostName(),
                                 announceMessage);
 

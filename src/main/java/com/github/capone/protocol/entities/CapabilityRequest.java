@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import nano.Capabilities;
 
 import java.util.Date;
 
-public class CapabilityRequestTo {
+public class CapabilityRequest {
 
-    public final IdentityTo requesterIdentity;
-    public final IdentityTo serviceIdentity;
+    public final Identity requesterIdentity;
+    public final Identity serviceIdentity;
 
     public final byte[] parameters;
 
@@ -35,13 +35,13 @@ public class CapabilityRequestTo {
 
     public final int requestId;
 
-    public CapabilityRequestTo(Capabilities.CapabilitiesRequest request) {
+    public CapabilityRequest(Capabilities.CapabilitiesRequest request) {
         this(request, null);
     }
 
-    public CapabilityRequestTo(Capabilities.CapabilitiesRequest request, Date received) {
-        requesterIdentity = new IdentityTo(request.requesterIdentity);
-        serviceIdentity = new IdentityTo(request.serviceIdentity);
+    public CapabilityRequest(Capabilities.CapabilitiesRequest request, Date received) {
+        requesterIdentity = new Identity(request.requesterIdentity);
+        serviceIdentity = new Identity(request.serviceIdentity);
         parameters = request.parameters;
         serviceAddress = request.serviceAddress;
         servicePort = request.servicePort;

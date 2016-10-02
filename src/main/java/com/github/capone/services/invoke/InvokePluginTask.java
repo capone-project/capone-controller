@@ -18,25 +18,25 @@
 package com.github.capone.services.invoke;
 
 import android.os.AsyncTask;
-import com.github.capone.entities.CapabilityTo;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.SessionTo;
-import com.github.capone.persistence.Identity;
+import com.github.capone.protocol.entities.Capability;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
+import com.github.capone.protocol.entities.Session;
+import com.github.capone.persistence.IdentityRecord;
 import com.github.capone.protocol.Client;
 import com.google.protobuf.nano.MessageNano;
 import nano.Invoke;
 
 public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
-    private final ServerTo invokerServer;
-    private final ServiceDescriptionTo invoker;
-    private final ServerTo serviceServer;
-    private final ServiceDescriptionTo service;
+    private final Server invokerServer;
+    private final ServiceDescription invoker;
+    private final Server serviceServer;
+    private final ServiceDescription service;
     private final MessageNano serviceParameters;
 
-    public InvokePluginTask(ServerTo invokerServer, ServiceDescriptionTo invoker,
-                            ServerTo serviceServer, ServiceDescriptionTo service,
+    public InvokePluginTask(Server invokerServer, ServiceDescription invoker,
+                            Server serviceServer, ServiceDescription service,
                             MessageNano serviceParameters) {
         this.invokerServer = invokerServer;
         this.invoker = invoker;
@@ -47,8 +47,8 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
 
     @Override
     protected Throwable doInBackground(Void... params) {
-        Client serviceClient = new Client(Identity.getSigningKey(), serviceServer);
-        SessionTo serviceSession;
+        Client serviceClient = new Client(IdentityRecord.getSigningKey(), serviceServer);
+        Session serviceSession;
 
         try {
             serviceSession = serviceClient.request(service, serviceParameters);
@@ -56,8 +56,8 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
             return e;
         }
 
-        CapabilityTo reference = serviceSession.capability.createReference(
-                CapabilityTo.RIGHT_EXEC | CapabilityTo.RIGHT_TERMINATE,
+        Capability reference = serviceSession.capability.createReference(
+                Capability.RIGHT_EXEC | Capability.RIGHT_TERMINATE,
                 invokerServer.signatureKey);
 
         Invoke.InvokeParams parameters = new Invoke.InvokeParams();
@@ -68,9 +68,9 @@ public class InvokePluginTask extends AsyncTask<Void, Void, Throwable> {
         parameters.servicePort = service.port;
         parameters.serviceType = service.type;
 
-        Client invokerClient = new Client(Identity.getSigningKey(), invokerServer);
+        Client invokerClient = new Client(IdentityRecord.getSigningKey(), invokerServer);
         try {
-            SessionTo invokerSession = invokerClient.request(invoker, parameters);
+            Session invokerSession = invokerClient.request(invoker, parameters);
             invokerClient.connect(invoker, invokerSession, null);
         } catch (Exception e) {
             return e;

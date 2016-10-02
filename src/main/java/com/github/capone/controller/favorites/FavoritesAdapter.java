@@ -23,9 +23,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.github.capone.controller.R;
-import com.github.capone.persistence.Server;
+import com.github.capone.persistence.ServerRecord;
 
-public class FavoritesAdapter extends ArrayAdapter<Server> {
+public class FavoritesAdapter extends ArrayAdapter<ServerRecord> {
 
     public FavoritesAdapter(Context context) {
         super(context, R.layout.list_item_favorite);
@@ -40,7 +40,7 @@ public class FavoritesAdapter extends ArrayAdapter<Server> {
         TextView name = (TextView) view.findViewById(R.id.server_name);
         TextView address = (TextView) view.findViewById(R.id.server_address);
 
-        Server server = getItem(position);
+        ServerRecord server = getItem(position);
         if (server.getName() == null) {
             name.setText(server.getAddress());
             address.setText(null);

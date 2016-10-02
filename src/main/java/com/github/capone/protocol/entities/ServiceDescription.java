@@ -15,23 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import nano.Capone;
 
-public class ServiceDescriptionTo implements Parcelable {
+public class ServiceDescription implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
-        public ServiceDescriptionTo createFromParcel(Parcel in) {
-            return new ServiceDescriptionTo(in);
+        public ServiceDescription createFromParcel(Parcel in) {
+            return new ServiceDescription(in);
         }
 
         @Override
-        public ServiceDescriptionTo[] newArray(int size) {
-            return new ServiceDescriptionTo[size];
+        public ServiceDescription[] newArray(int size) {
+            return new ServiceDescription[size];
         }
     };
 
@@ -42,7 +42,7 @@ public class ServiceDescriptionTo implements Parcelable {
     public final String type;
     public final String version;
 
-    public ServiceDescriptionTo(Capone.ServiceQueryResult result) {
+    public ServiceDescription(Capone.ServiceQueryResult result) {
         this.name = result.result.name;
         this.port = result.result.port;
         this.location = result.result.location;
@@ -51,7 +51,7 @@ public class ServiceDescriptionTo implements Parcelable {
         this.version = result.result.version;
     }
 
-    private ServiceDescriptionTo(Parcel in) {
+    private ServiceDescription(Parcel in) {
         name = in.readString();
         port = in.readInt();
         location = in.readString();

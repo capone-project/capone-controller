@@ -25,8 +25,8 @@ import android.widget.*;
 import com.github.capone.controller.R;
 import com.github.capone.controller.invoke.ServiceChooserDialog;
 import com.github.capone.controller.invoke.ServiceParametersDialog;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.services.Plugin;
 import com.github.capone.services.PluginFragment;
 import com.github.capone.services.Plugins;
@@ -38,16 +38,16 @@ public class InvokePluginFragment extends PluginFragment {
     private View view;
     private LinearLayout pluginLayout;
 
-    private ServerTo invokerServer;
-    private ServiceDescriptionTo invoker;
-    private ServerTo serviceServer;
-    private ServiceDescriptionTo service;
+    private Server invokerServer;
+    private ServiceDescription invoker;
+    private Server serviceServer;
+    private ServiceDescription service;
     private MessageNano serviceParameters;
 
     private Button invokeButton;
 
-    public static InvokePluginFragment createFragment(ServerTo invokerServer,
-                                                      ServiceDescriptionTo invoker) {
+    public static InvokePluginFragment createFragment(Server invokerServer,
+                                                      ServiceDescription invoker) {
         InvokePluginFragment fragment = new InvokePluginFragment();
         fragment.invokerServer = invokerServer;
         fragment.invoker = invoker;
@@ -83,7 +83,7 @@ public class InvokePluginFragment extends PluginFragment {
         ServiceChooserDialog dialog = new ServiceChooserDialog();
         dialog.setOnServiceChosenListener(new ServiceChooserDialog.OnServiceChosenListener() {
             @Override
-            public void onServiceChosen(final ServerTo server, final ServiceDescriptionTo details) {
+            public void onServiceChosen(final Server server, final ServiceDescription details) {
                 ServiceParametersDialog parametersDialog
                         = ServiceParametersDialog.createDialog(server, details);
                 parametersDialog.setOnParametersChosenListener(
@@ -117,8 +117,8 @@ public class InvokePluginFragment extends PluginFragment {
         Toast.makeText(getActivity(), R.string.service_was_invoked, Toast.LENGTH_SHORT).show();
     }
 
-    private void setServiceDetails(ServerTo server,
-                                   ServiceDescriptionTo results, MessageNano parameters) {
+    private void setServiceDetails(Server server,
+                                   ServiceDescription results, MessageNano parameters) {
         this.serviceServer = server;
         this.service = results;
         this.serviceParameters = parameters;

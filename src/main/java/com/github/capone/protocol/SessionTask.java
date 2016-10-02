@@ -18,24 +18,24 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.SessionTo;
-import com.github.capone.persistence.Identity;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
+import com.github.capone.protocol.entities.Session;
+import com.github.capone.persistence.IdentityRecord;
 import com.google.protobuf.nano.MessageNano;
 
 import java.io.IOException;
 
 public class SessionTask extends AsyncTask<Void, Void, Throwable> {
 
-    private final ServerTo server;
-    private final ServiceDescriptionTo service;
+    private final Server server;
+    private final ServiceDescription service;
     private final MessageNano parameters;
     private final Client.SessionHandler handler;
 
     private Client client;
 
-    public SessionTask(ServerTo server, ServiceDescriptionTo service,
+    public SessionTask(Server server, ServiceDescription service,
                        MessageNano parameters, Client.SessionHandler handler) {
         this.server = server;
         this.service = service;
@@ -46,8 +46,8 @@ public class SessionTask extends AsyncTask<Void, Void, Throwable> {
     @Override
     protected Throwable doInBackground(Void... params) {
         try {
-            client = new Client(Identity.getSigningKey(), server);
-            SessionTo session = client.request(service, parameters);
+            client = new Client(IdentityRecord.getSigningKey(), server);
+            Session session = client.request(service, parameters);
             client.connect(service, session, handler);
             return null;
         } catch (IOException | ProtocolException e) {

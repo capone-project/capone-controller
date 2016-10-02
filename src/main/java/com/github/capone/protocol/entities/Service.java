@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -23,17 +23,17 @@ import nano.Discovery;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-public class ServiceTo implements Parcelable {
+public class Service implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
-        public ServiceTo createFromParcel(Parcel in) {
-            return new ServiceTo(in);
+        public Service createFromParcel(Parcel in) {
+            return new Service(in);
         }
 
         @Override
-        public ServiceTo[] newArray(int size) {
-            return new ServiceTo[size];
+        public Service[] newArray(int size) {
+            return new Service[size];
         }
     };
 
@@ -41,19 +41,19 @@ public class ServiceTo implements Parcelable {
     public final String category;
     public final int port;
 
-    public ServiceTo() {
+    public Service() {
         name = null;
         category = null;
         port = 0;
     }
 
-    public ServiceTo(Discovery.DiscoverResult.Service service) {
+    public Service(Discovery.DiscoverResult.Service service) {
         this.name = service.name;
         this.category = service.category;
         this.port = service.port;
     }
 
-    private ServiceTo(Parcel in) {
+    private Service(Parcel in) {
         name = in.readString();
         category = in.readString();
         port = in.readInt();

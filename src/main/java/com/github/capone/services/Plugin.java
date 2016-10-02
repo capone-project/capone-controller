@@ -17,14 +17,14 @@
 
 package com.github.capone.services;
 
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
 
 public interface Plugin {
 
     String getType();
 
-    PluginFragment getFragment(ServerTo server, ServiceDescriptionTo service);
+    PluginFragment getFragment(Server server, ServiceDescription service);
 
     int getCategoryImageId(String category);
 

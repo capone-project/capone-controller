@@ -27,19 +27,19 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.github.capone.controller.R;
-import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.protocol.DiscoveryTask;
 import com.github.capone.controller.discovery.ServerListAdapter;
 import com.github.capone.controller.services.ServiceListAdapter;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceTo;
-import com.github.capone.persistence.Identity;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.Service;
+import com.github.capone.persistence.IdentityRecord;
 import com.github.capone.protocol.QueryTask;
 
 public class ServiceChooserDialog extends DialogFragment {
 
     public interface OnServiceChosenListener {
-        void onServiceChosen(ServerTo server, ServiceDescriptionTo service);
+        void onServiceChosen(Server server, ServiceDescription service);
     }
 
     private OnServiceChosenListener listener;
@@ -88,7 +88,7 @@ public class ServiceChooserDialog extends DialogFragment {
         stopTasks();
         discovery = new DiscoveryTask() {
             @Override
-            public void onProgressUpdate(ServerTo... server) {
+            public void onProgressUpdate(Server... server) {
                 serverAdapter.add(server[0]);
             }
 
@@ -121,7 +121,7 @@ public class ServiceChooserDialog extends DialogFragment {
         }
     }
 
-    private void showServices(final ServerTo server) {
+    private void showServices(final Server server) {
         final ServiceListAdapter adapter = new ServiceListAdapter(getActivity());
         adapter.addAll(server.services);
 
@@ -134,16 +134,16 @@ public class ServiceChooserDialog extends DialogFragment {
         });
     }
 
-    private void startQuery(final ServerTo server, final ServiceTo service) {
+    private void startQuery(final Server server, final Service service) {
         stopTasks();
         query = new QueryTask() {
             @Override
-            public void onProgressUpdate(ServiceDescriptionTo... description) {
+            public void onProgressUpdate(ServiceDescription... description) {
                 listener.onServiceChosen(server, description[0]);
                 dismiss();
             }
         };
-        query.execute(new QueryTask.Parameters(Identity.getSigningKey(), server, service));
+        query.execute(new QueryTask.Parameters(IdentityRecord.getSigningKey(), server, service));
     }
 
 }

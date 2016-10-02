@@ -24,9 +24,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.github.capone.controller.R;
-import com.github.capone.entities.ServiceTo;
+import com.github.capone.protocol.entities.Service;
 
-public class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
+public class ServiceListAdapter extends ArrayAdapter<Service> {
 
     public ServiceListAdapter(Context context) {
         super(context, R.layout.list_item_service);
@@ -34,7 +34,7 @@ public class ServiceListAdapter extends ArrayAdapter<ServiceTo> {
 
     @Override
     public View getView(final int position, View view, ViewGroup group) {
-        final ServiceTo service = getItem(position);
+        final Service service = getItem(position);
 
         if (view == null) {
             view = View.inflate(getContext(), R.layout.list_item_service, null);

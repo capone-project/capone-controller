@@ -24,20 +24,20 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.github.capone.controller.R;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.persistence.Server;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.persistence.ServerRecord;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class ServerListAdapter extends ArrayAdapter<ServerTo> {
+public class ServerListAdapter extends ArrayAdapter<Server> {
 
     public interface OnStarClickedListener {
-        boolean onStarClicked(ServerTo server);
+        boolean onStarClicked(Server server);
     }
 
     private OnStarClickedListener onStarClickedListener;
-    private Set<ServerTo> servers = new HashSet<>();
+    private Set<Server> servers = new HashSet<>();
 
     public ServerListAdapter(Context context) {
         super(context, R.layout.list_item_server);
@@ -49,8 +49,8 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
     }
 
     private View getServerView(int position, View view) {
-        final ServerTo to = getItem(position);
-        Server server = Server.findByTo(to);
+        final Server to = getItem(position);
+        ServerRecord server = ServerRecord.findByTo(to);
 
         if (view == null) {
             view = View.inflate(getContext(), R.layout.list_item_server, null);
@@ -96,7 +96,7 @@ public class ServerListAdapter extends ArrayAdapter<ServerTo> {
     }
 
     @Override
-    public void add(ServerTo server) {
+    public void add(Server server) {
         if (servers.contains(server)) {
             return;
         }

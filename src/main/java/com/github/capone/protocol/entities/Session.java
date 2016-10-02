@@ -15,18 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import nano.Capone;
 
-public class SessionTo {
+public class Session {
 
     public int identifier;
-    public CapabilityTo capability;
+    public Capability capability;
 
-    public SessionTo(Capone.SessionRequestResult msg) {
+    public Session(Capone.SessionRequestResult msg) {
         identifier = msg.result.identifier;
-        capability = new CapabilityTo(msg.result.cap);
+        capability = new Capability(msg.result.cap);
     }
 
     public long getUnsignedSessionId() {

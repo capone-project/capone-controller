@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.keys.VerifyKey;
@@ -23,14 +23,14 @@ import org.bouncycastle.util.encoders.Hex;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CapabilityToTest {
+public class CapabilityTest {
 
     @Test
     public void creatingReferenceSucceeds() {
-        CapabilityTo root = new CapabilityTo(new byte[CapabilityTo.SECRET_LENGTH]);
-        IdentityTo key = new IdentityTo(new VerifyKey(new byte[SodiumConstants.PUBLICKEY_BYTES]));
-        CapabilityTo ref = root.createReference(
-                CapabilityTo.RIGHT_EXEC | CapabilityTo.RIGHT_TERMINATE, key);
+        Capability root = new Capability(new byte[Capability.SECRET_LENGTH]);
+        Identity key = new Identity(new VerifyKey(new byte[SodiumConstants.PUBLICKEY_BYTES]));
+        Capability ref = root.createReference(
+                Capability.RIGHT_EXEC | Capability.RIGHT_TERMINATE, key);
 
         Assert.assertEquals(Hex.toHexString(ref.secret),
                             "ef65d681590e6c95d923bb0da71851cc4902491f054ec767b8c3aa697df1c913");

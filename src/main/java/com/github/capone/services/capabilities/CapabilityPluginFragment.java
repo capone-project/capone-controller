@@ -25,9 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import com.github.capone.controller.R;
-import com.github.capone.entities.CapabilityRequestTo;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
+import com.github.capone.protocol.entities.CapabilityRequest;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.services.PluginFragment;
 import nano.Capabilities;
 
@@ -38,12 +38,12 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
     private RecyclerView cardsView;
     private CapabilityRequestsAdapter cardsAdapter;
 
-    private ServerTo server;
-    private ServiceDescriptionTo service;
+    private Server server;
+    private ServiceDescription service;
     private CapabilityRequestsTask capabilityRequestsTask;
 
-    public static CapabilityPluginFragment createFragment(ServerTo server,
-                                                          ServiceDescriptionTo service) {
+    public static CapabilityPluginFragment createFragment(Server server,
+                                                          ServiceDescription service) {
         CapabilityPluginFragment fragment = new CapabilityPluginFragment();
         fragment.server = server;
         fragment.service = service;
@@ -93,7 +93,7 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
     }
 
     @Override
-    public void onRequestReceived(final CapabilityRequestTo request, final Runnable accept) {
+    public void onRequestReceived(final CapabilityRequest request, final Runnable accept) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {

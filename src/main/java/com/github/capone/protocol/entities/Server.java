@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.entities;
+package com.github.capone.protocol.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -26,33 +26,33 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerTo implements Parcelable {
+public class Server implements Parcelable {
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         @Override
-        public ServerTo createFromParcel(Parcel in) {
-            return new ServerTo(in);
+        public Server createFromParcel(Parcel in) {
+            return new Server(in);
         }
 
         @Override
-        public ServerTo[] newArray(int size) {
-            return new ServerTo[size];
+        public Server[] newArray(int size) {
+            return new Server[size];
         }
     };
 
     public String name;
     public String address;
-    public IdentityTo signatureKey;
-    public List<ServiceTo> services;
+    public Identity signatureKey;
+    public List<Service> services;
 
-    public ServerTo() {
+    public Server() {
     }
 
-    private ServerTo(Parcel in) {
+    private Server(Parcel in) {
         name = in.readString();
         address = in.readString();
-        signatureKey = in.readParcelable(IdentityTo.class.getClassLoader());
-        services = in.createTypedArrayList(ServiceTo.CREATOR);
+        signatureKey = in.readParcelable(Identity.class.getClassLoader());
+        services = in.createTypedArrayList(Service.CREATOR);
     }
 
     @Override
@@ -60,15 +60,15 @@ public class ServerTo implements Parcelable {
         return signatureKey.toString();
     }
 
-    public static ServerTo fromAnnounce(String address, Discovery.DiscoverResult announce) {
-        ServerTo server = new ServerTo();
+    public static Server fromAnnounce(String address, Discovery.DiscoverResult announce) {
+        Server server = new Server();
         server.name = announce.name;
         server.address = address;
-        server.signatureKey = new IdentityTo(announce.identity);
+        server.signatureKey = new Identity(announce.identity);
         server.services = new ArrayList<>();
 
         for (Discovery.DiscoverResult.Service announcedService : announce.services) {
-            server.services.add(new ServiceTo(announcedService));
+            server.services.add(new Service(announcedService));
         }
 
         return server;

@@ -27,7 +27,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.github.capone.controller.R;
-import com.github.capone.persistence.Identity;
+import com.github.capone.persistence.IdentityRecord;
 import org.abstractj.kalium.encoders.Encoder;
 import org.abstractj.kalium.keys.SigningKey;
 
@@ -35,7 +35,7 @@ import java.util.Iterator;
 
 public class IdentityActivity extends AppCompatActivity {
 
-    private Identity identity;
+    private IdentityRecord identity;
     private SigningKey signingKey;
     private TextView publicKey;
     private TextView keySeed;
@@ -48,9 +48,9 @@ public class IdentityActivity extends AppCompatActivity {
         publicKey = (TextView) findViewById(R.id.public_key);
         keySeed = (TextView) findViewById(R.id.key_seed);
 
-        Iterator<Identity> identities = Identity.findAll(Identity.class);
+        Iterator<IdentityRecord> identities = IdentityRecord.findAll(IdentityRecord.class);
         if (!identities.hasNext()) {
-            identity = new Identity(new SigningKey());
+            identity = new IdentityRecord(new SigningKey());
             identity.save();
         } else {
             identity = identities.next();

@@ -17,10 +17,10 @@
 
 package com.github.capone.protocol;
 
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.ServiceTo;
-import com.github.capone.entities.SessionTo;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
+import com.github.capone.protocol.entities.Service;
+import com.github.capone.protocol.entities.Session;
 import com.google.protobuf.nano.MessageNano;
 import nano.Capone;
 import nano.Discovery;
@@ -32,7 +32,7 @@ import java.io.IOException;
 public class Client {
 
     public interface SessionHandler {
-        void onSessionStarted(ServiceDescriptionTo service, SessionTo session, Channel channel);
+        void onSessionStarted(ServiceDescription service, Session session, Channel channel);
     }
 
     public static final int PROTOCOL_VERSION = 1;
@@ -42,7 +42,7 @@ public class Client {
     private final VerifyKey serverKey;
     private Channel channel;
 
-    public Client(SigningKey localKeys, ServerTo server) {
+    public Client(SigningKey localKeys, Server server) {
         this.localKeys = localKeys;
         this.serverAddress = server.address;
         this.serverKey = server.signatureKey.key;
@@ -66,7 +66,7 @@ public class Client {
         channel.writeProtobuf(connectionInitiation);
     }
 
-    public ServiceDescriptionTo query(ServiceTo service)
+    public ServiceDescription query(Service service)
             throws IOException, ProtocolException {
         Discovery.DiscoverMessage discovery = new Discovery.DiscoverMessage();
         discovery.version = PROTOCOL_VERSION;
@@ -78,7 +78,7 @@ public class Client {
             channel.writeProtobuf(discovery);
             channel.readProtobuf(results);
 
-            return new ServiceDescriptionTo(results);
+            return new ServiceDescription(results);
         } catch (VerifyKey.SignatureException e) {
             throw new ProtocolException(e.getMessage());
         } finally {
@@ -86,17 +86,17 @@ public class Client {
         }
     }
 
-    public SessionTo request(ServiceDescriptionTo service, MessageNano parameters)
+    public Session request(ServiceDescription service, MessageNano parameters)
             throws IOException, ProtocolException {
         return request(service, MessageNano.toByteArray(parameters));
     }
 
-    public SessionTo request(ServiceDescriptionTo service, byte[] parameters)
+    public Session request(ServiceDescription service, byte[] parameters)
             throws IOException, ProtocolException {
         return request(service.port, parameters);
     }
 
-    public SessionTo request(int port, byte[] parameters)
+    public Session request(int port, byte[] parameters)
             throws IOException, ProtocolException {
         Capone.SessionRequestMessage request = new Capone.SessionRequestMessage();
         request.version = PROTOCOL_VERSION;
@@ -113,7 +113,7 @@ public class Client {
                 throw new ProtocolException("Received error");
             }
 
-            return new SessionTo(sessionMessage);
+            return new Session(sessionMessage);
         } catch (VerifyKey.SignatureException e) {
             throw new ProtocolException(e.getMessage());
         } finally {
@@ -121,7 +121,7 @@ public class Client {
         }
     }
 
-    public void connect(ServiceDescriptionTo service, SessionTo session, SessionHandler handler)
+    public void connect(ServiceDescription service, Session session, SessionHandler handler)
             throws IOException, ProtocolException {
         Capone.SessionConnectMessage connect = new Capone.SessionConnectMessage();
         connect.version = PROTOCOL_VERSION;

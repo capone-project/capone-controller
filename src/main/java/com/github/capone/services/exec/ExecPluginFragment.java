@@ -25,9 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.github.capone.controller.R;
-import com.github.capone.entities.ServerTo;
-import com.github.capone.entities.ServiceDescriptionTo;
-import com.github.capone.entities.SessionTo;
+import com.github.capone.protocol.entities.Server;
+import com.github.capone.protocol.entities.ServiceDescription;
+import com.github.capone.protocol.entities.Session;
 import com.github.capone.protocol.Channel;
 import com.github.capone.protocol.Client;
 import com.github.capone.protocol.SessionTask;
@@ -39,8 +39,8 @@ import java.io.IOException;
 
 public class ExecPluginFragment extends PluginFragment {
 
-    private ServerTo server;
-    private ServiceDescriptionTo service;
+    private Server server;
+    private ServiceDescription service;
 
     private EditText executable;
 
@@ -62,7 +62,7 @@ public class ExecPluginFragment extends PluginFragment {
         }
     }
 
-    public static ExecPluginFragment createFragment(ServerTo server, ServiceDescriptionTo service) {
+    public static ExecPluginFragment createFragment(Server server, ServiceDescription service) {
         ExecPluginFragment fragment = new ExecPluginFragment();
         fragment.server = server;
         fragment.service = service;
@@ -124,7 +124,7 @@ public class ExecPluginFragment extends PluginFragment {
         SessionTask task = new SessionTask(server, service, getParameters(), new Client
                                                                                          .SessionHandler() {
             @Override
-            public void onSessionStarted(ServiceDescriptionTo service, SessionTo session,
+            public void onSessionStarted(ServiceDescription service, Session session,
                                          Channel channel) {
                 try {
                     while (true) {
