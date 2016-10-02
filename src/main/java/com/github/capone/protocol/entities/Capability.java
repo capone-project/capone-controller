@@ -17,9 +17,9 @@
 
 package com.github.capone.protocol.entities;
 
+import com.github.capone.protocol.crypto.Digest;
 import com.github.capone.protocol.crypto.VerifyKey;
 import nano.Core;
-import org.bouncycastle.jcajce.provider.digest.Blake2b;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -93,17 +93,18 @@ public class Capability {
     }
 
     public Capability createReference(int rights, final Identity entity) {
-        Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
-        blake.update(entity.key.toBytes());
-        blake.update(ByteBuffer.allocate(4).putInt(rights).order(ByteOrder.nativeOrder()).array());
-        blake.update(secret);
-        byte[] secret = blake.digest();
+        byte[] digest = new Digest()
+                                .update(entity.key.toBytes())
+                                .update(ByteBuffer.allocate(4).putInt(rights).order(
+                                        ByteOrder.nativeOrder()).array())
+                                .update(secret)
+                                .digest();
 
         ArrayList<ChainSegment> segments = new ArrayList<>(chain.size() + 1);
         segments.addAll(chain);
         segments.add(new ChainSegment(rights, entity));
 
-        return new Capability(secret, segments);
+        return new Capability(digest, segments);
     }
 
 }
