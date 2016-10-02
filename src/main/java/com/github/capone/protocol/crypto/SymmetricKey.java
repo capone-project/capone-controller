@@ -21,8 +21,6 @@ import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.crypto.SecretBox;
 
-import java.nio.ByteBuffer;
-
 public class SymmetricKey {
 
     public static final int BYTES = SodiumConstants.XSALSA20_POLY1305_SECRETBOX_KEYBYTES;
@@ -81,22 +79,17 @@ public class SymmetricKey {
         byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
         Sodium.crypto_scalarmult_curve25519(scalarmult, sk.toBytes(), pk.toBytes());
 
-        int bufferLength = scalarmult.length + PublicKey.BYTES * 2;
-        ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
-        buffer.put(scalarmult);
+        Digest digest = new Digest();
+        digest.update(scalarmult);
         if (localKeyFirst) {
-            buffer.put(sk.getPublicKey().toBytes());
-            buffer.put(pk.toBytes());
+            digest.update(sk.getPublicKey().toBytes());
+            digest.update(pk.toBytes());
         } else {
-            buffer.put(pk.toBytes());
-            buffer.put(sk.getPublicKey().toBytes());
+            digest.update(pk.toBytes());
+            digest.update(sk.getPublicKey().toBytes());
         }
 
-        byte[] symmetricKey = new byte[SymmetricKey.BYTES];
-        Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
-                                          buffer.array().length, new byte[0], 0);
-
-        return SymmetricKey.fromBytes(symmetricKey);
+        return SymmetricKey.fromBytes(digest.digest());
     }
 
     public String toString() {
