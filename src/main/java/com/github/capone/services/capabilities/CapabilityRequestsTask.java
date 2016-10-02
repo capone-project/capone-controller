@@ -19,6 +19,7 @@ package com.github.capone.services.capabilities;
 
 import android.os.AsyncTask;
 import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.SymmetricKey;
 import com.github.capone.protocol.crypto.VerifyKey;
 import com.github.capone.protocol.entities.*;
 import com.github.capone.persistence.SigningKeyRecord;
@@ -113,7 +114,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
                         return;
                 }
             }
-        } catch (IOException | VerifyKey.InvalidKeyException e) {
+        } catch (IOException | VerifyKey.InvalidKeyException | SymmetricKey.DecryptionException e) {
             /* ignore */
         }
     }
@@ -137,7 +138,7 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
 
         try {
             channel.writeProtobuf(capability);
-        } catch (IOException e) {
+        } catch (IOException | SymmetricKey.EncryptionException e) {
             return;
         }
     }

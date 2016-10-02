@@ -20,6 +20,7 @@ package com.github.capone.protocol;
 import android.os.AsyncTask;
 import com.github.capone.persistence.ServerRecord;
 import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.SymmetricKey;
 import com.github.capone.protocol.crypto.VerifyKey;
 import com.github.capone.protocol.entities.Server;
 import nano.Discovery;
@@ -69,7 +70,12 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
             channel.readProtobuf(announceMessage);
 
             return new Result(Server.fromAnnounce(server.getAddress(), announceMessage));
-        } catch (VerifyKey.SignatureException | VerifyKey.InvalidKeyException | IOException e) {
+        } catch (VerifyKey.SignatureException |
+                         VerifyKey.InvalidKeyException |
+                         IOException |
+                         SymmetricKey.InvalidKeyException |
+                         SymmetricKey.EncryptionException |
+                         SymmetricKey.DecryptionException e) {
             return new Result(e);
         } finally {
             try {
@@ -82,6 +88,7 @@ public class DirectedDiscoveryTask extends AsyncTask<Void, Void, DirectedDiscove
                 channel = null;
             }
         }
+
     }
 
     public void cancel() {

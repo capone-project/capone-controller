@@ -18,6 +18,7 @@
 package com.github.capone.protocol;
 
 import android.os.AsyncTask;
+import com.github.capone.protocol.crypto.SymmetricKey;
 import com.github.capone.protocol.crypto.VerifyKey;
 import com.github.capone.protocol.entities.Server;
 import nano.Discovery;
@@ -46,8 +47,8 @@ public class DiscoveryTask extends AsyncTask<Void, Server, Throwable> {
             socket.setBroadcast(true);
 
             UdpChannel channel = UdpChannel.createFromSocket(socket,
-                                                                      broadcastAddress,
-                                                                      DISCOVERY_PORT);
+                                                             broadcastAddress,
+                                                             DISCOVERY_PORT);
 
             while (true) {
                 channel.writeProtobuf(discoverMessage);
@@ -67,12 +68,13 @@ public class DiscoveryTask extends AsyncTask<Void, Server, Throwable> {
                                 announceMessage);
 
                         publishProgress(server);
-                    } catch (SocketTimeoutException | VerifyKey.InvalidKeyException e) {
+                    } catch (SocketTimeoutException | VerifyKey.InvalidKeyException |
+                                     SymmetricKey.DecryptionException e) {
                         break;
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | SymmetricKey.EncryptionException e) {
             return e;
         } finally {
             if (socket != null)

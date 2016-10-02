@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.github.capone.controller.R;
+import com.github.capone.protocol.crypto.SymmetricKey;
 import com.github.capone.protocol.entities.Server;
 import com.github.capone.protocol.entities.ServiceDescription;
 import com.github.capone.protocol.entities.Session;
@@ -140,7 +141,7 @@ public class ExecPluginFragment extends PluginFragment {
                             }
                         });
                     }
-                } catch (IOException e) {
+                } catch (IOException | SymmetricKey.DecryptionException e) {
                     e.printStackTrace();
                 }
             }

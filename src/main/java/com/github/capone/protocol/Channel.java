@@ -18,13 +18,13 @@
 package com.github.capone.protocol;
 
 import com.github.capone.protocol.crypto.SigningKey;
+import com.github.capone.protocol.crypto.SymmetricKey;
 import com.github.capone.protocol.crypto.VerifyKey;
 import com.google.protobuf.nano.MessageNano;
 import nano.Encryption;
 import org.abstractj.kalium.Sodium;
 import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.crypto.Random;
-import org.abstractj.kalium.crypto.SecretBox;
 import org.abstractj.kalium.keys.KeyPair;
 
 import java.io.IOException;
@@ -34,12 +34,12 @@ import java.util.Arrays;
 
 public abstract class Channel {
 
-    private byte[] localNonce;
-    private byte[] remoteNonce;
-    private SecretBox key;
+    private SymmetricKey.Nonce localNonce;
+    private SymmetricKey.Nonce remoteNonce;
+    private SymmetricKey key;
 
     public void enableEncryption(SigningKey signKeys, VerifyKey remoteKey)
-            throws IOException, VerifyKey.SignatureException {
+            throws IOException, VerifyKey.SignatureException, SymmetricKey.InvalidKeyException {
         final KeyPair emphKeys = new KeyPair();
 
         ByteBuffer sessionBuffer = ByteBuffer.wrap(new Random().randomBytes(4));
@@ -49,10 +49,18 @@ public abstract class Channel {
         initiatorKey.sessionid = sessionid;
         initiatorKey.signPk = signKeys.getVerifyKey().toBytes();
         initiatorKey.ephmPk = emphKeys.getPublicKey().toBytes();
-        writeProtobuf(initiatorKey);
+        try {
+            writeProtobuf(initiatorKey);
+        } catch (SymmetricKey.EncryptionException e) {
+            /* no encryption in use yet, ignore */
+        }
 
         Encryption.ResponderKey responderKey = new Encryption.ResponderKey();
-        readProtobuf(responderKey);
+        try {
+            readProtobuf(responderKey);
+        } catch (SymmetricKey.DecryptionException e) {
+            /* no encryption in use yet, ignore */
+        }
 
         if (responderKey.sessionid != sessionid) {
             throw new RuntimeException();
@@ -82,7 +90,11 @@ public abstract class Channel {
         acknowledgeKey.sessionid = sessionid;
         acknowledgeKey.signPk = signKeys.getVerifyKey().toBytes();
         acknowledgeKey.signature = signKeys.sign(signBuffer.array());
-        writeProtobuf(acknowledgeKey);
+        try {
+            writeProtobuf(acknowledgeKey);
+        } catch (SymmetricKey.EncryptionException e) {
+            /* no encryption in use yet, ignore */
+        }
 
         byte[] scalarmult = new byte[SodiumConstants.SCALAR_BYTES];
         Sodium.crypto_scalarmult_curve25519(scalarmult, emphKeys.getPrivateKey().toBytes(),
@@ -94,31 +106,31 @@ public abstract class Channel {
         buffer.put(emphKeys.getPublicKey().toBytes());
         buffer.put(responderKey.ephmPk);
 
-        byte[] symmetricKey = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_KEYBYTES];
+        byte[] symmetricKey = new byte[SymmetricKey.BYTES];
         Sodium.crypto_generichash_blake2b(symmetricKey, symmetricKey.length, buffer.array(),
                                           buffer.array().length, new byte[0], 0);
 
-        enableEncryption(new SecretBox(symmetricKey));
+        enableEncryption(SymmetricKey.fromBytes(symmetricKey));
     }
 
-    public void enableEncryption(SecretBox key) {
+    public void enableEncryption(SymmetricKey key) {
         this.key = key;
-        this.localNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
-        this.remoteNonce = new byte[SodiumConstants.XSALSA20_POLY1305_SECRETBOX_NONCEBYTES];
-        incrementNonce(this.remoteNonce);
+        this.localNonce = new SymmetricKey.Nonce();
+        this.remoteNonce = new SymmetricKey.Nonce();
+        this.remoteNonce.increment();
     }
 
     public boolean isEncrypted() {
         return this.key != null;
     }
 
-    public void write(byte[] msg) throws IOException {
+    public void write(byte[] msg) throws IOException, SymmetricKey.EncryptionException {
         ByteBuffer msgBuffer = ByteBuffer.wrap(msg);
 
         byte[] pkg;
         ByteBuffer plain;
         if (isEncrypted()) {
-            plain = ByteBuffer.allocate(512 - SodiumConstants.BOXZERO_BYTES);
+            plain = ByteBuffer.allocate(512 - SymmetricKey.MACBYTES);
         } else {
             plain = ByteBuffer.allocate(512);
         }
@@ -130,7 +142,7 @@ public abstract class Channel {
             if (isEncrypted()) {
                 len = Math.min(plain.capacity() - plain.position(), msgBuffer.remaining());
             } else {
-                len = Math.min(plain.capacity() - plain.position() - SodiumConstants.BOXZERO_BYTES,
+                len = Math.min(plain.capacity() - plain.position() - SymmetricKey.MACBYTES,
                                msgBuffer.remaining());
             }
 
@@ -140,8 +152,8 @@ public abstract class Channel {
 
             if (isEncrypted()) {
                 pkg = key.encrypt(localNonce, plain.array());
-                incrementNonce(localNonce);
-                incrementNonce(localNonce);
+                localNonce.increment();
+                localNonce.increment();
             } else {
                 pkg = plain.array();
             }
@@ -151,7 +163,7 @@ public abstract class Channel {
         }
     }
 
-    public byte[] read() throws IOException {
+    public byte[] read() throws IOException, SymmetricKey.DecryptionException {
         ByteBuffer message = null;
         ByteBuffer pkg = ByteBuffer.allocate(512);
 
@@ -163,8 +175,8 @@ public abstract class Channel {
             ByteBuffer plain;
             if (isEncrypted()) {
                 plain = ByteBuffer.wrap(key.decrypt(remoteNonce, pkg.array()));
-                incrementNonce(remoteNonce);
-                incrementNonce(remoteNonce);
+                remoteNonce.increment();
+                remoteNonce.increment();
             } else {
                 plain = ByteBuffer.wrap(pkg.array());
             }
@@ -182,27 +194,18 @@ public abstract class Channel {
         return message.array();
     }
 
-    public void writeProtobuf(MessageNano msg) throws IOException {
+    public void writeProtobuf(MessageNano msg)
+            throws IOException, SymmetricKey.EncryptionException {
         write(MessageNano.toByteArray(msg));
     }
 
     public <Message extends MessageNano> Message readProtobuf(Message msg)
-            throws IOException {
+            throws IOException, SymmetricKey.DecryptionException {
         byte[] bytes = read();
         if (bytes == null) {
             throw new IOException("Channel received invalid protobuf");
         }
         return Message.mergeFrom(msg, bytes);
-    }
-
-    private void incrementNonce(byte[] buf) {
-        byte c = 1;
-
-        for (int i = 0; i < buf.length; i++) {
-            c += buf[i];
-            buf[i] = c;
-            c >>= 8;
-        }
     }
 
     protected abstract void write(byte[] msg, int len) throws IOException;
