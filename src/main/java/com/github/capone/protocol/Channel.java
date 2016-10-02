@@ -20,12 +20,12 @@ package com.github.capone.protocol;
 import com.github.capone.protocol.crypto.*;
 import com.google.protobuf.nano.MessageNano;
 import nano.Encryption;
-import org.abstractj.kalium.crypto.Random;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.Random;
 
 public abstract class Channel {
 
@@ -37,9 +37,7 @@ public abstract class Channel {
             throws IOException, VerifyKey.SignatureException, SymmetricKey.InvalidKeyException {
         final PrivateKey emphKeys = PrivateKey.fromRandom();
 
-        ByteBuffer sessionBuffer = ByteBuffer.wrap(new Random().randomBytes(4));
-        int sessionid = sessionBuffer.getInt();
-
+        int sessionid = new Random().nextInt();
         Encryption.InitiatorKey initiatorKey = new Encryption.InitiatorKey();
         initiatorKey.sessionid = sessionid;
         initiatorKey.signPk = signKeys.getVerifyKey().toBytes();
