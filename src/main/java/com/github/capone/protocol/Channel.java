@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.Random;
 
 public abstract class Channel {
 
@@ -37,11 +36,9 @@ public abstract class Channel {
             throws IOException, VerifyKey.SignatureException, SymmetricKey.InvalidKeyException {
         final PrivateKey emphKeys = PrivateKey.fromRandom();
 
-        int sessionid = new Random().nextInt();
-        Encryption.InitiatorKey initiatorKey = new Encryption.InitiatorKey();
-        initiatorKey.sessionid = sessionid;
-        initiatorKey.signPk = signKeys.getVerifyKey().toBytes();
-        initiatorKey.ephmPk = emphKeys.getPublicKey().toBytes();
+        Encryption.EncryptionInitiationMessage initiatorKey = new Encryption.EncryptionInitiationMessage();
+        initiatorKey.identity = signKeys.getVerifyKey().toMessage();
+        initiatorKey.ephemeral = emphKeys.getPublicKey().toMessage();
         try {
             writeProtobuf(initiatorKey);
         } catch (SymmetricKey.EncryptionException e) {
@@ -52,15 +49,12 @@ public abstract class Channel {
         VerifyKey remoteSignKey;
         byte[] signature;
         try {
-            Encryption.ResponderKey msg = new Encryption.ResponderKey();
+            Encryption.EncryptionAcknowledgementMessage msg =
+                    new Encryption.EncryptionAcknowledgementMessage();
             readProtobuf(msg);
 
-            if (msg.sessionid != sessionid) {
-                throw new RuntimeException();
-            }
-
-            remoteEmphKey = PublicKey.fromBytes(msg.ephmPk);
-            remoteSignKey = VerifyKey.fromBytes(msg.signPk);
+            remoteEmphKey = PublicKey.fromMessage(msg.ephemeral);
+            remoteSignKey = VerifyKey.fromMessage(msg.identity);
             signature = msg.signature;
         } catch (SymmetricKey.DecryptionException e) {
             throw new RuntimeException();
@@ -70,7 +64,6 @@ public abstract class Channel {
 
         ByteBuffer signBuffer = ByteBuffer.allocate(PublicKey.BYTES * 4 + 4);
         signBuffer.put(remoteSignKey.toBytes());
-        signBuffer.order(ByteOrder.LITTLE_ENDIAN).putInt(sessionid);
         signBuffer.put(remoteEmphKey.toBytes());
         signBuffer.put(emphKeys.getPublicKey().toBytes());
         signBuffer.put(signKeys.getVerifyKey().toBytes());
@@ -78,17 +71,17 @@ public abstract class Channel {
 
         signBuffer.clear();
         signBuffer.put(signKeys.getVerifyKey().toBytes());
-        signBuffer.order(ByteOrder.LITTLE_ENDIAN).putInt(sessionid);
         signBuffer.put(emphKeys.getPublicKey().toBytes());
         signBuffer.put(remoteEmphKey.toBytes());
         signBuffer.put(remoteSignKey.toBytes());
 
-        Encryption.AcknowledgeKey acknowledgeKey = new Encryption.AcknowledgeKey();
-        acknowledgeKey.sessionid = sessionid;
-        acknowledgeKey.signPk = signKeys.getVerifyKey().toBytes();
-        acknowledgeKey.signature = signKeys.sign(signBuffer.array());
+        Encryption.EncryptionAcknowledgementMessage ack =
+                new Encryption.EncryptionAcknowledgementMessage();
+        ack.ephemeral = emphKeys.getPublicKey().toMessage();
+        ack.identity = signKeys.getVerifyKey().toMessage();
+        ack.signature = signKeys.sign(signBuffer.array());
         try {
-            writeProtobuf(acknowledgeKey);
+            writeProtobuf(ack);
         } catch (SymmetricKey.EncryptionException e) {
             /* no encryption in use yet, ignore */
         }
