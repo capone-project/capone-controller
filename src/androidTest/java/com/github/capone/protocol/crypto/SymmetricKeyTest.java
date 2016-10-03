@@ -19,10 +19,10 @@ package com.github.capone.protocol.crypto;
 
 import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,11 +40,10 @@ public class SymmetricKeyTest {
     }
 
     @Test
-    @Ignore
     public void creatingKeySucceeds() throws SymmetricKey.InvalidKeyException {
         key = SymmetricKey.fromBytes(new byte[SymmetricKey.BYTES]);
         Assert.assertNotNull(key);
-        Assert.assertEquals("00000000000000000000000000000000", key.toString());
+        Assert.assertEquals(StringUtils.repeat("0", SymmetricKey.BYTES * 2), key.toString());
     }
 
     @Test(expected = SymmetricKey.InvalidKeyException.class)
