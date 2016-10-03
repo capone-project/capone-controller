@@ -17,6 +17,7 @@
 
 package com.github.capone.protocol.crypto;
 
+import nano.Core;
 import org.abstractj.kalium.SodiumConstants;
 
 public class PublicKey {
@@ -40,8 +41,22 @@ public class PublicKey {
         }
     }
 
+    public static PublicKey fromMessage(Core.PublicKeyMessage msg) throws InvalidKeyException {
+        try {
+            return new PublicKey(new org.abstractj.kalium.keys.PublicKey(msg.data));
+        } catch (Exception e) {
+            throw new InvalidKeyException();
+        }
+    }
+
     public byte[] toBytes() {
         return key.toBytes();
+    }
+
+    public Core.PublicKeyMessage toMessage() {
+        Core.PublicKeyMessage msg = new Core.PublicKeyMessage();
+        msg.data = toBytes();
+        return msg;
     }
 
 }

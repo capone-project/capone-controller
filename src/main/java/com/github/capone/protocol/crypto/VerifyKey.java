@@ -17,6 +17,7 @@
 
 package com.github.capone.protocol.crypto;
 
+import nano.Core;
 import org.abstractj.kalium.SodiumConstants;
 import org.abstractj.kalium.encoders.Encoder;
 
@@ -52,6 +53,14 @@ public class VerifyKey {
         }
     }
 
+    public static VerifyKey fromMessage(Core.IdentityMessage msg) throws InvalidKeyException {
+        try {
+            return new VerifyKey(new org.abstractj.kalium.keys.VerifyKey(msg.data));
+        } catch (Exception e) {
+            throw new InvalidKeyException();
+        }
+    }
+
     public byte[] toBytes() {
         return key.toBytes();
     }
@@ -59,6 +68,12 @@ public class VerifyKey {
     @Override
     public String toString() {
         return key.toString();
+    }
+
+    public Core.IdentityMessage toMessage() {
+        Core.IdentityMessage msg = new Core.IdentityMessage();
+        msg.data = toBytes();
+        return msg;
     }
 
     public void verify(byte[] message, byte[] signature) throws SignatureException {
