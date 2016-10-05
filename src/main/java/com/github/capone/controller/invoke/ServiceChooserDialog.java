@@ -69,8 +69,8 @@ public class ServiceChooserDialog extends DialogFragment {
         startDiscovery();
 
         return new AlertDialog.Builder(getActivity())
-                .setView(view)
-                .create();
+                       .setView(view)
+                       .create();
     }
 
     private void startDiscovery() {
@@ -136,10 +136,18 @@ public class ServiceChooserDialog extends DialogFragment {
 
     private void startQuery(final Server server, final Service service) {
         stopTasks();
+
         query = new QueryTask() {
             @Override
-            public void onProgressUpdate(ServiceDescription... description) {
-                listener.onServiceChosen(server, description[0]);
+            protected void onPostExecute(Result result) {
+                if (result.error != null) {
+                    Toast.makeText(ServiceChooserDialog.this.getActivity(),
+                                   result.error.getLocalizedMessage(),
+                                   Toast.LENGTH_LONG).show();
+                } else {
+                    listener.onServiceChosen(server, result.description);
+                }
+
                 dismiss();
             }
         };

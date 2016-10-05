@@ -25,7 +25,22 @@ import com.github.capone.protocol.entities.Service;
 import com.github.capone.protocol.entities.ServiceDescription;
 
 public abstract class QueryTask
-        extends AsyncTask<QueryTask.Parameters, ServiceDescription, Throwable> {
+        extends AsyncTask<QueryTask.Parameters, Void, QueryTask.Result> {
+
+    public static class Result {
+        public final Throwable error;
+        public final ServiceDescription description;
+
+        public Result(Throwable error) {
+            this.error = error;
+            this.description = null;
+        }
+
+        public Result(ServiceDescription description) {
+            this.error = null;
+            this.description = description;
+        }
+    }
 
     public static class Parameters {
         public final SigningKey localKey;
@@ -42,33 +57,27 @@ public abstract class QueryTask
     private Client client;
 
     @Override
-    protected Throwable doInBackground(Parameters... params) {
-        for (Parameters param : params) {
-            try {
-                if (isCancelled())
-                    return null;
-
-                client = new Client(SigningKeyRecord.getSigningKey(), param.server);
-                publishProgress(client.query(param.service));
-
+    protected Result doInBackground(Parameters... params) {
+        Parameters param = params[0];
+        try {
+            if (isCancelled())
                 return null;
-            } catch (Exception e) {
-                /* ignore */
-            } finally {
-                client = null;
-            }
-        }
 
-        return null;
+            client = new Client(SigningKeyRecord.getSigningKey(), param.server);
+
+            return new Result(client.query(param.service));
+        } catch (Exception e) {
+            return new Result(e);
+        } finally {
+            client = null;
+        }
     }
 
     public void cancel() {
         if (client != null) {
             client.disconnect();
+            client = null;
         }
     }
-
-    @Override
-    public abstract void onProgressUpdate(ServiceDescription... description);
 
 }
