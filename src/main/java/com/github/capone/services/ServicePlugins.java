@@ -19,7 +19,6 @@ package com.github.capone.services;
 
 import com.github.capone.services.capabilities.CapabilitiesServicePlugin;
 import com.github.capone.services.exec.ExecServicePlugin;
-import com.github.capone.services.invoke.InvokeServicePlugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +28,6 @@ public class ServicePlugins {
     private static final Map<String, ServicePlugin> plugins = new HashMap<>();
 
     static {
-        registerPlugin(new InvokeServicePlugin());
         registerPlugin(new CapabilitiesServicePlugin());
         registerPlugin(new ExecServicePlugin());
     }
