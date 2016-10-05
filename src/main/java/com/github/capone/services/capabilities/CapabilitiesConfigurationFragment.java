@@ -72,8 +72,11 @@ public class CapabilitiesConfigurationFragment extends ServiceConfigurationFragm
     public void onPause() {
         super.onPause();
 
-        capabilitiesRequestsTask.cancel();
-        capabilitiesRequestsTask = null;
+        if (capabilitiesRequestsTask != null) {
+            capabilitiesRequestsTask.cancel();
+            capabilitiesRequestsTask = null;
+        }
+
         startButton.setEnabled(true);
     }
 
