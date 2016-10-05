@@ -62,7 +62,7 @@ public abstract class Channel {
             throw new SymmetricKey.InvalidKeyException();
         }
 
-        ByteBuffer signBuffer = ByteBuffer.allocate(PublicKey.BYTES * 4 + 4);
+        ByteBuffer signBuffer = ByteBuffer.allocate(PublicKey.BYTES * 2 + VerifyKey.BYTES * 2);
         signBuffer.put(remoteSignKey.toBytes());
         signBuffer.put(remoteEmphKey.toBytes());
         signBuffer.put(emphKeys.getPublicKey().toBytes());
