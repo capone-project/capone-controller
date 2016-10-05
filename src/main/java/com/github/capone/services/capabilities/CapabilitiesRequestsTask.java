@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequestsTask.Result>
+public class CapabilitiesRequestsTask extends AsyncTask<Void, Void, CapabilitiesRequestsTask.Result>
         implements Client.SessionHandler {
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
@@ -60,8 +60,8 @@ public class CapabilityRequestsTask extends AsyncTask<Void, Void, CapabilityRequ
 
     private RequestListener listener;
 
-    public CapabilityRequestsTask(Server server, ServiceDescription service,
-                                  MessageNano parameters) {
+    public CapabilitiesRequestsTask(Server server, ServiceDescription service,
+                                    MessageNano parameters) {
         this.server = server;
         this.service = service;
         this.parameters = parameters;

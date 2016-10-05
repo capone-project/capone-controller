@@ -17,28 +17,28 @@
 
 package com.github.capone.services;
 
-import com.github.capone.services.capabilities.CapabilityPlugin;
-import com.github.capone.services.exec.ExecPlugin;
-import com.github.capone.services.invoke.InvokePlugin;
+import com.github.capone.services.capabilities.CapabilitiesServicePlugin;
+import com.github.capone.services.exec.ExecServicePlugin;
+import com.github.capone.services.invoke.InvokeServicePlugin;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Plugins {
+public class ServicePlugins {
 
-    private static final Map<String, Plugin> plugins = new HashMap<>();
+    private static final Map<String, ServicePlugin> plugins = new HashMap<>();
 
     static {
-        registerPlugin(new InvokePlugin());
-        registerPlugin(new CapabilityPlugin());
-        registerPlugin(new ExecPlugin());
+        registerPlugin(new InvokeServicePlugin());
+        registerPlugin(new CapabilitiesServicePlugin());
+        registerPlugin(new ExecServicePlugin());
     }
 
-    private static void registerPlugin(Plugin plugin) {
+    private static void registerPlugin(ServicePlugin plugin) {
         plugins.put(plugin.getType(), plugin);
     }
 
-    public static Plugin getPlugin(String type) {
+    public static ServicePlugin getPlugin(String type) {
         return plugins.get(type);
     }
 

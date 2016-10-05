@@ -33,8 +33,8 @@ import com.github.capone.protocol.crypto.SigningKey;
 import com.github.capone.protocol.entities.Server;
 import com.github.capone.protocol.entities.Service;
 import com.github.capone.protocol.entities.ServiceDescription;
-import com.github.capone.services.Plugin;
-import com.github.capone.services.Plugins;
+import com.github.capone.services.ServicePlugin;
+import com.github.capone.services.ServicePlugins;
 
 public class InvokeActivity extends AppCompatActivity {
 
@@ -88,7 +88,7 @@ public class InvokeActivity extends AppCompatActivity {
     }
 
     private void setServiceDescription(Server server, ServiceDescription results) {
-        Plugin plugin = Plugins.getPlugin(results.type);
+        ServicePlugin plugin = ServicePlugins.getPlugin(results.type);
 
         if (plugin == null) {
             Toast.makeText(InvokeActivity.this,
@@ -100,7 +100,7 @@ public class InvokeActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.plugin_view, plugin.getFragment(server, results));
+        transaction.add(R.id.plugin_view, plugin.getConfigurationFragment(server, results));
         transaction.commit();
 
         progressDialog.dismiss();

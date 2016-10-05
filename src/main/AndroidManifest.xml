@@ -32,7 +32,7 @@
         <activity android:name=".about.AboutActivity">
         </activity>
 
-        <!-- Plugin activities -->
+        <!-- ServicePlugin activities -->
 
         <meta-data
                 android:name="DATABASE"

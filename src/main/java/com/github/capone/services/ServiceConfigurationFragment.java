@@ -1,4 +1,4 @@
-/*
+/*GenericPluginFragment
  * Copyright (C) 2016 Patrick Steinhardt
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,15 +17,11 @@
 
 package com.github.capone.services;
 
-import com.github.capone.protocol.entities.Server;
-import com.github.capone.protocol.entities.ServiceDescription;
+import android.app.Fragment;
+import com.google.protobuf.nano.MessageNano;
 
-public interface Plugin {
+public abstract class ServiceConfigurationFragment extends Fragment {
 
-    String getType();
-
-    PluginFragment getFragment(Server server, ServiceDescription service);
-
-    int getCategoryImageId(String category);
+    public abstract MessageNano getParameters();
 
 }

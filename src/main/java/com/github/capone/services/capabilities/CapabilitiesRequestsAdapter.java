@@ -29,8 +29,8 @@ import com.github.capone.protocol.entities.CapabilityRequest;
 import java.text.DateFormat;
 import java.util.ArrayList;
 
-public class CapabilityRequestsAdapter
-        extends RecyclerView.Adapter<CapabilityRequestsAdapter.ViewHolder> {
+public class CapabilitiesRequestsAdapter
+        extends RecyclerView.Adapter<CapabilitiesRequestsAdapter.ViewHolder> {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView requester;

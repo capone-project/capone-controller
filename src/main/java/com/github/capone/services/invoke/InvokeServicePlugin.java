@@ -15,29 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.github.capone.services.capabilities;
+package com.github.capone.services.invoke;
 
 import com.github.capone.controller.R;
 import com.github.capone.protocol.entities.Server;
 import com.github.capone.protocol.entities.ServiceDescription;
-import com.github.capone.services.Plugin;
-import com.github.capone.services.PluginFragment;
+import com.github.capone.services.ServicePlugin;
+import com.github.capone.services.ServiceConfigurationFragment;
 
-public class CapabilityPlugin implements Plugin {
+public class InvokeServicePlugin implements ServicePlugin {
 
     @Override
     public String getType() {
-        return "capabilities";
+        return "invoke";
     }
 
     @Override
-    public PluginFragment getFragment(Server server, ServiceDescription service) {
-        return CapabilityPluginFragment.createFragment(server, service);
+    public ServiceConfigurationFragment getConfigurationFragment(Server server, ServiceDescription service) {
+        return InvokeConfigurationFragment.createFragment(server, service);
     }
 
     @Override
     public int getCategoryImageId(String category) {
-        return R.drawable.service_capabilities;
+        return R.drawable.service_invoke;
     }
 
 }

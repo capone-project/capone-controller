@@ -32,13 +32,13 @@ import com.github.capone.protocol.entities.Session;
 import com.github.capone.protocol.Channel;
 import com.github.capone.protocol.Client;
 import com.github.capone.protocol.SessionTask;
-import com.github.capone.services.PluginFragment;
+import com.github.capone.services.ServiceConfigurationFragment;
 import com.google.protobuf.nano.MessageNano;
 import nano.Exec;
 
 import java.io.IOException;
 
-public class ExecPluginFragment extends PluginFragment {
+public class ExecPluginFragment extends ServiceConfigurationFragment {
 
     private Server server;
     private ServiceDescription service;

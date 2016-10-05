@@ -27,13 +27,13 @@ import com.github.capone.controller.invoke.ServiceChooserDialog;
 import com.github.capone.controller.invoke.ServiceParametersDialog;
 import com.github.capone.protocol.entities.Server;
 import com.github.capone.protocol.entities.ServiceDescription;
-import com.github.capone.services.Plugin;
-import com.github.capone.services.PluginFragment;
-import com.github.capone.services.Plugins;
+import com.github.capone.services.ServicePlugin;
+import com.github.capone.services.ServiceConfigurationFragment;
+import com.github.capone.services.ServicePlugins;
 import com.google.protobuf.nano.MessageNano;
 import nano.Invoke;
 
-public class InvokePluginFragment extends PluginFragment {
+public class InvokeConfigurationFragment extends ServiceConfigurationFragment {
 
     private View view;
     private LinearLayout pluginLayout;
@@ -46,9 +46,9 @@ public class InvokePluginFragment extends PluginFragment {
 
     private Button invokeButton;
 
-    public static InvokePluginFragment createFragment(Server invokerServer,
-                                                      ServiceDescription invoker) {
-        InvokePluginFragment fragment = new InvokePluginFragment();
+    public static InvokeConfigurationFragment createFragment(Server invokerServer,
+                                                             ServiceDescription invoker) {
+        InvokeConfigurationFragment fragment = new InvokeConfigurationFragment();
         fragment.invokerServer = invokerServer;
         fragment.invoker = invoker;
         return fragment;
@@ -106,7 +106,7 @@ public class InvokePluginFragment extends PluginFragment {
             @Override
             protected void onPostExecute(Throwable throwable) {
                 if (throwable != null) {
-                    Toast.makeText(InvokePluginFragment.this.getActivity(),
+                    Toast.makeText(InvokeConfigurationFragment.this.getActivity(),
                                    throwable.getLocalizedMessage(),
                                    Toast.LENGTH_SHORT).show();
                 }
@@ -123,7 +123,7 @@ public class InvokePluginFragment extends PluginFragment {
         this.service = results;
         this.serviceParameters = parameters;
 
-        Plugin plugin = Plugins.getPlugin(results.type);
+        ServicePlugin plugin = ServicePlugins.getPlugin(results.type);
 
         if (plugin == null) {
             Toast.makeText(getActivity(),

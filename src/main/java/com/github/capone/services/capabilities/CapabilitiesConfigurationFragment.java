@@ -28,23 +28,23 @@ import com.github.capone.controller.R;
 import com.github.capone.protocol.entities.CapabilityRequest;
 import com.github.capone.protocol.entities.Server;
 import com.github.capone.protocol.entities.ServiceDescription;
-import com.github.capone.services.PluginFragment;
+import com.github.capone.services.ServiceConfigurationFragment;
 import nano.Capabilities;
 
-public class CapabilityPluginFragment extends PluginFragment implements View.OnClickListener, CapabilityRequestsTask.RequestListener {
+public class CapabilitiesConfigurationFragment extends ServiceConfigurationFragment implements View.OnClickListener, CapabilitiesRequestsTask.RequestListener {
 
     private Button startButton;
 
     private RecyclerView cardsView;
-    private CapabilityRequestsAdapter cardsAdapter;
+    private CapabilitiesRequestsAdapter cardsAdapter;
 
     private Server server;
     private ServiceDescription service;
-    private CapabilityRequestsTask capabilityRequestsTask;
+    private CapabilitiesRequestsTask capabilitiesRequestsTask;
 
-    public static CapabilityPluginFragment createFragment(Server server,
-                                                          ServiceDescription service) {
-        CapabilityPluginFragment fragment = new CapabilityPluginFragment();
+    public static CapabilitiesConfigurationFragment createFragment(Server server,
+                                                                   ServiceDescription service) {
+        CapabilitiesConfigurationFragment fragment = new CapabilitiesConfigurationFragment();
         fragment.server = server;
         fragment.service = service;
         return fragment;
@@ -62,7 +62,7 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         cardsView.setLayoutManager(layoutManager);
 
-        cardsAdapter = new CapabilityRequestsAdapter();
+        cardsAdapter = new CapabilitiesRequestsAdapter();
         cardsView.setAdapter(cardsAdapter);
 
         return view;
@@ -72,8 +72,8 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
     public void onPause() {
         super.onPause();
 
-        capabilityRequestsTask.cancel();
-        capabilityRequestsTask = null;
+        capabilitiesRequestsTask.cancel();
+        capabilitiesRequestsTask = null;
         startButton.setEnabled(true);
     }
 
@@ -86,9 +86,9 @@ public class CapabilityPluginFragment extends PluginFragment implements View.OnC
 
     @Override
     public void onClick(View v) {
-        capabilityRequestsTask = new CapabilityRequestsTask(server, service, getParameters());
-        capabilityRequestsTask.setRequestListener(this);
-        capabilityRequestsTask.execute();
+        capabilitiesRequestsTask = new CapabilitiesRequestsTask(server, service, getParameters());
+        capabilitiesRequestsTask.setRequestListener(this);
+        capabilitiesRequestsTask.execute();
         startButton.setEnabled(false);
     }
 
